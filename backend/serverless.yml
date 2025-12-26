@@ -12,10 +12,15 @@ custom:
   wsgi:
     # The name of the app
     app: app.app
+  prune:
+    automatic: true
+    number: 5  # keep the 5 latest versions
 
 provider:
   name: aws
   runtime: python3.12
+  stage: api    # Stage blir /api
+  region: eu-north-1 
   iam:
     role: ${file(./config.yml):aws.role}
   environment:
@@ -36,6 +41,7 @@ resources:
   Resources:
     UsersTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain   # Keep the same table when deploying
       Properties:
         TableName: fishScore
         BillingMode: PAY_PER_REQUEST
@@ -49,4 +55,3 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-
