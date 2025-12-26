@@ -17,19 +17,42 @@ if os.environ.get('IS_OFFLINE'):
 USERS_TABLE = os.environ['USERS_TABLE']
 
 
+# @app.route('/users/<string:user_id>')
+# def get_user(user_id):
+#     result = dynamodb_client.get_item(
+#         TableName=USERS_TABLE, Key={'PK': {'S': user_id}}
+#     )
+#     item = result.get('Item')
+#     if not item:
+#         return jsonify({'error': 'Could not find user with provided "userId"'}), 404
+
+#     return jsonify(
+#         {'userId': item.get('userId').get('S'), 'name': item.get('name').get('S')}
+#     )
+
 @app.route('/users/<string:user_id>')
 def get_user(user_id):
+    # Hämtar ett item från DynamoDB med både PK och SK
     result = dynamodb_client.get_item(
-        TableName=USERS_TABLE, Key={'userId': {'S': user_id}}
+        TableName=USERS_TABLE,
+        Key={
+            'PK': {'S': user_id},              # Partition key
+            'SK': {'S': 'USER#PROFILE'}        # Sort key
+        }
     )
+
+    # Plockar ut Item från svaret om det finns
     item = result.get('Item')
+
+    # Om inget item hittades, returnera 404
     if not item:
-        return jsonify({'error': 'Could not find user with provided "userId"'}), 404
+        return jsonify({'error': 'User not found'}), 404
 
-    return jsonify(
-        {'userId': item.get('userId').get('S'), 'name': item.get('name').get('S')}
-    )
-
+    # Returnerar data som vanlig JSON
+    return jsonify({
+        'pk': item['PK']['S'],
+        'sk': item['SK']['S']
+    })
 
 @app.route('/users', methods=['POST'])
 def create_user():
