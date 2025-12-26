@@ -1,0 +1,3 @@
+aws:
+    org: fedev24
+    role: arn:aws:iam::747901701332:role/BasicLambdaRole
