@@ -14,7 +14,7 @@ if os.environ.get('IS_OFFLINE'):
     )
 
 
-USERS_TABLE = os.environ['USERS_TABLE']
+USERS_TABLE = os.environ.get('USERS_TABLE', 'fishScore')
 
 
 # @app.route('/users/<string:user_id>')
@@ -29,6 +29,10 @@ USERS_TABLE = os.environ['USERS_TABLE']
 #     return jsonify(
 #         {'userId': item.get('userId').get('S'), 'name': item.get('name').get('S')}
 #     )
+
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok'})
 
 @app.route('/users/<string:user_id>')
 def get_user(user_id):
@@ -71,3 +75,7 @@ def create_user():
 @app.errorhandler(404)
 def resource_not_found(e):
     return make_response(jsonify(error='Not found!'), 404)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
