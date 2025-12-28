@@ -6,6 +6,7 @@ service: fishScore
 plugins:
   - serverless-wsgi
   - serverless-python-requirements
+  - serverless-prune-plugin
 
 # Connection to Flask
 custom:
@@ -36,6 +37,12 @@ functions:
       - http:
           path: /{proxy+}
           method: ANY
+  # createUser:
+  #   handler: functions/auth/PostRegisterUser/handler.handler
+  #   events:
+  #     - http:
+  #         path: /auth/register
+  #         method: POST
 
 resources:
   Resources:
