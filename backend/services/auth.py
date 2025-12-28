@@ -1,18 +1,16 @@
-import boto3
-from datetime import datetime
-import os
+from datetime import datetime, timezone
 import uuid
+from .table import get_dynamodb_table
+from botocore.exceptions import ClientError
 
-dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(os.environ.get("USERS_TABLE", "fishScore"))
 
-
-def register_user(email, first_name, last_name):
+def register_user_to_db(email, first_name, last_name):
+    table = get_dynamodb_table()
 
     user_id = str(uuid.uuid4())[:5]
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     item = {
-        "PK": f"USER#{user_id}",
+        "PK": f"USER#user-{user_id}",
         "SK": "PROFILE",
         "entityType": "USER",
         "email": email,
@@ -23,5 +21,13 @@ def register_user(email, first_name, last_name):
         "maxCatchWeight": 0,
     }
 
-    table.put_item(Item=item, ConditionExpression="attribute_not_exists(PK)")
-    return {"userId": user_id, "email": email}
+    try:
+        table.put_item(Item=item, ConditionExpression="attribute_not_exists(PK)")
+    except ClientError as e:
+        if e.respons["Error"]["Code"] == "ConditionalCheckFailedException":
+            # Om användaren redan finns
+            return {"error": "User already exists"}
+        else:
+            return {"error": str(e)}
+
+    return {"userId": f"user-{user_id}", "email": email}
