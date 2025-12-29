@@ -1,14 +1,12 @@
-import { type JSX } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-type Props = {
-	children: JSX.Element;
-};
+export const ProtectedRoute = () => {
+	const token = localStorage.getItem('token'); // eller annan auth-logik
 
-export const ProtectedRoute = ({ children }: Props) => {
-	// const { user } = useAuthStore();
+	if (!token) {
+		return <Navigate to='/auth' replace />;
+	}
 
-	// if (!user) return <Navigate to={'/'} />;
-
-	return children;
+	// Om token finns, rendera de child routes som ligger under denna route
+	return <Outlet />;
 };

@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/authform",
+	"main": "./index.ts"
+}
