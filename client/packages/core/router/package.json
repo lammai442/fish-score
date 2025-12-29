@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/router",
+	"main": "./index.ts"
+}

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify  # Flask-verktyg
 from services.auth import register_user_to_db  # Service-lager
 import logging
 
+
 logging.basicConfig(level=logging.INFO)
 logging.info("Server startad")
 
