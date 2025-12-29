@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/errorpage",
+	"main": "./index.ts"
+}
