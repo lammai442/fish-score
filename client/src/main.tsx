@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { router } from '@fishScore/router';
-import './index.scss';
+import './index.css';
 import { RouterProvider } from 'react-router-dom';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 import '@mantine/core/styles.css';

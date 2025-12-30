@@ -1,5 +1,3 @@
-// Importerar useForm-hooken från Mantine för formulärhantering
-import { useForm } from '@mantine/form';
 import {
 	TextInput,
 	PasswordInput,
@@ -8,73 +6,86 @@ import {
 	Title,
 	Center,
 	Image,
+	Text,
+	SegmentedControl,
 } from '@mantine/core';
-import { useState } from 'react';
+import { useAuthFormLogic } from './useAuthFormLogic';
 
 // Exporterar komponenten
 export const AuthForm = () => {
-	const [mode, setMode] = useState('login');
-
-	const form = useForm({
-		initialValues: {
-			email: '',
-			password: '',
-			firstName: '',
-			lastName: '',
-		},
-
-		validate: {
-			email: (value) =>
-				value.includes('@') ? null : 'Ogiltig e-postadress',
-
-			password: (value) =>
-				value.length >= 6 ? null : 'Minst 6 tecken krävs',
-
-			firstName: (value) =>
-				mode === 'register' && value.length === 0
-					? 'Förnamn krävs'
-					: null,
-
-			lastName: (value) =>
-				mode === 'register' && value.length === 0
-					? 'Efternamn krävs'
-					: null,
-		},
-	});
+	const { mode, setMode, form } = useAuthFormLogic();
 
 	return (
 		// Box används för layout och maxbredd
-		<Box maw={400} mx='auto' mt={50} bg='white'>
+		<Box
+			maw={400}
+			mx='auto'
+			mt={50}
+			bg='white'
+			p={16}
+			style={{
+				borderRadius: '10px',
+				boxShadow:
+					'0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+			}}>
 			<Center mb='md'>
 				<Image src='/transparent-logo.png' w={80} h={80} />
 			</Center>
-			{/* Titel ändras beroende på mode */}
 			<Title order={2} ta='center' mb='lg'>
-				{mode === 'login' ? 'Logga in' : 'Registrera'}
+				FishScore
 			</Title>
-
-			{/* Form-element med submit-hantering */}
+			<Text>Track your fishing competition with ease</Text>
+			<SegmentedControl
+				value={mode}
+				onChange={(value) => setMode(value as 'login' | 'register')}
+				data={[
+					{ label: 'Logga in', value: 'login' },
+					{ label: 'Registera', value: 'register' },
+				]}
+				fullWidth
+				styles={{
+					label: {
+						fontWeight: '700',
+					},
+					root: {
+						padding: '0.4rem',
+						borderRadius: '1rem',
+					},
+					control: {
+						borderRadius: '1rem',
+						overflow: 'hidden',
+					},
+					indicator: {
+						borderRadius: '1rem',
+					},
+				}}
+			/>
 			<form
 				onSubmit={form.onSubmit((values) => {
 					// Loggar alla formulärvärden
 					console.log(values);
-
-					// Här anropar du login eller register i backend
-					// Du kan kontrollera mode här också
 				})}>
-				{/* Emailfält visas alltid */}
 				<TextInput
 					label='Email'
 					placeholder='din@email.se'
 					{...form.getInputProps('email')}
+					styles={{
+						label: {
+							fontWeight: 700, // fet stil
+						},
+					}}
 				/>
 
-				{/* Förnamn visas endast vid register */}
 				{mode === 'register' && (
 					<TextInput
 						label='Förnamn'
 						mt='md'
 						{...form.getInputProps('firstName')}
+						styles={{
+							label: {
+								fontWeight: 700, // fet stil
+							},
+						}}
 					/>
 				)}
 

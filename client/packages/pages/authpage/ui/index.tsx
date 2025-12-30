@@ -1,11 +1,15 @@
-// Importerar useForm-hooken från Mantine för formulärhantering
-import { useForm } from '@mantine/form';
+import { Center } from '@mantine/core';
 import { AuthForm } from '@fishScore/authform';
 
-// Importerar UI-komponenter från Mantine
-import { TextInput, PasswordInput, Button, Box, Title } from '@mantine/core';
-
-// Exporterar AuthPage-komponenten
 export const AuthPage = () => {
-	return <AuthForm mode='register'></AuthForm>;
+	return (
+		<Center
+			style={{
+				minHeight: '100vh',
+				background:
+					'linear-gradient(var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)',
+			}}>
+			<AuthForm />;
+		</Center>
+	);
 };
