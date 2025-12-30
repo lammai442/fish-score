@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/apiauth",
+	"main": "./index.ts"
+}
