@@ -1,4 +1,4 @@
 {
-	"name": "@fishScore/protectedrouter",
+	"name": "@fishScore/protectedroute",
 	"main": "./index.ts"
 }

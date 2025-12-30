@@ -1,7 +1,11 @@
 import { Outlet } from 'react-router-dom';
 import { AppShell, Container } from '@mantine/core';
 
-function App() {
+export const AuthLayout = () => {
+	return <Outlet />;
+};
+
+export const AppLayout = () => {
 	return (
 		<AppShell header={{ height: 60 }} padding='md'>
 			{/* <AppShell.Header>
@@ -16,6 +20,4 @@ function App() {
 			</AppShell.Main>
 		</AppShell>
 	);
-}
-
-export default App;
+};
