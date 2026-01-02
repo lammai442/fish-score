@@ -14,11 +14,13 @@ def register_user():
     try:
         data = request.get_json()  # Läser JSON från request
 
-        email = data.get("email")  # Hämtar email
-        first_name = data.get("firstName")  # Hämtar förnamn
-        last_name = data.get("lastName")  # Hämtar efternamn
+        email = data.get("email")
+        first_name = data.get("firstName")
+        last_name = data.get("lastName")
+        password = data.get("password")
 
-        if not email or not first_name or not last_name:  # Enkel validering
+        # Enkel validering
+        if not email or not first_name or not last_name:
             return jsonify({"error": "Missing fields"}), 400
 
         user = register_user_to_db(email, first_name, last_name)  # Anropar service
