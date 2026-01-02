@@ -1,28 +1,17 @@
-# from .table import get_dynamodb_table
-# from botocore.exceptions import ClientError
+from .table import get_dynamodb_table
+from boto3.dynamodb.conditions import Key
 
-# def getUserByEmail(email):
-#     table = get_dynamodb_table()
 
-#     item = {
-#         "PK": f"USER#user-{user_id}",
-#         "SK": "PROFILE",
-#         "entityType": "USER",
-#         "email": email,
-#         "firstName": first_name,
-#         "lastName": last_name,
-#         "createdAt": now,
-#         "totalCatchWeight": 0,
-#         "maxCatchWeight": 0,
-#     }
+def get_user_by_email(email):
+    table = get_dynamodb_table()
 
-#     try:
-#         table.put_item(Item=item, ConditionExpression="attribute_not_exists(PK)")
-#     except ClientError as e:
-#         if e.respons["Error"]["Code"] == "ConditionalCheckFailedException":
-#             # Om användaren redan finns
-#             return {"error": "User already exists"}
-#         else:
-#             return {"error": str(e)}
+    response = table.query(
+        IndexName="GSI1",
+        KeyConditionExpression=Key("lookupPK").eq("USER#EMAIL")
+        & Key("lookupSK").eq(email),
+    )
 
-#     return {"userId": f"user-{user_id}", "email": email}
+    if response["Count"] > 0:
+        return {"success": True, "user": response["Items"][0]}
+    else:
+        return {"success": False, "error": "User not found"}

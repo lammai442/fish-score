@@ -1,33 +1,28 @@
-from flask import Blueprint, request, jsonify  # Flask-verktyg
-from services.auth import register_user_to_db  # Service-lager
+from flask import Blueprint, request, jsonify
+from services.auth import register_user_to_db
+from schemas.register_schema import RegisterSchema
+from middlewares.validate_schema import validate_schema
 import logging
 
 
 logging.basicConfig(level=logging.INFO)
 logging.info("Server startad")
 
-auth_bp = Blueprint("auth", __name__)  # Skapar blueprint
+# Skapar blueprint
+auth_bp = Blueprint("auth", __name__)
 
 
-@auth_bp.route("/auth/register", methods=["POST"])  # Endpoint
+@auth_bp.route("/auth/register", methods=["POST"])
+@validate_schema(RegisterSchema)
 def register_user():
-    try:
-        data = request.get_json()  # Läser JSON från request
+    data = request.validated_data  # Färdigvaliderad data
 
-        email = data.get("email")
-        first_name = data.get("firstName")
-        last_name = data.get("lastName")
-        password = data.get("password")
+    response = register_user_to_db(data)
 
-        # Enkel validering
-        if not email or not first_name or not last_name:
-            return jsonify({"error": "Missing fields"}), 400
-
-        user = register_user_to_db(email, first_name, last_name)  # Anropar service
-
-        return jsonify(user), 201  # Returnerar svar
-    except Exception as e:
-        return jsonify({"error": str(e)})
+    if response["success"]:
+        return jsonify({"success": True, "user": response["user"]}), 201
+    else:
+        return jsonify({"success": False, "error": response["error"]}), 409
 
 
 @auth_bp.route("/auth/login", methods=["POST"])  # Endpoint

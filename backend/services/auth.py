@@ -2,32 +2,45 @@ from datetime import datetime, timezone
 import uuid
 from .table import get_dynamodb_table
 from botocore.exceptions import ClientError
+from .users import get_user_by_email
+from utils.bcrypt import hash_password
 
 
-def register_user_to_db(email, first_name, last_name):
+def register_user_to_db(data):
     table = get_dynamodb_table()
+    emailExist = get_user_by_email(data["email"])
+
+    # Avbryt om email redan finns i databasen
+    if emailExist["success"]:
+        return {"success": False, "error": "Email already exists"}
 
     user_id = str(uuid.uuid4())[:5]
     now = datetime.now(timezone.utc).isoformat()
-    item = {
+    user_item = {
         "PK": f"USER#user-{user_id}",
         "SK": "PROFILE",
+        "lookupPK": "USER#EMAIL",
+        "lookupSK": data["email"],
         "entityType": "USER",
-        "email": email,
-        "firstName": first_name,
-        "lastName": last_name,
+        "email": data["email"],
+        "password": hash_password(data["password"]),
+        "firstName": data["firstName"],
+        "lastName": data["lastName"],
         "createdAt": now,
         "totalCatchWeight": 0,
         "maxCatchWeight": 0,
     }
 
     try:
-        table.put_item(Item=item, ConditionExpression="attribute_not_exists(PK)")
-    except ClientError as e:
-        if e.respons["Error"]["Code"] == "ConditionalCheckFailedException":
-            # Om användaren redan finns
-            return {"error": "User already exists"}
-        else:
-            return {"error": str(e)}
+        table.put_item(
+            Item=user_item,
+            ConditionExpression="attribute_not_exists(PK)",
+        )
 
-    return {"userId": f"user-{user_id}", "email": email}
+        return {
+            "success": True,
+            "user": {"userId": f"user-{user_id}", "email": data["email"]},
+        }
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
