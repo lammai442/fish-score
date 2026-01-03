@@ -3,7 +3,7 @@ import uuid
 from .table import get_dynamodb_table
 from botocore.exceptions import ClientError
 from .users import get_user_by_email
-from utils.bcrypt import hash_password
+from utils.hash_bcrypt import hash_password
 
 
 def register_user_to_db(data):
@@ -16,6 +16,7 @@ def register_user_to_db(data):
 
     user_id = str(uuid.uuid4())[:5]
     now = datetime.now(timezone.utc).isoformat()
+
     user_item = {
         "PK": f"USER#user-{user_id}",
         "SK": "PROFILE",

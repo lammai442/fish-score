@@ -5,17 +5,17 @@ service: fishScore
 
 plugins:
   - serverless-wsgi
-  - serverless-python-requirements
   - serverless-prune-plugin
+  - serverless-python-requirements
 
 # Connection to Flask
 custom:
   wsgi:
-    # The name of the app
     app: app.app
   prune:
     automatic: true
     number: 5  # keep the 5 latest versions
+
 
 provider:
   name: aws

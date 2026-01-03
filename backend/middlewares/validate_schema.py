@@ -13,7 +13,7 @@ def validate_schema(schema_class):
             try:
                 data = schema_class().load(request.get_json())
                 # Lagra den validerade datan i request context
-                request.validated_data = data
+                setattr(request, "validated_data", data)
             except ValidationError as err:
                 return (
                     jsonify(
