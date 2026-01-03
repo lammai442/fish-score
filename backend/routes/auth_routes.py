@@ -1,21 +1,22 @@
 from flask import Blueprint, request, jsonify
 from services.auth import register_user_to_db
 from schemas.register_schema import RegisterSchema
+from schemas.login_schema import LoginSchema
 from middlewares.validate_schema import validate_schema
-import logging
-
-
-logging.basicConfig(level=logging.INFO)
-logging.info("Server startad")
+from services.users import get_user_by_email
+from utils.hash_bcrypt import verify_password
+from utils.tokens import generate_token
 
 # Skapar blueprint
 auth_bp = Blueprint("auth", __name__)
 
 
+# Registrera ny användare
 @auth_bp.route("/auth/register", methods=["POST"])
 @validate_schema(RegisterSchema)
 def register_user():
-    data = request.validated_data  # Färdigvaliderad data
+    # Färdigvaliderad data efter middleware
+    data = request.validated_data
 
     response = register_user_to_db(data)
 
@@ -25,20 +26,32 @@ def register_user():
         return jsonify({"success": False, "error": response["error"]}), 409
 
 
-@auth_bp.route("/auth/login", methods=["POST"])  # Endpoint
+# Logga in användare
+@auth_bp.route("/auth/login", methods=["POST"])
+@validate_schema(LoginSchema)
 def login_user():
-    try:
-        data = request.get_json()  # Läser JSON från request
 
-        email = data.get("email")  # Hämtar email
-        first_name = data.get("firstName")  # Hämtar förnamn
-        last_name = data.get("lastName")  # Hämtar efternamn
+    data = request.get_json()
+    user_exist = get_user_by_email(data["email"])
 
-        if not email or not first_name or not last_name:  # Enkel validering
-            return jsonify({"error": "Missing fields"}), 400
+    # Kontroll om användaren finns
+    if not user_exist["success"]:
+        return (
+            jsonify({"success": False, "error": user_exist["error"]}),
+            400,
+        )
 
-        # user = register_user_to_db(email, first_name, last_name)  # Anropar service
+    user = user_exist["user"]
 
-        return jsonify({"status": "success", "email": email}), 201  # Returnerar svar
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    user_pw = user["password"]
+    verify_pws = verify_password(data["password"], user_pw)
+
+    if not verify_pws:
+        return jsonify({"success": False, "error": "Password does not match"}), 400
+
+    token = generate_token({"sub": user["PK"][5:], "email": user["email"]})
+
+    return (
+        jsonify({"success": True, "message": "Login successfully", "token": token}),
+        200,
+    )
