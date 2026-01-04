@@ -1,13 +1,7 @@
 import axios from 'axios';
+import type { RegisterData } from '@fishScore/interfaces';
 
-type Props = {
-	email: string;
-	password: string;
-	firstName: string;
-	lastName: string;
-};
-
-export const ApiAuthRegister = async (user: Props) => {
+export const fetchAuthRegister = async (user: RegisterData) => {
 	const apiUrl: string = import.meta.env.VITE_API_URL;
 
 	try {

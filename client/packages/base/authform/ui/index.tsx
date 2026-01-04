@@ -10,10 +10,21 @@ import {
 	SegmentedControl,
 } from '@mantine/core';
 import { useAuthFormLogic } from './useAuthFormLogic';
+import type { LoginData, RegisterData } from '@fishScore/interfaces';
+import { fetchAuthRegister } from '@fishScore/apiauth';
 
 // Exporterar komponenten
 export const AuthForm = () => {
 	const { mode, setMode, form } = useAuthFormLogic();
+
+	const handleLogin = async (values: LoginData) => {
+		console.log(values);
+	};
+
+	const handleRegister = async (values: RegisterData) => {
+		const response = await fetchAuthRegister(values as RegisterData);
+		console.log(response);
+	};
 
 	return (
 		// Box används för layout och maxbredd
@@ -62,8 +73,11 @@ export const AuthForm = () => {
 			/>
 			<form
 				onSubmit={form.onSubmit((values) => {
-					// Loggar alla formulärvärden
-					console.log(values);
+					if (mode === 'register') {
+						handleRegister(values as RegisterData);
+					} else {
+						handleLogin(values as LoginData);
+					}
 				})}>
 				<TextInput
 					label='Email'

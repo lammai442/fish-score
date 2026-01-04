@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from services.auth import register_user_to_db
 from schemas.register_schema import RegisterSchema
 from schemas.login_schema import LoginSchema
@@ -31,7 +31,7 @@ def register_user():
 @validate_schema(LoginSchema)
 def login_user():
 
-    data = request.get_json()
+    data = request.validated_data
     user_exist = get_user_by_email(data["email"])
 
     # Kontroll om användaren finns
@@ -51,7 +51,16 @@ def login_user():
 
     token = generate_token({"sub": user["PK"][5:], "email": user["email"]})
 
-    return (
-        jsonify({"success": True, "message": "Login successfully", "token": token}),
-        200,
+    response = make_response(jsonify(
+        {"success": True, "message": "Login successfully"}
+    ), 200)
+
+    response.set_cookie(
+        "access_token",
+        token,
+        httponly=True,
+        secure=False,
+        samesite="None",
+        max_age=60 * 60
     )
+    return response

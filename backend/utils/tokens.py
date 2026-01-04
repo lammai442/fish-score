@@ -8,13 +8,15 @@ load_dotenv()
 secret = os.getenv("SECRET_KEY")
 
 
-def generate_token(payload: dict, expire_minutes: int = 60) -> str:
-    payload_copy = payload.copy()
-    payload_copy["exp"] = datetime.datetime.now(
-        datetime.timezone.utc
-    ) + datetime.timedelta(minutes=expire_minutes)
+def generate_token(user: dict) -> str:
+    payload = {
+        "sub": user["sub"],
+        "email": user["email"],
+        "iat": datetime.datetime.now(datetime.timezone.utc),
+        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=1)
+    }
 
-    token = jwt.encode(payload_copy, secret, algorithm="HS256")
+    token = jwt.encode(payload, secret, algorithm="HS256")
     return token
 
 
