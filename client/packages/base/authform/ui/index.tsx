@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useAuthFormLogic } from './useAuthFormLogic';
 import type { LoginData, RegisterData } from '@fishScore/interfaces';
-import { fetchAuthRegister } from '@fishScore/apiauth';
+import { fetchAuthRegister, fetchLogin } from '@fishScore/apiauth';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
@@ -22,7 +22,21 @@ export const AuthForm = () => {
 	const [loading, setLoading] = useState(false);
 
 	const handleLogin = async (values: LoginData) => {
-		console.log(values);
+		setLoading(true);
+		const response = await fetchLogin(values as LoginData);
+
+		setLoading(false);
+		if (!response.success) {
+			showNotification({
+				title: 'Unable to login',
+				message: response.data.error,
+				color: 'red',
+				icon: <IconX />,
+				position: 'top-center',
+			});
+		} else {
+			localStorage.setItem('user', values.email);
+		}
 	};
 
 	const handleRegister = async (values: RegisterData) => {
@@ -92,7 +106,11 @@ export const AuthForm = () => {
 					if (mode === 'register') {
 						handleRegister(values as RegisterData);
 					} else {
-						handleLogin(values as LoginData);
+						const loginData: LoginData = {
+							email: values.email,
+							password: values.password,
+						};
+						handleLogin(loginData);
 					}
 				})}>
 				<TextInput
