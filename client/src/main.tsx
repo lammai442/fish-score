@@ -1,10 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { router } from '@fishScore/router';
-import './index.css';
 import { RouterProvider } from 'react-router-dom';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import './index.css';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
@@ -15,8 +17,9 @@ createRoot(document.getElementById('root')!).render(
 			{/* MantineProvider */}
 			<MantineProvider
 				theme={{
-					fontFamily: 'Verdana, sans-serif', // exempel på tema
+					fontFamily: 'Verdana, sans-serif',
 				}}>
+				<Notifications />
 				<RouterProvider router={router} />
 			</MantineProvider>
 		</>

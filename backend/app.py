@@ -1,9 +1,17 @@
 from flask import Flask, jsonify, make_response
+from flask_cors import CORS
 
 # Importerar auth routes
 from routes.auth_routes import auth_bp
 
 app = Flask(__name__)
+
+
+CORS(
+    app,
+    supports_credentials=True,
+    origins=["http://localhost:5173", "https://din-vercel-app.vercel.app"],
+)
 
 # Kopplar in auth routes
 app.register_blueprint(auth_bp)

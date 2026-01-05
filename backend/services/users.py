@@ -15,3 +15,13 @@ def get_user_by_email(email):
         return {"success": True, "user": response["Items"][0]}
     else:
         return {"success": False, "error": "User not found"}
+
+
+def get_user_by_user_id(user_id):
+    table = get_dynamodb_table()
+
+    response = table.get_item(Key={"PK": f"USER#{user_id}", "SK": "PROFILE"})
+
+    if "Item" in response:
+        return response["Item"]
+    return None

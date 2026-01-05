@@ -1,32 +1,33 @@
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
+import type { LoginData, RegisterData } from '@fishScore/interfaces';
 
 export const useAuthFormLogic = () => {
 	const [mode, setMode] = useState('login');
 
-	const form = useForm({
+	const form = useForm<LoginData | RegisterData>({
 		initialValues: {
-			email: '',
-			password: '',
-			firstName: '',
-			lastName: '',
+			email: 'and@and.se',
+			password: 'mamma1',
+			firstName: 'Anders',
+			lastName: 'Karlsson',
 		},
 
 		validate: {
 			email: (value) =>
-				value.includes('@') ? null : 'Ogiltig e-postadress',
+				value.includes('@') ? null : 'Invalid email address',
 
 			password: (value) =>
-				value.length >= 6 ? null : 'Minst 6 tecken krävs',
+				value.length >= 6 ? null : 'Minimum of 6 charaters is required',
 
 			firstName: (value) =>
 				mode === 'register' && value.length === 0
-					? 'Förnamn krävs'
+					? 'First name is required'
 					: null,
 
 			lastName: (value) =>
 				mode === 'register' && value.length === 0
-					? 'Efternamn krävs'
+					? 'Last name is required'
 					: null,
 		},
 	});
