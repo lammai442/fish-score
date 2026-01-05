@@ -2,9 +2,10 @@ import { Flex, Loader, LoadingOverlay, Text } from '@mantine/core';
 
 type Props = {
 	visible: boolean;
+	text: string;
 };
 
-export const Loading = ({ visible }: Props) => {
+export const Loading = ({ visible, text }: Props) => {
 	return (
 		<LoadingOverlay
 			visible={visible}
@@ -17,7 +18,7 @@ export const Loading = ({ visible }: Props) => {
 						justify='center' // vertikal centrering
 					>
 						<Loader />
-						<Text mt='sm'>Loading...</Text>
+						<Text mt='sm'>{text}</Text>
 					</Flex>
 				),
 			}}

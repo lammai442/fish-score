@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { AppShell, Container } from '@mantine/core';
+import { Header } from '@fishScore/header';
 
 export const AuthLayout = () => {
 	return <Outlet />;
@@ -7,12 +8,12 @@ export const AuthLayout = () => {
 
 export const AppLayout = () => {
 	return (
-		<AppShell header={{ height: 60 }} padding='md'>
+		<AppShell>
 			{/* <AppShell.Header>
 			</AppShell.Header> */}
 
 			{/* <AppShell.Navbar></AppShell.Navbar> */}
-
+			<Header></Header>
 			<AppShell.Main>
 				<Container size='lg'>
 					<Outlet />

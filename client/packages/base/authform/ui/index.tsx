@@ -11,15 +11,17 @@ import {
 } from '@mantine/core';
 import { useAuthFormLogic } from './useAuthFormLogic';
 import type { LoginData, RegisterData } from '@fishScore/interfaces';
-import { fetchAuthRegister, fetchLogin } from '@fishScore/apiauth';
+import { fetchAuthRegister, fetchLogin, fetchLogout } from '@fishScore/apiauth';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthForm = () => {
 	const { mode, setMode, form } = useAuthFormLogic();
 	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
 
 	const handleLogin = async (values: LoginData) => {
 		setLoading(true);
@@ -35,6 +37,7 @@ export const AuthForm = () => {
 				position: 'top-center',
 			});
 		} else {
+			navigate('/');
 			localStorage.setItem('user', values.email);
 		}
 	};
@@ -67,7 +70,12 @@ export const AuthForm = () => {
 					'0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
 				position: 'relative',
 			}}>
-			<Loading visible={loading} />
+			<Loading
+				visible={loading}
+				text={
+					mode === 'login' ? 'Signing in...' : 'Register new user...'
+				}
+			/>
 
 			<Center mb='md'>
 				<Image src='/transparent-logo.png' w={80} h={80} />
