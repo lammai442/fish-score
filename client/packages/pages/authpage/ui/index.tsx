@@ -9,7 +9,7 @@ export const AuthPage = () => {
 				background:
 					'linear-gradient(var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%)',
 			}}>
-			<AuthForm />;
+			<AuthForm />
 		</Center>
 	);
 };

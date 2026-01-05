@@ -21,7 +21,10 @@ def register_user():
     response = register_user_to_db(data)
 
     if response["success"]:
-        return jsonify({"success": True, "user": response["user"]}), 201
+        return (
+            jsonify({"success": True, "message": "Successfully register new user"}),
+            201,
+        )
     else:
         return jsonify({"success": False, "error": response["error"]}), 409
 
@@ -51,9 +54,9 @@ def login_user():
 
     token = generate_token({"sub": user["PK"][5:], "email": user["email"]})
 
-    response = make_response(jsonify(
-        {"success": True, "message": "Login successfully"}
-    ), 200)
+    response = make_response(
+        jsonify({"success": True, "message": "Login successfully"}), 200
+    )
 
     response.set_cookie(
         "access_token",
@@ -61,6 +64,6 @@ def login_user():
         httponly=True,
         secure=False,
         samesite="None",
-        max_age=60 * 60
+        max_age=60 * 60,
     )
     return response

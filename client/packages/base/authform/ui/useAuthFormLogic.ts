@@ -15,19 +15,19 @@ export const useAuthFormLogic = () => {
 
 		validate: {
 			email: (value) =>
-				value.includes('@') ? null : 'Ogiltig e-postadress',
+				value.includes('@') ? null : 'Invalid email address',
 
 			password: (value) =>
-				value.length >= 6 ? null : 'Minst 6 tecken krävs',
+				value.length >= 6 ? null : 'Minimum of 6 charaters is required',
 
 			firstName: (value) =>
 				mode === 'register' && value.length === 0
-					? 'Förnamn krävs'
+					? 'First name is required'
 					: null,
 
 			lastName: (value) =>
 				mode === 'register' && value.length === 0
-					? 'Efternamn krävs'
+					? 'Last name is required'
 					: null,
 		},
 	});

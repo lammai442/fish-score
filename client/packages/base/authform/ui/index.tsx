@@ -12,22 +12,35 @@ import {
 import { useAuthFormLogic } from './useAuthFormLogic';
 import type { LoginData, RegisterData } from '@fishScore/interfaces';
 import { fetchAuthRegister } from '@fishScore/apiauth';
+import { showNotification } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
+import { Loading } from '@fishScore/loading';
+import { useState } from 'react';
 
-// Exporterar komponenten
 export const AuthForm = () => {
 	const { mode, setMode, form } = useAuthFormLogic();
+	const [loading, setLoading] = useState(false);
 
 	const handleLogin = async (values: LoginData) => {
 		console.log(values);
 	};
 
 	const handleRegister = async (values: RegisterData) => {
+		setLoading(true);
 		const response = await fetchAuthRegister(values as RegisterData);
-		console.log(response);
+		setLoading(false);
+		if (!response.success) {
+			showNotification({
+				title: 'Unable to register',
+				message: response.data.error,
+				color: 'red',
+				icon: <IconX />,
+				position: 'top-center',
+			});
+		}
 	};
 
 	return (
-		// Box används för layout och maxbredd
 		<Box
 			maw={400}
 			mx='auto'
@@ -38,7 +51,10 @@ export const AuthForm = () => {
 				borderRadius: '10px',
 				boxShadow:
 					'0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+				position: 'relative',
 			}}>
+			<Loading visible={loading} />
+
 			<Center mb='md'>
 				<Image src='/transparent-logo.png' w={80} h={80} />
 			</Center>
@@ -91,28 +107,25 @@ export const AuthForm = () => {
 				/>
 
 				{mode === 'register' && (
-					<TextInput
-						label='Förnamn'
-						mt='md'
-						{...form.getInputProps('firstName')}
-						styles={{
-							label: {
-								fontWeight: 700, // fet stil
-							},
-						}}
-					/>
+					<>
+						<TextInput
+							label='Förnamn'
+							mt='md'
+							{...form.getInputProps('firstName')}
+							styles={{
+								label: {
+									fontWeight: 700, // fet stil
+								},
+							}}
+						/>
+						<TextInput
+							label='Efternamn'
+							mt='md'
+							{...form.getInputProps('lastName')}
+						/>
+					</>
 				)}
 
-				{/* Efternamn visas endast vid register */}
-				{mode === 'register' && (
-					<TextInput
-						label='Efternamn'
-						mt='md'
-						{...form.getInputProps('lastName')}
-					/>
-				)}
-
-				{/* Lösenord visas alltid */}
 				<PasswordInput
 					label='Lösenord'
 					placeholder='Ditt lösenord'
@@ -120,7 +133,6 @@ export const AuthForm = () => {
 					{...form.getInputProps('password')}
 				/>
 
-				{/* Submit-knapp med dynamisk text */}
 				<Button type='submit' fullWidth mt='xl'>
 					{mode === 'login' ? 'Logga in' : 'Registrera'}
 				</Button>
