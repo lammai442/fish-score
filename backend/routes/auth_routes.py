@@ -1,11 +1,13 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, g
 from services.auth import register_user_to_db
 from schemas.register_schema import RegisterSchema
 from schemas.login_schema import LoginSchema
 from middlewares.validate_schema import validate_schema
 from services.users import get_user_by_email, get_user_by_user_id
 from utils.hash_bcrypt import verify_password
-from utils.tokens import generate_token, verify_token
+from utils.tokens import generate_token
+from middlewares.require_auth import require_auth
+from utils.help_functions import filter_user
 
 # Skapar blueprint
 auth_bp = Blueprint("auth", __name__)
@@ -72,6 +74,7 @@ def login_user():
     return response
 
 
+# Logga ut
 @auth_bp.route("/auth/logout", methods=["POST"])
 def logout_user():
     response = make_response(jsonify({"success": True, "message": "Logged out"}))
@@ -90,30 +93,21 @@ def logout_user():
     return response
 
 
+# Kontrollerar för me
 @auth_bp.route("/auth/me", methods=["GET"])
+@require_auth
 def get_current_user():
-    token = request.cookies.get("access_token")
 
-    if not token:
-        return jsonify({"success": False, "error": "No token"}), 401
-
-    valid_token = verify_token(token)
-
-    if not valid_token:
-        return jsonify({"success": False, "error": "Token invalid"}), 401
-
-    user = get_user_by_user_id(valid_token["sub"])
+    user = get_user_by_user_id(g.user["sub"])
 
     if user is None:
         return jsonify({"success": False, "error": "Could not find user"})
 
+    filtered_user = filter_user(user)
+
     return jsonify(
         {
             "success": True,
-            "user": {
-                "email": user["email"],
-                "firstName": user["firstName"],
-                "lastName": user["lastName"],
-            },
+            "user": filtered_user,
         }
     )

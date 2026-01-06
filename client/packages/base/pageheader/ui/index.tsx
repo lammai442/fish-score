@@ -1,12 +1,4 @@
-import {
-	ActionIcon,
-	Avatar,
-	Box,
-	Flex,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core';
+import { ActionIcon, Box, Stack, Text, Title } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,12 +18,27 @@ export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
 				gridTemplateColumns: 'auto 1fr auto',
 				alignItems: 'center',
 			}}>
-			<ActionIcon onClick={() => navigate(-1)}>
+			<ActionIcon
+				variant='transparent'
+				aria-label='back icon'
+				color='var(--bg-black-color)'
+				onClick={() => navigate(-1)}>
 				<IconArrowLeft />
 			</ActionIcon>
-			<Stack>
+			<Stack align='center' gap='0'>
 				<Title order={1}>{title}</Title>
-				{subTitle && <Text>{subTitle}</Text>}
+				{subTitle && (
+					<Text
+						style={{
+							border: '1px solid black',
+							padding: '0.5rem 0.75rem',
+							borderRadius: '15px',
+							backgroundColor: 'black',
+							color: 'white',
+						}}>
+						{subTitle}
+					</Text>
+				)}
 			</Stack>
 		</Box>
 	);
