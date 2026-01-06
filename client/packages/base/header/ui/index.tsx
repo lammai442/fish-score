@@ -17,7 +17,7 @@ export const Header = () => {
 
 	return (
 		<Flex justify='space-between' p='md'>
-			<Box onClick={() => navigate('/auth')}>
+			<Box onClick={() => navigate('/')}>
 				<Image
 					src='/transparent-logo.png'
 					alt='Logo'
@@ -40,6 +40,7 @@ export const Header = () => {
 				</Indicator>
 
 				<Avatar
+					onClick={() => navigate('/profile')}
 					color='var(--bg-primary-color)'
 					radius='xl'
 					style={{ cursor: 'pointer' }}>

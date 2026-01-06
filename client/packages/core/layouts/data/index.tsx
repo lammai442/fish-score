@@ -9,10 +9,6 @@ export const AuthLayout = () => {
 export const AppLayout = () => {
 	return (
 		<AppShell>
-			{/* <AppShell.Header>
-			</AppShell.Header> */}
-
-			{/* <AppShell.Navbar></AppShell.Navbar> */}
 			<Header></Header>
 			<AppShell.Main>
 				<Container size='lg'>
