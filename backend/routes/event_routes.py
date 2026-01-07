@@ -2,12 +2,26 @@ from flask import Blueprint, request, jsonify
 from middlewares.require_auth import require_auth
 from schemas.event_schema import EventSchema
 from middlewares.validate_schema import validate_schema
-from services.events import create_new_event_in_db
+from services.events import create_new_event_in_db, get_event_in_db
 
 # Skapar blueprint
 event_bp = Blueprint("event_bp", __name__)
 
 
+# Hämtar alla events
+@event_bp.route("/events", methods=["GET"])
+@require_auth
+def get_events():
+
+    response = get_event_in_db()
+
+    if response is None:
+        return jsonify({"success": False, "error": "Could not fetch events"}), 500
+
+    return jsonify({"success": True, "events": response}), 200
+
+
+# Skapar ett nytt event
 @event_bp.route("/events", methods=["POST"])
 @require_auth
 @validate_schema(EventSchema)

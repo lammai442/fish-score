@@ -13,14 +13,17 @@ import { useNavigate } from 'react-router-dom';
 import { IconBell } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { fetchLogout } from '@fishScore/apiauth';
+import { useUserStore } from '@fishScore/useUserStore';
 
 export const Header = () => {
 	const navigate = useNavigate();
 	const [visible, { toggle }] = useDisclosure();
+	const { clearUser } = useUserStore();
 
 	const handleLogout = async () => {
 		const response = await fetchLogout();
 		navigate('/auth');
+		clearUser();
 	};
 	return (
 		<Container size='lg'>

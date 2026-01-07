@@ -21,9 +21,13 @@ export interface User {
 export interface FishEvent {
 	PK: string;
 	SK: string;
-	name: string;
-	date: string;
+	eventName: string;
+	createdAt: string;
 	createdBy: string;
+	entityType: string;
+	lookupPK: string;
+	lookupSK: string;
+	status: string;
 	teams: Team[];
 }
 

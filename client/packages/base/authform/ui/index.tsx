@@ -22,9 +22,11 @@ import { IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '@fishScore/useUserStore';
 
 export const AuthForm = () => {
 	const { mode, setMode, form } = useAuthFormLogic();
+	const { setUser } = useUserStore();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
@@ -43,9 +45,8 @@ export const AuthForm = () => {
 			});
 		} else {
 			const res = await fetchMe();
-
-			if (res.success)
-				localStorage.setItem('user', JSON.stringify(res.data.user));
+			// Sparar inloggade användaren i store
+			setUser(res.data.user);
 			navigate('/');
 		}
 	};

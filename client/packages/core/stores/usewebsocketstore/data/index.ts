@@ -9,6 +9,7 @@ type WebSocketState = {
 	setWebSocket: (websocket: WebSocket) => void;
 	setConnectionStatus: (status: boolean) => void;
 	updateUser: (updatedUser: User) => void;
+	setEvents: (events: FishEvent[]) => void;
 	updateEvent: (updatedEvent: FishEvent) => void;
 	closeConnection: () => void;
 	reset: () => void;
@@ -29,6 +30,8 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 	updateUser: (updatedUser: User): void => {
 		set({ userFromWs: updatedUser });
 	},
+
+	setEvents: (events) => set({ events }),
 
 	// Uppdaterar eller lägger till ett event
 	updateEvent: (updatedEvent: FishEvent): void => {
