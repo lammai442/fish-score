@@ -17,3 +17,25 @@ export interface User {
 	totalCatchWeight: number;
 	createdAt: string;
 }
+
+export interface FishEvent {
+	PK: string;
+	SK: string;
+	name: string;
+	date: string;
+	createdBy: string;
+	teams: Team[];
+}
+
+export interface Team {
+	teamId: string;
+	name: string;
+	members: string[];
+	catches: FishCatch[];
+}
+
+export interface FishCatch {
+	userId: string;
+	weight: number;
+	createdAt: number;
+}

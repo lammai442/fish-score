@@ -4,6 +4,7 @@ from flask_cors import CORS
 # Importerar auth routes
 from routes.auth_routes import auth_bp
 from routes.user_routes import user_bp
+from routes.event_routes import event_bp
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ CORS(
 # Kopplar in auth routes
 app.register_blueprint(auth_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(event_bp)
 
 
 @app.errorhandler(404)

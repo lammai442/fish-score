@@ -8,4 +8,11 @@ def filter_user(user):
         "totalCatchWeight",
         "createdAt",
     ]
-    return {key: user[key] for key in allowed_fields if key in user}
+    # Skapar en ny dictionary med endast allowed_fields
+    filtered = {key: user[key] for key in allowed_fields if key in user}
+
+    # Lägger till PK utan de första 5 tecknen, om PK finns
+    if "PK" in user:
+        filtered["userId"] = user["PK"][5:]  # tar bort första 5 tecknen
+
+    return filtered

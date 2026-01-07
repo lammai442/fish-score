@@ -1,17 +1,86 @@
-import { fetchLogout } from '@fishScore/apiauth';
-import { Button } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import {
+	Stack,
+	Button,
+	Modal,
+	Text,
+	Title,
+	Box,
+	TextInput,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { BaseModal } from '@fishScore/basemodal';
+import { useState } from 'react';
+import { showNotification } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 
 export const LandingPage = () => {
-	const navigate = useNavigate();
-	const handleLogout = async () => {
-		const response = await fetchLogout();
-		navigate('/auth', { replace: true });
+	const [opened, { open, close }] = useDisclosure(false);
+	const [errorInput, setErrorInput] = useState<string>('');
+	const [inputValue, setInputValue] = useState<string>('');
+
+	const handleCreateEvent = () => {
+		const emojiRegex = /[\p{Extended_Pictographic}]/u;
+
+		// Rensa tidigare fel
+		setErrorInput('');
+
+		const value = inputValue.trim();
+
+		if (value.length === 0) {
+			setErrorInput('You need to fill in an event name');
+			return;
+		}
+
+		if (value.length > 10) {
+			setErrorInput('Max 10 characters');
+			return;
+		}
+
+		if (emojiRegex.test(value)) {
+			setErrorInput('Emojis are not allowed');
+			return;
+		}
+
+		showNotification({
+			title: 'New event created',
+			message: `The event: ${inputValue} has created`,
+			color: 'var(--bg-primary-color)',
+			icon: <IconCheck />,
+			position: 'top-center',
+		});
+		close();
 	};
 
 	return (
-		<div>
-			<Button onClick={() => handleLogout()}>Log out</Button>
-		</div>
+		<Stack>
+			<Button
+				color='var(--bg-black-color)'
+				size='lg'
+				radius='md'
+				onClick={open}>
+				+ Create Event
+			</Button>
+			{/* Modal för att skapa ett nytt event */}
+			<BaseModal title='Create Event' opened={opened} close={close}>
+				<Stack>
+					<Text>Add a new fishing event</Text>
+					<TextInput
+						label='Event name'
+						value={inputValue}
+						onChange={(event) => {
+							setInputValue(event.currentTarget.value);
+							setErrorInput('');
+						}}
+						error={errorInput}></TextInput>
+					<Button
+						color='var(--bg-black-color)'
+						radius={'md'}
+						size='md'
+						onClick={handleCreateEvent}>
+						Create
+					</Button>
+				</Stack>
+			</BaseModal>
+		</Stack>
 	);
 };
