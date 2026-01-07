@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@fishScore/protectedroute';
 import { AuthPage } from '@fishScore/authpage';
 import { ErrorPage } from '@fishScore/errorpage';
 import { LandingPage } from '@fishScore/landingpage';
+import { ProfilePage } from '@fishScore/profilepage';
 
 export const router = createBrowserRouter([
 	{
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
 					{
 						path: '/',
 						element: <LandingPage />,
+					},
+					{
+						path: '/profile',
+						element: <ProfilePage />,
 					},
 					{
 						path: '*',

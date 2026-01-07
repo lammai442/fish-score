@@ -8,7 +8,7 @@ load_dotenv()
 secret = os.getenv("SECRET_KEY")
 
 
-def generate_token(user: dict) -> str:
+def generate_token(user):
     now = datetime.datetime.now(datetime.timezone.utc)
 
     payload = {
@@ -22,11 +22,11 @@ def generate_token(user: dict) -> str:
     return token
 
 
-def verify_token(token: str) -> dict:
+def verify_token(token):
     try:
         decoded = jwt.decode(token, secret, algorithms=["HS256"])
         return decoded
     except jwt.ExpiredSignatureError:
-        return {"error": "Token expired"}
+        return None
     except jwt.InvalidTokenError:
-        return {"error": "Invalid token"}
+        return None
