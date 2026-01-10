@@ -17,8 +17,8 @@ export const AppLayout = () => {
 	useEffect(() => {
 		const getAllEvents = async () => {
 			const response = await fetchAllEvents();
-			if (response.success) {
-				const events = response.data.event;
+			if (response.success && response.data.events.length > 0) {
+				const events = response.data.events;
 
 				setEvents(events);
 			}

@@ -6,12 +6,14 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useUserStore } from '@fishScore/useUserStore';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
+import { CreateEvent } from '@fishScore/interfaces/eventsdata/data';
 
 export const LandingPage = () => {
 	const [opened, { open, close }] = useDisclosure(false);
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState<string>('');
 	const { events } = useWebSocketStore();
+	const { user } = useUserStore();
 
 	const handleCreateEvent = () => {
 		const emojiRegex = /[\p{Extended_Pictographic}]/u;
@@ -43,10 +45,14 @@ export const LandingPage = () => {
 			icon: <IconCheck />,
 			position: 'top-center',
 		});
+
+		const createEventDesc: CreateEvent = {
+			eventName: value,
+			userId: user?.userId,
+		};
+
 		close();
 	};
-	console.log('is array:', Array.isArray(events));
-	console.log('events:', events);
 
 	return (
 		<>

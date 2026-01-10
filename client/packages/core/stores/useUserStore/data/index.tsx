@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { User } from '@fishScore/interfaces';
+import type { User } from '@fishScore/usersdata';
 
 interface UserStore {
 	user: User | null;
