@@ -1,14 +1,14 @@
 export interface FishEvent {
-	PK: string;
-	SK: string;
+	PK?: string;
+	SK?: string;
 	eventName: string;
-	createdAt: string;
-	createdBy: string;
-	entityType: string;
-	lookupPK: string;
-	lookupSK: string;
-	status: string;
-	teams: Team[];
+	createdAt?: string;
+	createdBy: string | undefined;
+	entityType?: string;
+	lookupPK?: string;
+	lookupSK?: string;
+	status?: string;
+	teams?: Team[];
 }
 
 export interface Team {
@@ -24,7 +24,8 @@ export interface FishCatch {
 	createdAt: number;
 }
 
-export interface CreateEvent {
+export interface CreateEventDesc {
 	eventName: string;
-	userId: string;
+	createdBy: string | undefined;
+	teams: Team[];
 }

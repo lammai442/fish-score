@@ -22,7 +22,7 @@ def get_events():
 
 
 # Skapar ett nytt event
-@event_bp.route("/events", methods=["POST"])
+@event_bp.route("/events/newevent", methods=["POST"])
 @require_auth
 @validate_schema(EventSchema)
 def create_new_event():
@@ -37,4 +37,4 @@ def create_new_event():
         saved_event = response["event"]
         return jsonify({"success": True, "event": saved_event}), 200
     else:
-        return jsonify(response)
+        return jsonify(response), 409

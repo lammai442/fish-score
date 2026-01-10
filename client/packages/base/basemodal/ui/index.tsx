@@ -15,6 +15,7 @@ export const BaseModal = ({ title, children, opened, close }: Props) => {
 			opened={opened}
 			onClose={close}
 			centered
+			zIndex={9999}
 			title={
 				<Text
 					ta='center'

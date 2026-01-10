@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/useAuthStore",
+	"main": "./index.ts"
+}

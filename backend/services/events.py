@@ -23,6 +23,7 @@ def get_event_in_db():
 def create_new_event_in_db(event_name, created_by):
 
     eventExist = get_event_by_event_name(event_name)
+    print("EVENTEXIST: ", eventExist)
 
     # Avbryt om eventen redan finns i databasen
     if eventExist["success"]:
