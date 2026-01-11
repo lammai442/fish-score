@@ -11,6 +11,7 @@ export const LandingPage = () => {
 	const { events } = useWebSocketStore();
 	const [opened, { open, close }] = useDisclosure(false);
 	const { user } = useUserStore();
+
 	return (
 		<>
 			{/* Modal för att skapa ett nytt event */}

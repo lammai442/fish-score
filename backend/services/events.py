@@ -7,10 +7,11 @@ from boto3.dynamodb.conditions import Key
 table = get_dynamodb_table()
 
 
-def get_event_in_db():
+def get_all_events_in_db():
     try:
         response = table.query(
-            IndexName="GSI1", KeyConditionExpression=Key("lookupPK").eq("EVENT#NAME")
+            IndexName="LookupIndex",
+            KeyConditionExpression=Key("lookupType").eq("EVENT#ID"),
         )
 
         return response.get("Items", [])
@@ -23,7 +24,6 @@ def get_event_in_db():
 def create_new_event_in_db(event_name, created_by):
 
     eventExist = get_event_by_event_name(event_name)
-    print("EVENTEXIST: ", eventExist)
 
     # Avbryt om eventen redan finns i databasen
     if eventExist["success"]:
@@ -35,10 +35,11 @@ def create_new_event_in_db(event_name, created_by):
     event_item = {
         "PK": f"EVENT#event-{event_id}",
         "SK": "EVENT",
+        "id": f"event_{event_id}",
         "eventName": event_name,
         "createdBy": created_by,
-        "lookupPK": "EVENT#NAME",
-        "lookupSK": event_name.lower(),
+        "lookupType": "EVENT#ID",
+        "lookupValue": f"event_{event_id}",
         "entityType": "EVENT",
         "createdAt": now,
         "teams": [],
@@ -68,12 +69,22 @@ def create_new_event_in_db(event_name, created_by):
 def get_event_by_event_name(event_name):
     event_name_lower = event_name.lower()
     response = table.query(
-        IndexName="GSI1",
-        KeyConditionExpression=Key("lookupPK").eq("EVENT#NAME")
-        & Key("lookupSK").eq(event_name_lower),
+        IndexName="LookupIndex",
+        KeyConditionExpression=Key("lookupType").eq("EVENT#NAME"),
     )
 
     if response["Count"] > 0:
-        return {"success": True, "event": response["Items"][0]}
-    else:
-        return {"success": False, "error": "Event not found"}
+        # Kontroll om något av eventet har samma namn
+        matching_event = next(
+            (
+                item
+                for item in response["Items"]
+                if item.get("eventName", "").lower() == event_name_lower
+            ),
+            None,
+        )
+
+        if matching_event:
+            return {"success": True, "event": matching_event}
+
+    return {"success": False, "error": "Event not found"}

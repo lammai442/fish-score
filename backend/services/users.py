@@ -6,9 +6,9 @@ def get_user_by_email(email):
     table = get_dynamodb_table()
 
     response = table.query(
-        IndexName="GSI1",
-        KeyConditionExpression=Key("lookupPK").eq("USER#EMAIL")
-        & Key("lookupSK").eq(email),
+        IndexName="LookupIndex",
+        KeyConditionExpression=Key("lookupType").eq("USER#EMAIL")
+        & Key("lookupValue").eq(email),
     )
 
     if response["Count"] > 0:

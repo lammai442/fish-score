@@ -91,9 +91,9 @@ resources:
             AttributeType: S
           - AttributeName: SK
             AttributeType: S
-          - AttributeName: lookupPK
+          - AttributeName: lookupType
             AttributeType: S
-          - AttributeName: lookupSK
+          - AttributeName: lookupValue
             AttributeType: S
         KeySchema:
           - AttributeName: PK
@@ -101,11 +101,11 @@ resources:
           - AttributeName: SK
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: GSI1
+          - IndexName: LookupIndex
             KeySchema:
-              - AttributeName: lookupPK
+              - AttributeName: lookupType
                 KeyType: HASH
-              - AttributeName: lookupSK
+              - AttributeName: lookupValue
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

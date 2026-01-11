@@ -1,12 +1,18 @@
 import { FishEvent } from '@fishScore/eventsdata';
 import { Text, Title, Flex } from '@mantine/core';
 import { calculateMembers } from '@fishScore/helpfunctions';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
 	events: FishEvent[];
 };
 
 export const Events = ({ events = [] }: Props) => {
+	const navigate = useNavigate();
+	const handleToEvent = (event: FishEvent) => {
+		navigate('/event', { state: { eventId: event.id } });
+	};
+
 	return (
 		<>
 			<Title order={3}>Your events</Title>
@@ -20,12 +26,15 @@ export const Events = ({ events = [] }: Props) => {
 								maw={{ sm: '330px' }}
 								bd={'1px solid var(--br-grey)'}
 								p={'1rem'}
-								bdrs={'10px'}>
+								bdrs={'10px'}
+								key={event.eventName}
+								onClick={() => handleToEvent(event)}>
 								<Flex
 									justify={'space-between'}
 									align={'center'}>
 									<Title order={5}>{event.eventName}</Title>
 									<Text
+										fz={'sm'}
 										style={{
 											padding: '0.3rem 0.4rem',
 											backgroundColor:

@@ -14,18 +14,18 @@ export const useAuthFormLogic = () => {
 		},
 
 		validate: {
-			email: (value) =>
+			email: (value: string) =>
 				value.includes('@') ? null : 'Invalid email address',
 
-			password: (value) =>
+			password: (value: string) =>
 				value.length >= 6 ? null : 'Minimum of 6 charaters is required',
 
-			firstName: (value) =>
+			firstName: (value: string) =>
 				mode === 'register' && value.length === 0
 					? 'First name is required'
 					: null,
 
-			lastName: (value) =>
+			lastName: (value: string) =>
 				mode === 'register' && value.length === 0
 					? 'Last name is required'
 					: null,

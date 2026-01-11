@@ -18,7 +18,7 @@ import {
 	fetchMe,
 } from '@fishScore/apiauth';
 import { showNotification } from '@mantine/notifications';
-import { IconX } from '@tabler/icons-react';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -55,15 +55,18 @@ export const AuthForm = () => {
 		setLoading(true);
 		const response = await fetchAuthRegister(values as RegisterData);
 		setLoading(false);
-		if (!response.success) {
-			showNotification({
-				title: 'Unable to register',
-				message: response.data.error,
-				color: 'red',
-				icon: <IconX />,
-				position: 'top-center',
-			});
-		}
+
+		const responseNotification = {
+			title: response.success ? 'User registered' : 'Unable to register',
+			message: response.success
+				? 'Successfully created user'
+				: response.data.error,
+			color: response.success ? 'green' : 'red',
+			icon: response.success ? <IconCheck /> : <IconX />,
+			position: 'top-center' as const,
+		};
+		showNotification(responseNotification);
+		if (response.success) setMode('login');
 	};
 
 	return (

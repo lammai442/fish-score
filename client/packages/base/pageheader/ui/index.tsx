@@ -1,11 +1,11 @@
-import { ActionIcon, Box, Stack, Text, Title } from '@mantine/core';
+import { ActionIcon, Box, Flex, Stack, Text, Title } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
 type Props = {
-	title: string;
-	subTitle?: string;
-	subTitleStatus?: string;
+	title: string | null;
+	subTitle?: string | undefined;
+	subTitleStatus?: string | null;
 };
 
 export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
@@ -26,18 +26,24 @@ export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
 				<IconArrowLeft />
 			</ActionIcon>
 			<Stack align='center' gap='0'>
-				<Title order={1}>{title}</Title>
+				<Title order={3}>{title}</Title>
 				{subTitle && (
-					<Text
+					<Title
+						order={6}
 						style={{
-							border: '1px solid black',
 							padding: '0.5rem 0.75rem',
 							borderRadius: '15px',
-							backgroundColor: 'black',
-							color: 'white',
+							backgroundColor:
+								subTitle.toLowerCase() === 'ongoing'
+									? 'var(--bg-black-color)'
+									: 'var(--bg-grey-color)',
+							color:
+								subTitle.toLowerCase() === 'ongoing'
+									? 'var(--text-white)'
+									: 'var(--text-black)',
 						}}>
 						{subTitle}
-					</Text>
+					</Title>
 				)}
 			</Stack>
 		</Box>
