@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from middlewares.require_auth import require_auth
 from schemas.event_schema import EventSchema
 from middlewares.validate_schema import validate_schema
-from services.events import create_new_event_in_db, get_event_in_db
+from services.events import create_new_event_in_db, get_all_events_in_db
 
 # Skapar blueprint
 event_bp = Blueprint("event_bp", __name__)
@@ -13,7 +13,7 @@ event_bp = Blueprint("event_bp", __name__)
 @require_auth
 def get_events():
 
-    response = get_event_in_db()
+    response = get_all_events_in_db()
 
     if response is None:
         return jsonify({"success": False, "error": "Could not fetch events"}), 500

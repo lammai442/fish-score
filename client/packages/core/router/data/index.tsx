@@ -6,6 +6,7 @@ import { AuthPage } from '@fishScore/authpage';
 import { ErrorPage } from '@fishScore/errorpage';
 import { LandingPage } from '@fishScore/landingpage';
 import { ProfilePage } from '@fishScore/profilepage';
+import { EventPage } from '@fishScore/eventpage';
 
 export const router = createBrowserRouter([
 	{
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
 					{
 						path: '/profile',
 						element: <ProfilePage />,
+					},
+					{
+						path: '/event',
+						element: <EventPage />,
 					},
 					{
 						path: '*',

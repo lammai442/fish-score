@@ -1,5 +1,6 @@
 import axios from 'axios';
-import type { LoginData, RegisterData } from '@fishScore/interfaces';
+import type { LoginData, RegisterData } from '@fishScore/authsdata';
+import { useAuthStore } from '@fishScore/useAuthStore';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
@@ -66,6 +67,13 @@ export const fetchMe = async () => {
 			// här skickas cookies
 			withCredentials: true,
 		});
+
+		// Om backend svarar 401 (No token)
+		if (response.status === 401) {
+			useAuthStore.getState().openLoginModal();
+			return { success: false, error: response.data.error };
+		}
+
 		return {
 			success: true,
 			data: response.data,

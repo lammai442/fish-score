@@ -1,5 +1,5 @@
 import { fetchLogout } from '@fishScore/apiauth';
-import { Button } from '@mantine/core';
+import { Button, Stack } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@fishScore/pageheader';
 import { useEffect, useState } from 'react';
@@ -25,10 +25,10 @@ export const ProfilePage = () => {
 	};
 
 	return (
-		<div>
-			<PageHeader title='Profile' />
+		<Stack>
 			<Loading visible={loading} text='Getting profile'></Loading>
+			<PageHeader title='Profile' />
 			<Button onClick={() => handleLogout()}>Log out</Button>
-		</div>
+		</Stack>
 	);
 };

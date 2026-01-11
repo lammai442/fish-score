@@ -20,8 +20,9 @@ def register_user_to_db(data):
     user_item = {
         "PK": f"USER#user-{user_id}",
         "SK": "PROFILE",
-        "lookupPK": "USER#EMAIL",
-        "lookupSK": data["email"],
+        "id": f"event_{user_id}",
+        "lookupType": "USER#EMAIL",
+        "lookupValue": data["email"],
         "entityType": "USER",
         "email": data["email"],
         "password": hash_password(data["password"]),

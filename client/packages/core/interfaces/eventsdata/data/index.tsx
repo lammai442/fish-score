@@ -1,12 +1,13 @@
 export interface FishEvent {
 	PK?: string;
 	SK?: string;
+	id: string;
 	eventName: string;
 	createdAt?: string;
 	createdBy: string | undefined;
 	entityType?: string;
-	lookupPK?: string;
-	lookupSK?: string;
+	lookupType?: string;
+	lookupValue?: string;
 	status?: string;
 	teams?: Team[];
 }
