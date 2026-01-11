@@ -1,17 +1,33 @@
-import { fetchLogout } from '@fishScore/apiauth';
-import { Button } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import { Stack, Button } from '@mantine/core';
+
+import { useDisclosure } from '@mantine/hooks';
+import { useWebSocketStore } from '@fishScore/usewebsocketstore';
+import { CreateEvent } from '@fishScore/createevent';
+import { BaseModal } from '@fishScore/basemodal';
+import { useUserStore } from '@fishScore/useUserStore';
+import { Events } from '@fishScore/events';
 
 export const LandingPage = () => {
-	const navigate = useNavigate();
-	const handleLogout = async () => {
-		const response = await fetchLogout();
-		navigate('/auth', { replace: true });
-	};
-
+	const { events } = useWebSocketStore();
+	const [opened, { open, close }] = useDisclosure(false);
+	const { user } = useUserStore();
 	return (
-		<div>
-			<Button onClick={() => handleLogout()}>Log out</Button>
-		</div>
+		<>
+			{/* Modal för att skapa ett nytt event */}
+			<BaseModal title='Create Event' opened={opened} close={close}>
+				{' '}
+				<CreateEvent close={close}></CreateEvent>
+			</BaseModal>
+			<Stack>
+				<Button
+					color='var(--bg-black-color)'
+					size='lg'
+					radius='md'
+					onClick={open}>
+					+ Create Event
+				</Button>
+				<Events events={events}></Events>
+			</Stack>
+		</>
 	);
 };

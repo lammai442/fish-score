@@ -26,6 +26,15 @@ provider:
     role: ${file(./config.yml):aws.role}
   environment:
     USERS_TABLE: fishScore
+    WEBSOCKET_ENDPOINT:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: WebsocketsApi
+          - ".execute-api."
+          - Ref: AWS::Region
+          - ".amazonaws.com/"
+          - ${self:provider.stage}
 
 functions:
   api:
@@ -43,9 +52,34 @@ functions:
   #     - http:
   #         path: /auth/register
   #         method: POST
+  WebsocketHandler:
+    handler: websocket/handler.handler
+    events:
+      - websocket:
+          route: $connect
+      - websocket:
+          route: $disconnect
+      - websocket:
+          route: $default
 
+  ScoreStreamProcessor:
+    handler: streams/score_stream.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [UsersTable, StreamArn]
+          startingPosition: LATEST
+          batchSize: 10
 resources:
   Resources:
+    WebsocketsApi:
+      Type: AWS::ApiGatewayV2::Api
+      Properties:
+        Name: fishscore-websocket-api
+        ProtocolType: WEBSOCKET
+        RouteSelectionExpression: "$request.body.action"
+
     UsersTable:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain   # Keep the same table when deploying
@@ -75,3 +109,5 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES

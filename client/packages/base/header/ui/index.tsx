@@ -12,11 +12,19 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { IconBell } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import { fetchLogout } from '@fishScore/apiauth';
+import { useUserStore } from '@fishScore/useUserStore';
 
 export const Header = () => {
 	const navigate = useNavigate();
 	const [visible, { toggle }] = useDisclosure();
+	const { clearUser } = useUserStore();
 
+	const handleLogout = async () => {
+		const response = await fetchLogout();
+		navigate('/auth');
+		clearUser();
+	};
 	return (
 		<Container size='lg'>
 			<Flex justify='space-between' align='center' p='16px'>
@@ -29,6 +37,7 @@ export const Header = () => {
 						style={{ cursor: 'pointer' }}
 						fit='contain'></Image>
 				</Box>
+				<Button onClick={() => handleLogout()}>Log out</Button>
 				<Flex gap='0.5rem'>
 					<Indicator
 						size={10}

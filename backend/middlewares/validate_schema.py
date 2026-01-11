@@ -10,6 +10,30 @@ def validate_schema(schema_class):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
+            # Kontrollera att body finns
+            if not request.data:
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": "Request body is required",
+                        }
+                    ),
+                    400,
+                )
+
+            # Kontrollera att body är JSON
+            if not request.is_json:
+                return (
+                    jsonify(
+                        {
+                            "success": False,
+                            "error": "Request body must be valid JSON",
+                        }
+                    ),
+                    400,
+                )
+
             try:
                 data = schema_class().load(request.get_json())
                 # Lagra den validerade datan i request context

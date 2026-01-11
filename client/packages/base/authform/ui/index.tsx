@@ -11,15 +11,22 @@ import {
 } from '@mantine/core';
 import { useAuthFormLogic } from './useAuthFormLogic';
 import type { LoginData, RegisterData } from '@fishScore/interfaces';
-import { fetchAuthRegister, fetchLogin, fetchLogout } from '@fishScore/apiauth';
+import {
+	fetchAuthRegister,
+	fetchLogin,
+	fetchLogout,
+	fetchMe,
+} from '@fishScore/apiauth';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '@fishScore/useUserStore';
 
 export const AuthForm = () => {
 	const { mode, setMode, form } = useAuthFormLogic();
+	const { setUser } = useUserStore();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
@@ -37,8 +44,10 @@ export const AuthForm = () => {
 				position: 'top-center',
 			});
 		} else {
+			const res = await fetchMe();
+			// Sparar inloggade användaren i store
+			setUser(res.data.user);
 			navigate('/');
-			localStorage.setItem('user', values.email);
 		}
 	};
 

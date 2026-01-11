@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/usewebsocketstore",
+	"main": "./index.ts"
+}
