@@ -1,7 +1,7 @@
 export interface FishEvent {
 	PK?: string;
 	SK?: string;
-	id: string;
+	id?: string;
 	eventName: string;
 	createdAt?: string;
 	createdBy: string | undefined;
@@ -13,8 +13,9 @@ export interface FishEvent {
 }
 
 export interface Team {
-	teamId: string;
-	name: string;
+	teamId?: string;
+	teamName: string;
+	createdBy: string;
 	members: string[];
 	catches: FishCatch[];
 }

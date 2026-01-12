@@ -16,7 +16,7 @@ export const Events = ({ events = [] }: Props) => {
 	return (
 		<>
 			<Title order={3}>Your events</Title>
-			<Flex wrap={'wrap'} gap={'md'}>
+			<Flex wrap={'wrap'} gap={'md'} style={{ cursor: 'pointer' }}>
 				{events.length > 0 ? (
 					events.map((event, index) => {
 						return (
