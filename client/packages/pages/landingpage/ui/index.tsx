@@ -6,6 +6,7 @@ import { CreateEvent } from '@fishScore/createevent';
 import { BaseModal } from '@fishScore/basemodal';
 import { useUserStore } from '@fishScore/useUserStore';
 import { Events } from '@fishScore/events';
+import { CreateItemModal } from '@fishScore/createitemmodal';
 
 export const LandingPage = () => {
 	const { events } = useWebSocketStore();
@@ -17,7 +18,8 @@ export const LandingPage = () => {
 			{/* Modal för att skapa ett nytt event */}
 			<BaseModal title='Create Event' opened={opened} close={close}>
 				{' '}
-				<CreateEvent close={close}></CreateEvent>
+				<CreateItemModal close={close} type='event'></CreateItemModal>
+				{/* <CreateEvent close={close}></CreateEvent> */}
 			</BaseModal>
 			<Stack>
 				<Button

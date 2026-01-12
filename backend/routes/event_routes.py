@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from middlewares.require_auth import require_auth
-from schemas.event_schema import EventSchema
+from schemas.event_schema import EventSchema, TeamSchema
 from middlewares.validate_schema import validate_schema
 from services.events import create_new_event_in_db, get_all_events_in_db
 
@@ -33,6 +33,23 @@ def create_new_event():
     created_by = data["createdBy"]
 
     response = create_new_event_in_db(event_name, created_by)
+    if response["success"]:
+        saved_event = response["event"]
+        return jsonify({"success": True, "event": saved_event}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Create new team
+@event_bp.route("/events/newteam", methods=["POST"])
+@require_auth
+@validate_schema(TeamSchema)
+def create_new_team():
+
+    # Validated data after middleware
+    data = request.validated_data
+
+    response = create_new_team_in_db(data)
     if response["success"]:
         saved_event = response["event"]
         return jsonify({"success": True, "event": saved_event}), 200
