@@ -66,6 +66,50 @@ def create_new_event_in_db(event_name, created_by):
         return {"success": False, "error": str(e)}
 
 
+def create_new_team_in_db(data):
+
+    teamExist = get_team_by_team_name(data["teamName"])
+
+    if teamExist["success"]:
+        return {"success": False, "error": "Team with this name already exist"}
+
+    event_id = str(uuid.uuid4())[:5]
+    now = datetime.now(timezone.utc).isoformat()
+
+    event_item = {
+        "PK": f"EVENT#event-{event_id}",
+        "SK": "EVENT",
+        "id": f"event_{event_id}",
+        "eventName": event_name,
+        "createdBy": created_by,
+        "lookupType": "EVENT#ID",
+        "lookupValue": f"event_{event_id}",
+        "entityType": "EVENT",
+        "createdAt": now,
+        "teams": [],
+        "status": "ongoing",
+    }
+
+    try:
+        table.put_item(
+            Item=event_item,
+            ConditionExpression="attribute_not_exists(PK)",
+        )
+
+        return {
+            "success": True,
+            "event": {
+                "eventId": f"event-{event_id}",
+                "eventName": event_name,
+                "createdBy": created_by,
+                "createdAt": now,
+            },
+        }
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
+
+
 def get_event_by_event_name(event_name):
     event_name_lower = event_name.lower()
     response = table.query(
@@ -88,3 +132,27 @@ def get_event_by_event_name(event_name):
             return {"success": True, "event": matching_event}
 
     return {"success": False, "error": "Event not found"}
+
+
+def get_team_by_team_name(team_name):
+    team_name_lower = team_name.lower()
+    response = table.query(
+        IndexName="LookupIndex",
+        KeyConditionExpression=Key("lookupType").eq("EVENT#TEAMNAME"),
+    )
+
+    if response["Count"] > 0:
+        # Kontroll om något av Teamen har samma namn
+        matching_team = next(
+            (
+                item
+                for item in response["Items"]
+                if item.get("teamName", "").lower() == team_name_lower
+            ),
+            None,
+        )
+
+        if matching_team:
+            return {"success": True, "team": matching_team}
+
+    return {"success": False, "error": "Team not found"}
