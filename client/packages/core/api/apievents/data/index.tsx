@@ -1,4 +1,4 @@
-import { FishEvent } from '@fishScore/eventsdata';
+import { FishEvent, Team } from '@fishScore/eventsdata';
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
 
@@ -36,7 +36,38 @@ export const fetchCreateEvent = async (createEventDesc: FishEvent) => {
 			}
 		);
 
-		// Om backend svarar 401 (No token)
+		// Open loginModal if response is 401 (No token)
+		if (response.status === 401) {
+			useAuthStore.getState().openLoginModal();
+			return { success: false, error: response.data.error };
+		}
+
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status: error.response?.status || 500,
+		};
+	}
+};
+
+// Create new team
+export const fetchCreateTeam = async (createTeamDesc: Team) => {
+	try {
+		const response = await axios.post(
+			`${apiUrl}/events/newteam`,
+			createTeamDesc,
+			{
+				withCredentials: true,
+			}
+		);
+
+		// Open loginModal if response is 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };
