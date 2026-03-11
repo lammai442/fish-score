@@ -10,13 +10,8 @@ import {
 	SegmentedControl,
 } from '@mantine/core';
 import { useAuthFormLogic } from './useAuthFormLogic';
-import type { LoginData, RegisterData } from '@fishScore/interfaces';
-import {
-	fetchAuthRegister,
-	fetchLogin,
-	fetchLogout,
-	fetchMe,
-} from '@fishScore/apiauth';
+import type { LoginData, RegisterData } from '@fishScore/authsdata';
+import { fetchAuthRegister, fetchLogin, fetchMe } from '@fishScore/apiauth';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
@@ -139,7 +134,7 @@ export const AuthForm = () => {
 					{...form.getInputProps('email')}
 					styles={{
 						label: {
-							fontWeight: 700, // fet stil
+							fontWeight: 700,
 						},
 					}}
 				/>
@@ -152,7 +147,7 @@ export const AuthForm = () => {
 							{...form.getInputProps('firstName')}
 							styles={{
 								label: {
-									fontWeight: 700, // fet stil
+									fontWeight: 700,
 								},
 							}}
 						/>
