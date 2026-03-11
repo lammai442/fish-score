@@ -1,0 +1,15 @@
+.scoreboard__list {
+	padding: 0.2rem;
+	background-color: var(--bg-grey-color);
+	border-radius: 15px;
+}
+
+.scoreboard__tab {
+	transition: 0.3s;
+}
+
+.scoreboard__tab[data-active] {
+	background-color: var(--bg-white-color);
+	border-radius: 15px;
+	color: var(--text-black);
+}

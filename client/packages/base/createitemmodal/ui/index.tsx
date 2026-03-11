@@ -63,15 +63,18 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			};
 			response = await fetchCreateEvent(createEventDesc);
 		} else {
-			console.log('id: ', id);
 			const createTeamDesc: createNewTeam = {
 				eventId: id,
 				teamName: value,
-				members: [{ userId: user.userId, name: user.firstName }],
+				members: [
+					{
+						userId: user.userId,
+						name: `${user.firstName} ${user.lastName}`,
+					},
+				],
 				createdBy: user.userId,
 			};
 			response = await fetchCreateTeam(createTeamDesc);
-			console.log('response: ', response);
 		}
 
 		if (response.success) {

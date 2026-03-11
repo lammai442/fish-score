@@ -1,15 +1,16 @@
-import { FishEvent, Team } from '@fishScore/eventsdata';
+import './index.css';
+import type { FishEvent, Team } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
 import { Button, Stack, Tabs } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
-import { fetchEvent } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
 import { BaseModal } from '@fishScore/basemodal';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
+
 export const EventPage = () => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const { id } = useParams();
@@ -17,34 +18,49 @@ export const EventPage = () => {
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
 	const [opened, { open, close }] = useDisclosure(false);
+	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 
-	useEffect(() => {
-		if (!id) {
-			return;
-		}
+	// useEffect(() => {
+	// 	if (!id) {
+	// 		return;
+	// 	}
 
-		const getEvent = async (id: string) => {
-			setLoading(true);
-			const result = await fetchEvent(id);
+	// 	const getEvent = async (id: string) => {
+	// 		setLoading(true);
+	// 		const result = await fetchEvent(id);
 
-			setLoading(false);
-			if (result.success) {
-				let event = result.data.event;
+	// 		setLoading(false);
+	// 		if (result.success) {
+	// 			let event = result.data.event;
 
-				setCurrentEvent(event);
-				console.log(currentEvent);
-			}
-		};
+	// 			setCurrentEvent(event);
 
-		getEvent(id);
-	}, [id]);
+	// 			const sortedLeaderboard = event.teams.sort(
+	// 				(a: Team, b: Team) =>
+	// 					b.totalCatchWeight - a.totalCatchWeight,
+	// 			);
+	// 			setLeaderboard(sortedLeaderboard);
+	// 		}
+	// 	};
+
+	// 	getEvent(id);
+	// }, []);
 
 	// Synka liveuppdateringar från websocket
 	useEffect(() => {
-		console.log(events);
+		setLoading(true);
 		const updatedEvent = events.find((e) => e.id === id);
-		console.log('updatedEvent :', updatedEvent);
+
 		setCurrentEvent(updatedEvent);
+
+		const sortedLeaderboard: Team[] = updatedEvent.teams.sort(
+			(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
+		);
+
+		if (sortedLeaderboard) {
+			setLeaderboard(sortedLeaderboard);
+		}
+		setLoading(false);
 	}, [events]);
 
 	return (
@@ -69,19 +85,29 @@ export const EventPage = () => {
 				onClick={open}>
 				+ Create team
 			</Button>
+
 			{loading && (
 				<Loading visible={loading} text='Loading events'></Loading>
 			)}
-			{/* Render teams */}
-			<Tabs value={mode} onChange={setMode}>
-				<Tabs.List>
+
+			{/* Rendera teams */}
+			<Tabs
+				variant='pills'
+				value={mode}
+				onChange={setMode}
+				classNames={{
+					tab: 'scoreboard__tab',
+					list: 'scoreboard__list',
+				}}>
+				{/* Tab  */}
+				<Tabs.List grow justify='center'>
 					<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
 					<Tabs.Tab value='activity'>Activity</Tabs.Tab>
 				</Tabs.List>
 				<Tabs.Panel value='leaderboard' pt='md'>
 					<Stack>
 						{currentEvent &&
-							currentEvent.teams.map((team: Team) => {
+							leaderboard.map((team: Team) => {
 								return (
 									<Stack key={team.createdAt}>
 										<p>{team.teamName}</p>
@@ -90,6 +116,7 @@ export const EventPage = () => {
 												<p key={index}>{member.name}</p>
 											);
 										})}
+										<p>{team.totalCatchWeight}</p>
 									</Stack>
 								);
 							})}
