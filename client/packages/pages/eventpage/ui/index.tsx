@@ -74,23 +74,33 @@ export const EventPage = () => {
 						)}></PageHeader>
 				)}
 			</Stack>
-			{/* Skapa nytt team button genom öppna modal */}
-			<BaseModal title='Create team' opened={opened} close={close}>
-				<CreateItemModal close={close} type='team'></CreateItemModal>
-			</BaseModal>
-			<Button
-				color='var(--bg-black-color)'
-				size='lg'
-				radius='md'
-				onClick={open}>
-				+ Create team
-			</Button>
 
 			{loading && (
 				<Loading visible={loading} text='Loading events'></Loading>
 			)}
 
 			{/* Rendera teams */}
+
+			{/* Skapa nytt team button genom öppna modal */}
+			{leaderboard.length === 0 && (
+				<>
+					<BaseModal
+						title='Create team'
+						opened={opened}
+						close={close}>
+						<CreateItemModal
+							close={close}
+							type='team'></CreateItemModal>
+					</BaseModal>
+					<Button
+						color='var(--bg-black-color)'
+						size='lg'
+						radius='md'
+						onClick={open}>
+						+ Create team
+					</Button>
+				</>
+			)}
 			<Tabs
 				variant='pills'
 				value={mode}

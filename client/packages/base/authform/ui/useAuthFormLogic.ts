@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
-import type { LoginData, RegisterData } from '@fishScore/interfaces';
+import type { LoginData, RegisterData } from '@fishScore/authsdata';
 
 export const useAuthFormLogic = () => {
 	const [mode, setMode] = useState('login');

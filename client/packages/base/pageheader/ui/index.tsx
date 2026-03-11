@@ -14,9 +14,13 @@ export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
 	return (
 		<Box
 			style={{
+				width: '100vw',
+				marginLeft: 'calc(50% - 50vw)',
 				display: 'grid',
 				gridTemplateColumns: 'auto 1fr auto',
 				alignItems: 'center',
+				background: 'var(--bg-light-grey-color)',
+				padding: '1rem',
 			}}>
 			<ActionIcon
 				variant='transparent'
