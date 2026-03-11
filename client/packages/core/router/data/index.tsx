@@ -33,7 +33,7 @@ export const router = createBrowserRouter([
 						element: <ProfilePage />,
 					},
 					{
-						path: '/event',
+						path: '/event/:id',
 						element: <EventPage />,
 					},
 					{

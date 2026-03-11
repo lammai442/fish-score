@@ -10,7 +10,7 @@ user_bp = Blueprint("user_bp", __name__)
 @user_bp.route("/users/me", methods=["GET"])
 @require_auth
 def get_current_user():
-    # Hämtar userId direkt från token
+    # Get userId from token
     user_id = g.user["sub"]
 
     user = get_user_by_user_id(user_id)

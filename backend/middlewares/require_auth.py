@@ -3,7 +3,7 @@ from flask import request, jsonify, g
 from utils.tokens import verify_token
 
 
-# Kontroll av token/authentisering
+# Authenticate token
 def require_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -17,7 +17,7 @@ def require_auth(f):
         if not payload:
             return jsonify({"success": False, "error": "Token invalid"}), 401
 
-        # Sparar payload för resten av requesten
+        # Save payload for the request
         g.user = payload
 
         return f(*args, **kwargs)

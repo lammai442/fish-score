@@ -15,7 +15,7 @@ def generate_token(user):
         "sub": user["sub"],
         "email": user["email"],
         "iat": int(now.timestamp()),
-        "exp": int((now + datetime.timedelta(hours=1)).timestamp()),
+        "exp": int((now + datetime.timedelta(hours=10)).timestamp()),
     }
 
     token = jwt.encode(payload, secret, algorithm="HS256")

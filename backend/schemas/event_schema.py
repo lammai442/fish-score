@@ -15,7 +15,21 @@ class EventSchema(Schema):
     )
 
 
+class UpdateEventSchema(Schema):
+    newEventName = fields.String(required=True, validate=validate.Length(min=1, max=18))
+
+
 class TeamSchema(Schema):
+    eventId = fields.String(
+        required=True,
+        validate=[
+            validate.Length(equal=11),
+            validate.Regexp(
+                r"^event-[a-zA-Z0-9]{5}$",
+                error="Each member must match format event-xxxxx",
+            ),
+        ],
+    )
     teamName = fields.String(required=True, validate=validate.Length(min=1, max=18))
     createdBy = fields.String(
         required=True,
@@ -28,15 +42,23 @@ class TeamSchema(Schema):
         ],
     )
     members = fields.List(
-        fields.String(
-            required=True,
-            validate=[
-                validate.Length(equal=10),
-                validate.Regexp(
-                    r"^user-[a-zA-Z0-9]{5}$",
-                    error="Each member must match format user-xxxxx",
+        fields.Nested(
+            {
+                "userId": fields.String(
+                    required=True,
+                    validate=[
+                        validate.Length(equal=10),
+                        validate.Regexp(
+                            r"^user-[a-zA-Z0-9]{5}$",
+                            error="userId must match format user-xxxxx",
+                        ),
+                    ],
                 ),
-            ],
+                "name": fields.String(
+                    required=True,
+                    validate=validate.Length(min=1, max=50),
+                ),
+            }
         ),
         required=True,
         validate=validate.Length(min=1),

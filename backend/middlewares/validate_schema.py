@@ -3,14 +3,13 @@ from flask import request, jsonify
 from marshmallow import ValidationError
 
 
-# Decorator som validerar request.get_json() mot ett Marshmallow-schema.
-# Om valideringen misslyckas returnerar den 400 Bad Request automatiskt.
+# Decorator that validates request.get_json() to a Marshmallow-schema.
+# If validation fails, return 400 Bad Request
 def validate_schema(schema_class):
 
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            # Kontrollera att body finns
             if not request.data:
                 return (
                     jsonify(
@@ -22,7 +21,7 @@ def validate_schema(schema_class):
                     400,
                 )
 
-            # Kontrollera att body är JSON
+            # Validate body input format
             if not request.is_json:
                 return (
                     jsonify(
@@ -36,7 +35,7 @@ def validate_schema(schema_class):
 
             try:
                 data = schema_class().load(request.get_json())
-                # Lagra den validerade datan i request context
+                # Store validated data in request context
                 setattr(request, "validated_data", data)
             except ValidationError as err:
                 return (
