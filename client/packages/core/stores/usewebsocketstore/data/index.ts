@@ -20,7 +20,6 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 	isConnected: false,
 	userFromWs: null,
 	events: [],
-
 	// Stores the WebSocket when it connects.
 	setWebSocket: (websocket) => {
 		set({ ws: websocket, isConnected: true });
@@ -37,7 +36,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 	updateEvent: (updatedEvent: FishEvent): void => {
 		set((state) => {
 			const existingIndex = state.events.findIndex(
-				(e) => e.PK === updatedEvent.PK
+				(e) => e.PK === updatedEvent.PK,
 			);
 			if (existingIndex >= 0) {
 				// Uppdatera befintligt event

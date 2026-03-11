@@ -7,7 +7,7 @@ export const useAuthFormLogic = () => {
 
 	const form = useForm<LoginData | RegisterData>({
 		initialValues: {
-			email: 'and@and.se',
+			email: 'moa@kalle.se',
 			password: 'mamma1',
 			firstName: 'Anders',
 			lastName: 'Karlsson',

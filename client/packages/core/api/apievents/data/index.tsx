@@ -1,4 +1,9 @@
-import { FishEvent, Team } from '@fishScore/eventsdata';
+import {
+	createNewTeam,
+	FishEvent,
+	NewFishEvent,
+	Team,
+} from '@fishScore/eventsdata';
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
 
@@ -24,16 +29,36 @@ export const fetchAllEvents = async () => {
 		};
 	}
 };
+// Hämtar ett event
+export const fetchEvent = async (id: string) => {
+	try {
+		const response = await axios.get(`${apiUrl}/events/${id}`, {
+			withCredentials: true,
+		});
+
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status: error.response?.status || 500,
+		};
+	}
+};
 
 // Skapar ett nytt event
-export const fetchCreateEvent = async (createEventDesc: FishEvent) => {
+export const fetchCreateEvent = async (createEventDesc: NewFishEvent) => {
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/newevent`,
 			createEventDesc,
 			{
 				withCredentials: true,
-			}
+			},
 		);
 
 		// Open loginModal if response is 401 (No token)
@@ -56,15 +81,49 @@ export const fetchCreateEvent = async (createEventDesc: FishEvent) => {
 	}
 };
 
-// Create new team
-export const fetchCreateTeam = async (createTeamDesc: Team) => {
+// Skapar ett nytt team
+export const fetchCreateTeam = async (createTeamDesc: createNewTeam) => {
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/newteam`,
 			createTeamDesc,
 			{
 				withCredentials: true,
-			}
+			},
+		);
+
+		// Open loginModal if response is 401 (No token)
+		if (response.status === 401) {
+			useAuthStore.getState().openLoginModal();
+			return { success: false, error: response.data.error };
+		}
+
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status: error.response?.status || 500,
+		};
+	}
+};
+
+// Uppdatererar eventnamn
+export const fetchUpdateEvent = async (
+	eventId: string | undefined,
+	newEventname: string,
+) => {
+	try {
+		const response = await axios.put(
+			`${apiUrl}/events/${eventId}`,
+			{ newEventName: newEventname },
+			{
+				withCredentials: true,
+			},
 		);
 
 		// Open loginModal if response is 401 (No token)

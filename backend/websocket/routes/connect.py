@@ -3,7 +3,7 @@ from utils.connection import store_connection
 
 def connect(connection_id, event):
     try:
-        # Om du vill ignorera user_id:
+        # If you want to ignore userId
         store_connection(connection_id, None)
         print("Connect successful:", connection_id)
         return {"statusCode": 200}

@@ -1,6 +1,5 @@
 import { FishEvent } from '@fishScore/eventsdata';
 import { Text, Title, Flex } from '@mantine/core';
-import { calculateMembers } from '@fishScore/helpfunctions';
 import { useNavigate } from 'react-router-dom';
 
 type Props = {
@@ -10,12 +9,12 @@ type Props = {
 export const Events = ({ events = [] }: Props) => {
 	const navigate = useNavigate();
 	const handleToEvent = (event: FishEvent) => {
-		navigate('/event', { state: { eventId: event.id } });
+		navigate(`/event/${event.id}`);
 	};
 
 	return (
 		<>
-			<Title order={3}>Your events</Title>
+			<Title order={3}>Events</Title>
 			<Flex wrap={'wrap'} gap={'md'} style={{ cursor: 'pointer' }}>
 				{events.length > 0 ? (
 					events.map((event, index) => {
@@ -55,12 +54,6 @@ export const Events = ({ events = [] }: Props) => {
 										{
 											label: 'Teams',
 											value: event.teams?.length,
-										},
-										{
-											label: 'Participants',
-											value: calculateMembers(
-												event.teams || []
-											),
 										},
 									].map((item) => (
 										<Flex

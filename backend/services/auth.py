@@ -10,7 +10,7 @@ def register_user_to_db(data):
     table = get_dynamodb_table()
     emailExist = get_user_by_email(data["email"])
 
-    # Avbryt om email redan finns i databasen
+    # Cancel if email already exist i database
     if emailExist["success"]:
         return {"success": False, "error": "Email already exists"}
 
@@ -20,7 +20,7 @@ def register_user_to_db(data):
     user_item = {
         "PK": f"USER#user-{user_id}",
         "SK": "PROFILE",
-        "id": f"event_{user_id}",
+        "id": f"user-{user_id}",
         "lookupType": "USER#EMAIL",
         "lookupValue": data["email"],
         "entityType": "USER",
@@ -30,7 +30,7 @@ def register_user_to_db(data):
         "lastName": data["lastName"],
         "createdAt": now,
         "totalCatchWeight": 0,
-        "maxCatchWeight": 0,
+        "totalCatches": 0,
     }
 
     try:

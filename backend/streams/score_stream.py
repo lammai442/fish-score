@@ -2,15 +2,26 @@ from utils.connection import send_to_connection, remove_connection
 import boto3
 import os
 from boto3.dynamodb.types import TypeDeserializer
+from decimal import Decimal
 
-# Importerar AWS-klienter och hjälpklasser
+# Importing AWS-clients
 
 dynamodb = boto3.client("dynamodb")
 deserializer = TypeDeserializer()
 
 
+def make_json_safe(value):
+    if isinstance(value, list):
+        return [make_json_safe(v) for v in value]
+    if isinstance(value, dict):
+        return {k: make_json_safe(v) for k, v in value.items()}
+    if isinstance(value, Decimal):
+        return int(value) if value % 1 == 0 else float(value)
+    return value
+
+
 def is_event_record(record):
-    # Skicka alla händelser som gäller events, lag eller fångster
+    # Send all records for events, teams och catches
 
     new_image = record["dynamodb"].get("NewImage")
     old_image = record["dynamodb"].get("OldImage")
@@ -22,41 +33,56 @@ def is_event_record(record):
         sk = image.get("SK", {}).get("S")
         return pk and pk.startswith("EVENT#") and sk == "EVENT"
 
-    return check_image(new_image) or check_image(old_image)
+    result = check_image(new_image) or check_image(old_image)
+    print("IS EVENT RECORD:", result)
+    return result
 
 
 def handler(event, context):
-    # Lambda-entrypoint för streamen
+    print("LAMBDA TRIGGERED")
+    print("RAW EVENT:", event)
+
+    # Lambda-entrypoint for stream
 
     table_name = os.environ.get("USERS_TABLE", "fishScore")
     table = boto3.resource("dynamodb").Table(table_name)
 
-    # Hämtar alla aktiva anslutningar
+    # Get all active connections
     connections = table.query(
         KeyConditionExpression="PK = :pk",
         ExpressionAttributeValues={":pk": "CONNECTION"},
     )["Items"]
 
-    # Loopar igenom alla DynamoDB-streamrecords
+    print("ACTIVE CONNECTIONS:", connections)
+
+    # Loop through all DynamDB-streamrecords
     for record in event["Records"]:
+        print("STREAM RECORD:", record)
         if not is_event_record(record):
+            print("SKIPPED RECORD")
             continue
 
-        # Använder NewImage om den finns, annars OldImage
+        # Use NewImage if it exist, else OldImage
         image = record["dynamodb"].get("NewImage") or record["dynamodb"].get("OldImage")
 
-        # Konverterar DynamoDB-format till Python-dict
+        # Convert DynamoDB-format to Python-dict
         data = {k: deserializer.deserialize(v) for k, v in image.items()}
 
-        # Skapar meddelande att skicka via WebSocket
-        message = {"type": "eventUpdate", "data": data}
+        safe_data = make_json_safe(data)
 
-        # Loopar igenom alla aktiva anslutningar och skickar meddelandet
+        # Create message and send through Websocket
+        message = {"type": "eventUpdate", "data": safe_data}
+        print("SENDING MESSAGE:", message)
+
+        # Loop through all active connections and send message
         for conn in connections:
+            connection_id = conn["SK"].replace("CONNECTION#", "")
             try:
-                send_to_connection(conn["SK"].replace("CONNECTION#", ""), message)
+                print("SENDING TO CONNECTION:", connection_id)
+                send_to_connection(connection_id, message)
             except Exception as e:
-                # Tar bort anslutningar som inte längre är aktiva
+                # Remove all unactive connections
+                print("SEND ERROR:", str(e))
                 if "GoneException" in str(e):
                     remove_connection(conn["SK"].replace("CONNECTION#", ""))
 

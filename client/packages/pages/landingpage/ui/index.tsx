@@ -7,12 +7,26 @@ import { BaseModal } from '@fishScore/basemodal';
 import { useUserStore } from '@fishScore/useUserStore';
 import { Events } from '@fishScore/events';
 import { CreateItemModal } from '@fishScore/createitemmodal';
+import { useEffect } from 'react';
+import { fetchAllEvents } from '@fishScore/apievents';
 
 export const LandingPage = () => {
-	const { events } = useWebSocketStore();
+	const { events, setEvents } = useWebSocketStore();
 	const [opened, { open, close }] = useDisclosure(false);
 	const { user } = useUserStore();
 
+	useEffect(() => {
+		const getAllEvents = async () => {
+			const response = await fetchAllEvents();
+			if (response.success) {
+				setEvents(response.data.events);
+			}
+		};
+
+		getAllEvents();
+	}, []);
+
+	useEffect;
 	return (
 		<>
 			{/* Modal för att skapa ett nytt event */}

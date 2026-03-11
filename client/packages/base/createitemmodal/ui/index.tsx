@@ -3,9 +3,15 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useUserStore } from '@fishScore/useUserStore';
-import type { FishEvent, Team } from '@fishScore/eventsdata';
+import type {
+	createNewTeam,
+	FishEvent,
+	NewFishEvent,
+	Team,
+} from '@fishScore/eventsdata';
 import { fetchCreateEvent, fetchCreateTeam } from '@fishScore/apievents';
 import { ApiResponse } from '../../../core/interfaces/apidata/data';
+import { useParams } from 'react-router-dom';
 
 type Props = {
 	close: () => void;
@@ -16,6 +22,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState<string>('');
 	const { user } = useUserStore();
+	const { id } = useParams();
 
 	const handleCreateItem = async () => {
 		const emojiRegex = /[\p{Extended_Pictographic}]/u;
@@ -29,7 +36,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			setErrorInput(
 				`You need to fill in ${
 					type === 'event' ? 'an event' : 'a team'
-				} name`
+				} name`,
 			);
 			return;
 		}
@@ -50,19 +57,21 @@ export const CreateItemModal = ({ close, type }: Props) => {
 
 		let response: ApiResponse<FishEvent | Team>;
 		if (type === 'event') {
-			const createTypeDesc: FishEvent = {
+			const createEventDesc: NewFishEvent = {
 				eventName: value,
 				createdBy: user?.userId,
 			};
-			response = await fetchCreateEvent(createTypeDesc);
+			response = await fetchCreateEvent(createEventDesc);
 		} else {
-			const createTeamDesc: Team = {
+			console.log('id: ', id);
+			const createTeamDesc: createNewTeam = {
+				eventId: id,
 				teamName: value,
+				members: [{ userId: user.userId, name: user.firstName }],
 				createdBy: user.userId,
-				members: [user.userId],
-				catches: [],
 			};
 			response = await fetchCreateTeam(createTeamDesc);
+			console.log('response: ', response);
 		}
 
 		if (response.success) {
@@ -82,9 +91,13 @@ export const CreateItemModal = ({ close, type }: Props) => {
 	};
 	return (
 		<Stack>
-			<Text>Add a new fishing event</Text>
+			<Text>
+				{type === 'event'
+					? 'Add a new fishing event'
+					: 'Add a new team'}
+			</Text>
 			<TextInput
-				label='Event name'
+				label={type === 'event' ? 'Event name' : 'Team name'}
 				value={inputValue}
 				onChange={(event) => {
 					setInputValue(event.currentTarget.value);
