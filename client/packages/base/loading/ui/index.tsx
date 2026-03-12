@@ -12,11 +12,7 @@ export const Loading = ({ visible, text }: Props) => {
 			zIndex={1000}
 			loaderProps={{
 				children: (
-					<Flex
-						direction='column'
-						align='center' // horisontell centrering
-						justify='center' // vertikal centrering
-					>
+					<Flex direction='column' align='center' justify='center'>
 						<Loader />
 						<Text mt='sm'>{text}</Text>
 					</Flex>

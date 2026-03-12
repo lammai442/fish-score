@@ -14,10 +14,12 @@
 	--bg-medium-light-grey-color: #e9ebed;
 	--bg-light-grey-color: #f9fafb;
 	--bg-white-color: #ffffff;
+	--bg-blue-color: #eff6ff;
 
 	--text-white: #ffffff;
 	--text-black: #000000;
 
-	/* Border radius */
+	/* Borders */
 	--br-grey: #ddd;
+	--br-blue: #2b7fff;
 }

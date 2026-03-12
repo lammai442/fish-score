@@ -10,6 +10,8 @@ import { Loading } from '@fishScore/loading';
 import { BaseModal } from '@fishScore/basemodal';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
+import { Teams } from '../../../base/teams/ui';
+import { useUserStore } from '@fishScore/useUserStore';
 
 export const EventPage = () => {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -19,6 +21,7 @@ export const EventPage = () => {
 	const [mode, setMode] = useState<string | null>('leaderboard');
 	const [opened, { open, close }] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
+	const { user } = useUserStore();
 
 	// useEffect(() => {
 	// 	if (!id) {
@@ -101,6 +104,22 @@ export const EventPage = () => {
 					</Button>
 				</>
 			)}
+
+			<>
+				<BaseModal title='Create team' opened={opened} close={close}>
+					<CreateItemModal
+						close={close}
+						type='team'></CreateItemModal>
+				</BaseModal>
+				<Button
+					color='var(--bg-black-color)'
+					size='lg'
+					radius='md'
+					onClick={open}>
+					+ Create team
+				</Button>
+			</>
+
 			<Tabs
 				variant='pills'
 				value={mode}
@@ -117,17 +136,13 @@ export const EventPage = () => {
 				<Tabs.Panel value='leaderboard' pt='md'>
 					<Stack>
 						{currentEvent &&
-							leaderboard.map((team: Team) => {
+							leaderboard.map((team: Team, index) => {
 								return (
-									<Stack key={team.createdAt}>
-										<p>{team.teamName}</p>
-										{team.members.map((member, index) => {
-											return (
-												<p key={index}>{member.name}</p>
-											);
-										})}
-										<p>{team.totalCatchWeight}</p>
-									</Stack>
+									<Teams
+										key={team.teamId}
+										team={team}
+										userId={user?.userId}
+										rankNr={index + 1}></Teams>
 								);
 							})}
 					</Stack>
