@@ -1,0 +1,27 @@
+export interface Team {
+	teamId?: string;
+	teamName: string;
+	createdAt?: string;
+	members: [{ userId: string; name: string }];
+	catches: FishCatch[];
+	totalCatchWeight: number;
+	createdBy: string;
+}
+export interface createNewTeam {
+	eventId?: string;
+	teamName: string;
+	createdBy: string;
+	members: [{ userId: string; name: string }];
+}
+
+export interface FishCatch {
+	userId: string;
+	weight: number;
+	createdAt: number;
+}
+
+export interface TeamUserData {
+	userId?: string;
+	eventId?: string;
+	teamId: string;
+}

@@ -22,32 +22,6 @@ export const EventPage = () => {
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const { user } = useUserStore();
 
-	// useEffect(() => {
-	// 	if (!id) {
-	// 		return;
-	// 	}
-
-	// 	const getEvent = async (id: string) => {
-	// 		setLoading(true);
-	// 		const result = await fetchEvent(id);
-
-	// 		setLoading(false);
-	// 		if (result.success) {
-	// 			let event = result.data.event;
-
-	// 			setCurrentEvent(event);
-
-	// 			const sortedLeaderboard = event.teams.sort(
-	// 				(a: Team, b: Team) =>
-	// 					b.totalCatchWeight - a.totalCatchWeight,
-	// 			);
-	// 			setLeaderboard(sortedLeaderboard);
-	// 		}
-	// 	};
-
-	// 	getEvent(id);
-	// }, []);
-
 	const userExistInTeam = currentEvent?.teams.some((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
@@ -143,9 +117,8 @@ export const EventPage = () => {
 										team={team}
 										userId={user?.userId}
 										rankNr={index + 1}
-										userExistInTeam={
-											userExistInTeam
-										}></Teams>
+										userExistInTeam={userExistInTeam}
+										eventId={id}></Teams>
 								);
 							})}
 					</Stack>
