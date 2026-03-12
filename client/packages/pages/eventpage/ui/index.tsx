@@ -2,19 +2,18 @@ import './index.css';
 import type { FishEvent, Team } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
-import { Button, Stack, Tabs } from '@mantine/core';
+import { Button, Flex, Stack, Tabs, Text, Title } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
-import { Loading } from '@fishScore/loading';
 import { BaseModal } from '@fishScore/basemodal';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
+import { IconUsers } from '@tabler/icons-react';
 
 export const EventPage = () => {
-	const [loading, setLoading] = useState<boolean>(false);
 	const { id } = useParams();
 	const { events } = useWebSocketStore();
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
@@ -49,9 +48,12 @@ export const EventPage = () => {
 	// 	getEvent(id);
 	// }, []);
 
+	const userExistInTeam = currentEvent?.teams.some((team) =>
+		team.members.some((member) => member.userId === user?.userId),
+	);
+
 	// Synka liveuppdateringar från websocket
 	useEffect(() => {
-		setLoading(true);
 		const updatedEvent = events.find((e) => e.id === id);
 
 		setCurrentEvent(updatedEvent);
@@ -63,7 +65,6 @@ export const EventPage = () => {
 		if (sortedLeaderboard) {
 			setLeaderboard(sortedLeaderboard);
 		}
-		setLoading(false);
 	}, [events]);
 
 	return (
@@ -78,8 +79,22 @@ export const EventPage = () => {
 				)}
 			</Stack>
 
-			{loading && (
-				<Loading visible={loading} text='Loading events'></Loading>
+			{/* Join a team message */}
+			{!userExistInTeam && (
+				<Flex
+					bdrs={'lg'}
+					p={'md'}
+					bg={'var(--bg-light-orange-color)'}
+					bd={'1px solid var(--br-orange)'}>
+					<IconUsers size={50} />
+					<Stack>
+						<Title order={4}>Join a team to participate</Title>
+						<Text>
+							You need to join or create a team before you can
+							register catches for this event.
+						</Text>
+					</Stack>
+				</Flex>
 			)}
 
 			{/* Rendera teams */}
@@ -105,21 +120,6 @@ export const EventPage = () => {
 				</>
 			)}
 
-			<>
-				<BaseModal title='Create team' opened={opened} close={close}>
-					<CreateItemModal
-						close={close}
-						type='team'></CreateItemModal>
-				</BaseModal>
-				<Button
-					color='var(--bg-black-color)'
-					size='lg'
-					radius='md'
-					onClick={open}>
-					+ Create team
-				</Button>
-			</>
-
 			<Tabs
 				variant='pills'
 				value={mode}
@@ -142,7 +142,10 @@ export const EventPage = () => {
 										key={team.teamId}
 										team={team}
 										userId={user?.userId}
-										rankNr={index + 1}></Teams>
+										rankNr={index + 1}
+										userExistInTeam={
+											userExistInTeam
+										}></Teams>
 								);
 							})}
 					</Stack>

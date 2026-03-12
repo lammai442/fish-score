@@ -15,6 +15,8 @@
 	--bg-light-grey-color: #f9fafb;
 	--bg-white-color: #ffffff;
 	--bg-blue-color: #eff6ff;
+	--bg-orange-color: #ff6900;
+	--bg-light-orange-color: #fff7ed;
 
 	--text-white: #ffffff;
 	--text-black: #000000;
@@ -22,4 +24,10 @@
 	/* Borders */
 	--br-grey: #ddd;
 	--br-blue: #2b7fff;
+	--br-orange: #ff6900;
+
+	/* Outline */
+	--bg-gold-color: #f0b100;
+	--bg-silver-color: #99a1af;
+	--bg-bronze-color: #bb4d00;
 }

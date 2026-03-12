@@ -14,19 +14,20 @@ export const useWebSocketHook = () => {
 	} = useWebSocketStore();
 
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-		null
+		null,
 	);
 
 	useEffect(() => {
 		// Skapa WebSocket om det inte finns någon eller om den är stängd
 		if (!ws || ws.readyState === WebSocket.CLOSED) {
 			const websocket = new WebSocket(webSocketUrl);
-			console.log('Websocket connecting');
+			const date = new Date().toISOString().slice(0, -5);
+			console.log('Websocket connecting: ', date);
 
 			websocket.onopen = () => {
 				setWebSocket(websocket);
 				setConnectionStatus(true);
-				console.log('Websocket connected');
+				console.log('Websocket connected: ', date);
 			};
 
 			// Whenever a message is received from the WebSocket, check whether its type is "orderUpdate" and whether "message.order" exists.
