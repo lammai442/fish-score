@@ -1,18 +1,23 @@
+import { fetchJoinTeam } from '@fishScore/apievents';
 import type { Team } from '@fishScore/eventsdata';
-import { Box, Button, Flex, Stack, Text, Title } from '@mantine/core';
+import { Button, Flex, Stack, Text, Title } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
+import { TeamUserData } from '../../../core/interfaces/teamsdata/data';
 type Props = {
 	team: Team;
 	userId: string | undefined;
 	rankNr: number;
 	userExistInTeam: boolean | undefined;
+	eventId: string | undefined;
 };
 
-export const Teams = ({ team, userId, rankNr, userExistInTeam }: Props) => {
-	// const userExistInTeam = team.members.some(
-	// 	(member) => member.userId === userId,
-	// );
-
+export const Teams = ({
+	team,
+	userId,
+	rankNr,
+	userExistInTeam,
+	eventId,
+}: Props) => {
 	let trophyColor = '';
 
 	switch (rankNr) {
@@ -27,6 +32,17 @@ export const Teams = ({ team, userId, rankNr, userExistInTeam }: Props) => {
 			break;
 	}
 
+	const handleJoinTeam = async () => {
+		const teamUserData: TeamUserData = {
+			userId: userId,
+			eventId: eventId,
+			teamId: team.teamId,
+		};
+		console.log('teamUserData: ', teamUserData);
+
+		const response = await fetchJoinTeam(teamUserData);
+		console.log('response: ', response);
+	};
 	return (
 		<>
 			<Stack
@@ -49,7 +65,11 @@ export const Teams = ({ team, userId, rankNr, userExistInTeam }: Props) => {
 						<Text
 							span
 							fw={700}
-							bg='var(--bg-medium-light-grey-color)'
+							bg={
+								rankNr <= 3
+									? `${trophyColor}`
+									: 'var(--bg-medium-light-grey-color)'
+							}
 							w={30}
 							h={30}
 							style={{
@@ -84,7 +104,11 @@ export const Teams = ({ team, userId, rankNr, userExistInTeam }: Props) => {
 				<Text fz={'xl'}>Totalt: {team.totalCatchWeight} kg</Text>
 
 				{!userExistInTeam && (
-					<Button bg={'var(--bg-black-color)'}>Join team</Button>
+					<Button
+						bg={'var(--bg-black-color)'}
+						onClick={handleJoinTeam}>
+						Join team
+					</Button>
 				)}
 			</Stack>
 		</>

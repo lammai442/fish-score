@@ -3,6 +3,7 @@ import uuid
 from .table import get_dynamodb_table
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
+from .users import get_user_by_user_id
 
 table = get_dynamodb_table()
 
@@ -246,6 +247,70 @@ def get_team_by_team_name(event_id, team_name):
                 return {"success": True, "team": matching_team}
 
         return {"success": False, "error": "Team not found"}
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
+
+
+def join_team_in_db(event_id, team_id, user_id):
+    user = get_user_by_user_id(user_id)
+
+    if user is None:
+        return {"success": False, "error": "User not found"}
+
+    user_full_name = f"{user['firstName']} {user['lastName']}"
+
+    try:
+        response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            }
+        )
+
+        event_item = response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Event not found"}
+
+        teams = event_item.get("teams", [])
+        team_found = None
+
+        for team in teams:
+            if team.get("teamId") == team_id:
+                team_found = team
+                break
+
+        if not team_found:
+            return {"success": False, "error": "Team not found"}
+
+        members = team_found.get("members", [])
+
+        already_member = any(member["userId"] == user_id for member in members)
+        if already_member:
+            return {"success": False, "error": "User already in team"}
+
+        members.append(
+            {
+                "userId": user_id,
+                "name": user_full_name,
+            }
+        )
+
+        team_found["members"] = members
+
+        table.update_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            },
+            UpdateExpression="SET teams = :teams",
+            ExpressionAttributeValues={
+                ":teams": teams,
+            },
+        )
+
+        return {"success": True, "message": "Joined team successfully"}
 
     except ClientError as e:
         return {"success": False, "error": str(e)}

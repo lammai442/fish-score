@@ -3,15 +3,11 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useUserStore } from '@fishScore/useUserStore';
-import type {
-	createNewTeam,
-	FishEvent,
-	NewFishEvent,
-	Team,
-} from '@fishScore/eventsdata';
+import type { FishEvent, NewFishEvent } from '@fishScore/eventsdata';
 import { fetchCreateEvent, fetchCreateTeam } from '@fishScore/apievents';
 import { ApiResponse } from '../../../core/interfaces/apidata/data';
 import { useParams } from 'react-router-dom';
+import { createNewTeam, Team } from '../../../core/interfaces/teamsdata/data';
 
 type Props = {
 	close: () => void;

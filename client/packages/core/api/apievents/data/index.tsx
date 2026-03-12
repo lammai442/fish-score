@@ -1,11 +1,10 @@
-import {
-	createNewTeam,
-	FishEvent,
-	NewFishEvent,
-	Team,
-} from '@fishScore/eventsdata';
+import { FishEvent, NewFishEvent } from '@fishScore/eventsdata';
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
+import {
+	createNewTeam,
+	TeamUserData,
+} from '../../../interfaces/teamsdata/data';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
@@ -87,6 +86,37 @@ export const fetchCreateTeam = async (createTeamDesc: createNewTeam) => {
 		const response = await axios.post(
 			`${apiUrl}/events/newteam`,
 			createTeamDesc,
+			{
+				withCredentials: true,
+			},
+		);
+
+		// Open loginModal if response is 401 (No token)
+		if (response.status === 401) {
+			useAuthStore.getState().openLoginModal();
+			return { success: false, error: response.data.error };
+		}
+
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status: error.response?.status || 500,
+		};
+	}
+};
+
+// Joinar ett nytt team
+export const fetchJoinTeam = async (teamUserData: TeamUserData) => {
+	try {
+		const response = await axios.post(
+			`${apiUrl}/events/${teamUserData.eventId}/teams/${teamUserData.teamId}/join`,
+			{ userId: teamUserData.userId },
 			{
 				withCredentials: true,
 			},
