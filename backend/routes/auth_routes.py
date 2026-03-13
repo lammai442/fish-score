@@ -9,15 +9,16 @@ from utils.tokens import generate_token
 from middlewares.require_auth import require_auth
 from utils.help_functions import filter_user
 
-# Create blueprint
+# Skapa blueprint instans
 auth_bp = Blueprint("auth", __name__)
 
 
-# Register new user
+# Registrera ny användare
 @auth_bp.route("/auth/register", methods=["POST"])
 @validate_schema(RegisterSchema)
 def register_user():
-    # Validated data after middleware
+
+    # Validerad data från middleware
     data = request.validated_data
 
     response = register_user_to_db(data)
@@ -31,7 +32,7 @@ def register_user():
         return jsonify({"success": False, "error": response["error"]}), 409
 
 
-# Login user
+# Logga in en user
 @auth_bp.route("/auth/login", methods=["POST"])
 @validate_schema(LoginSchema)
 def login_user():
@@ -39,7 +40,6 @@ def login_user():
     data = request.validated_data
     user_exist = get_user_by_email(data["email"])
 
-    # Response if user doesn't exist
     if not user_exist["success"]:
         return (
             jsonify({"success": False, "error": user_exist["error"]}),
@@ -60,7 +60,7 @@ def login_user():
         jsonify({"success": True, "message": "Login successfully", "token": token}), 200
     )
 
-    # Sets cookie
+    # Sätter cookie
     response.set_cookie(
         "access_token",
         token,
@@ -74,7 +74,7 @@ def login_user():
     return response
 
 
-# Log out
+# Logga ut
 @auth_bp.route("/auth/logout", methods=["POST"])
 def logout_user():
     response = make_response(jsonify({"success": True, "message": "Logged out"}))
@@ -93,7 +93,7 @@ def logout_user():
     return response
 
 
-# Get Me
+# Hämta Me
 @auth_bp.route("/auth/me", methods=["GET"])
 @require_auth
 def get_current_user():

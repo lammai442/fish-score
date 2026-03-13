@@ -11,11 +11,11 @@ from services.events import (
     join_team_in_db,
 )
 
-# Create blueprint
+# Skapa blueprint instans
 event_bp = Blueprint("event_bp", __name__)
 
 
-# Get event
+# Hämtar ett event
 @event_bp.route("/events/<string:event_id>", methods=["GET"])
 @require_auth
 def get_event(event_id):
@@ -28,7 +28,7 @@ def get_event(event_id):
     return jsonify({"success": True, "event": response}), 200
 
 
-# Get all events
+# Hämtar alla events
 @event_bp.route("/events", methods=["GET"])
 @require_auth
 def get_all_events():
@@ -41,7 +41,7 @@ def get_all_events():
     return jsonify({"success": True, "events": response}), 200
 
 
-# Update event
+# Uppdatera ett event
 @event_bp.route("/events/<string:event_id>", methods=["PUT"])
 @require_auth
 @validate_schema(UpdateEventSchema)
@@ -57,7 +57,7 @@ def update_event(event_id):
     return jsonify({"success": True, "updatedEvent": response["updatedEvent"]})
 
 
-# Create new event
+# Skapa nytt event
 @event_bp.route("/events/newevent", methods=["POST"])
 @require_auth
 @validate_schema(EventSchema)
@@ -93,14 +93,14 @@ def create_new_team():
         return jsonify(response), 409
 
 
-# Join a team
+# Gå med i ett team
 @event_bp.route(
     "/events/<string:event_id>/teams/<string:team_id>/join", methods=["POST"]
 )
 @require_auth
 def join_team(event_id, team_id):
 
-    # Validated data after middleware
+    # Hämtar data från bodyn
     data = request.get_json()
     user_id = data["userId"]
 
