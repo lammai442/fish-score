@@ -99,7 +99,7 @@ export const Teams = ({
 					)}
 				</Flex>
 				<Text>
-					Medlemmar:{' '}
+					Members:{' '}
 					{team.members.map((member) => member.name).join(', ')}
 				</Text>
 				<Text fz={'xl'}>Totalt: {team.totalCatchWeight} kg</Text>

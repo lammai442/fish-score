@@ -1,4 +1,4 @@
-import { FishEvent, NewFishEvent } from '@fishScore/eventsdata';
+import { NewFishEvent } from '@fishScore/eventsdata';
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
 import {
@@ -151,6 +151,42 @@ export const fetchUpdateEvent = async (
 		const response = await axios.put(
 			`${apiUrl}/events/${eventId}`,
 			{ newEventName: newEventname },
+			{
+				withCredentials: true,
+			},
+		);
+
+		// Open loginModal if response is 401 (No token)
+		if (response.status === 401) {
+			useAuthStore.getState().openLoginModal();
+			return { success: false, error: response.data.error };
+		}
+
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status: error.response?.status || 500,
+		};
+	}
+};
+
+// Registrera ny fångst
+export const fetchAddCatch = async (
+	eventId: string | undefined,
+	weight: string,
+	teamId: string,
+	userId: string,
+) => {
+	try {
+		const response = await axios.post(
+			`${apiUrl}/events/${eventId}/teams/${teamId}/add-catch`,
+			{ weight: weight, userId: userId },
 			{
 				withCredentials: true,
 			},

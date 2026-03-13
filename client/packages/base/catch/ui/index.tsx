@@ -5,9 +5,10 @@ import { useParams } from 'react-router-dom';
 
 type Props = {
 	close: () => void;
+	eventId: string;
 };
 
-export const Catch = ({ close }: Props) => {
+export const Catch = ({ close, eventId }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState<string>('');
 	const { user } = useUserStore();
@@ -17,9 +18,9 @@ export const Catch = ({ close }: Props) => {
 		// Rensa tidigare fel
 		setErrorInput('');
 
-		const value = inputValue.trim();
+		const numberValue = Number(inputValue);
 
-		if (value.length === 0) {
+		if (!numberValue) {
 			setErrorInput(`You need to fill in a number`);
 			return;
 		}
@@ -28,16 +29,24 @@ export const Catch = ({ close }: Props) => {
 			setErrorInput(`You must be logged in to add a catch`);
 			return;
 		}
+
+		const roundedDown = Math.floor(numberValue * 10) / 10;
+
+		const response = 
+
 	};
 	return (
 		<Stack>
 			<Text>Add a new fish catch</Text>
 			<TextInput
+				inputMode='decimal'
+				step={0.01}
 				type='number'
 				label={'Weight'}
 				value={inputValue}
 				onChange={(event) => {
-					setInputValue(event.currentTarget.value);
+					const value = event.currentTarget.value.replace(',', '.');
+					setInputValue(value);
 					setErrorInput('');
 				}}
 				error={errorInput}></TextInput>
