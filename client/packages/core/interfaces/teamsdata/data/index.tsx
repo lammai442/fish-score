@@ -23,5 +23,5 @@ export interface FishCatch {
 export interface TeamUserData {
 	userId?: string;
 	eventId?: string;
-	teamId: string;
+	teamId?: string;
 }

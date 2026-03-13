@@ -1,23 +1,26 @@
 import { fetchJoinTeam } from '@fishScore/apievents';
-import type { Team } from '@fishScore/eventsdata';
 import { Button, Flex, Stack, Text, Title } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
-import { TeamUserData } from '../../../core/interfaces/teamsdata/data';
+import { Team, TeamUserData } from '../../../core/interfaces/teamsdata/data';
 type Props = {
 	team: Team;
 	userId: string | undefined;
 	rankNr: number;
-	userExistInTeam: boolean | undefined;
 	eventId: string | undefined;
+	userIsInAnyTeam: boolean | undefined;
 };
 
 export const Teams = ({
 	team,
 	userId,
 	rankNr,
-	userExistInTeam,
 	eventId,
+	userIsInAnyTeam,
 }: Props) => {
+	const userExistInTeam = team.members.some(
+		(member) => member.userId === userId,
+	);
+
 	let trophyColor = '';
 
 	switch (rankNr) {
@@ -38,10 +41,8 @@ export const Teams = ({
 			eventId: eventId,
 			teamId: team.teamId,
 		};
-		console.log('teamUserData: ', teamUserData);
 
 		const response = await fetchJoinTeam(teamUserData);
-		console.log('response: ', response);
 	};
 	return (
 		<>
@@ -103,7 +104,7 @@ export const Teams = ({
 				</Text>
 				<Text fz={'xl'}>Totalt: {team.totalCatchWeight} kg</Text>
 
-				{!userExistInTeam && (
+				{!userIsInAnyTeam && (
 					<Button
 						bg={'var(--bg-black-color)'}
 						onClick={handleJoinTeam}>
