@@ -19,6 +19,10 @@ class UpdateEventSchema(Schema):
     newEventName = fields.String(required=True, validate=validate.Length(min=1, max=18))
 
 
+class CatchSchema(Schema):
+    catchWeight = fields.Float(required=True, validate=validate.Range(min=0.1))
+
+
 class TeamSchema(Schema):
     eventId = fields.String(
         required=True,

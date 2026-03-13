@@ -32,7 +32,7 @@ export const EventPage = () => {
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const { user } = useUserStore();
 
-	const userIsInAnyTeam = currentEvent?.teams.some((team) =>
+	const usersTeam = currentEvent?.teams.find((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
 
@@ -64,7 +64,7 @@ export const EventPage = () => {
 			</Stack>
 
 			{/* Join a team message */}
-			{!userIsInAnyTeam && (
+			{!!usersTeam && (
 				<Flex
 					bdrs={'lg'}
 					p={'md'}
@@ -107,7 +107,10 @@ export const EventPage = () => {
 
 			<>
 				<BaseModal title='Add new catch' opened={opened} close={close}>
-					<Catch close={close}></Catch>
+					<Catch
+						close={close}
+						eventId={id}
+						teamId={usersTeam?.teamId}></Catch>
 				</BaseModal>
 				<ActionIcon
 					radius={'xl'}
@@ -150,7 +153,7 @@ export const EventPage = () => {
 										team={team}
 										userId={user?.userId}
 										rankNr={index + 1}
-										userIsInAnyTeam={userIsInAnyTeam}
+										userIsInAnyTeam={!!usersTeam}
 										eventId={id}></Teams>
 								);
 							})}

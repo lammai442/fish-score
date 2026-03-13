@@ -179,14 +179,13 @@ export const fetchUpdateEvent = async (
 // Registrera ny fångst
 export const fetchAddCatch = async (
 	eventId: string | undefined,
-	weight: string,
-	teamId: string,
-	userId: string,
+	catchWeight: number,
+	teamId: string | undefined,
 ) => {
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/${eventId}/teams/${teamId}/add-catch`,
-			{ weight: weight, userId: userId },
+			{ weight: catchWeight },
 			{
 				withCredentials: true,
 			},

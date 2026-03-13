@@ -314,3 +314,75 @@ def join_team_in_db(event_id, team_id, user_id):
 
     except ClientError as e:
         return {"success": False, "error": str(e)}
+
+
+def add_catch_in_db(event_id, team_id, user_id, catch_weight):
+    user = get_user_by_user_id(user_id)
+
+    if user is None:
+        return {"success": False, "error": "User not found"}
+
+    user_full_name = f"{user['firstName']} {user['lastName']}"
+
+    try:
+        response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            }
+        )
+
+        event_item = response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Event not found"}
+
+        teams = event_item.get("teams", [])
+        team_found = None
+
+        for team in teams:
+            if team.get("teamId") == team_id:
+                team_found = team
+                break
+
+        if not team_found:
+            return {"success": False, "error": "Team not found"}
+
+        catch_id = str(uuid.uuid4())[:5]
+        now = datetime.now(timezone.utc).isoformat()
+
+        catches = team_found.get("catches", [])
+
+        item = {
+            "catchId": catch_id,
+            "catchedBy": user_id,
+            "catchersFullName": user_full_name,
+            "createdAt": now,
+            "catchWeight": catch_weight,
+        }
+
+        catches.append(item)
+
+        # Spara över nya catches
+        team_found["catches"] = catches
+
+        # Uppdatera teamets totalvikt
+        team_found["totalCatchWeight"] = round(
+            team_found.get("totalCatchWeight", 0) + catch_weight, 1
+        )
+
+        table.update_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            },
+            UpdateExpression="SET teams = :teams",
+            ExpressionAttributeValues={
+                ":teams": teams,
+            },
+        )
+
+        return {"success": True, "updatedTeam": team_found}
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
