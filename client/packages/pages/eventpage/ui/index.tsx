@@ -1,5 +1,5 @@
 import './index.css';
-import type { FishEvent, Team } from '@fishScore/eventsdata';
+import type { FishEvent } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
 import { Button, Flex, Stack, Tabs, Text, Title } from '@mantine/core';
@@ -12,6 +12,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
 import { IconUsers } from '@tabler/icons-react';
+import { Team } from '../../../core/interfaces/teamsdata/data';
 
 export const EventPage = () => {
 	const { id } = useParams();
@@ -94,6 +95,7 @@ export const EventPage = () => {
 				</>
 			)}
 
+			{/* Leaderboard/Activity tab  */}
 			<Tabs
 				variant='pills'
 				value={mode}
@@ -102,8 +104,12 @@ export const EventPage = () => {
 					tab: 'scoreboard__tab',
 					list: 'scoreboard__list',
 				}}>
-				{/* Tab  */}
-				<Tabs.List grow justify='center'>
+				<Tabs.List
+					grow
+					justify='center'
+					p={'0.2rem'}
+					bg={'var(--bg-medium-light-grey-color)'}
+					bdrs={15}>
 					<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
 					<Tabs.Tab value='activity'>Activity</Tabs.Tab>
 				</Tabs.List>
