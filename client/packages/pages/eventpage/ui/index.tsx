@@ -2,7 +2,15 @@ import './index.css';
 import type { FishEvent } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
-import { Button, Flex, Stack, Tabs, Text, Title } from '@mantine/core';
+import {
+	ActionIcon,
+	Button,
+	Flex,
+	Stack,
+	Tabs,
+	Text,
+	Title,
+} from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
@@ -13,6 +21,7 @@ import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
 import { IconUsers } from '@tabler/icons-react';
 import { Team } from '../../../core/interfaces/teamsdata/data';
+import { Catch } from '../../../base/catch/ui';
 
 export const EventPage = () => {
 	const { id } = useParams();
@@ -23,7 +32,7 @@ export const EventPage = () => {
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const { user } = useUserStore();
 
-	const userExistInTeam = currentEvent?.teams.some((team) =>
+	const userIsInAnyTeam = currentEvent?.teams.some((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
 
@@ -55,7 +64,7 @@ export const EventPage = () => {
 			</Stack>
 
 			{/* Join a team message */}
-			{!userExistInTeam && (
+			{!userIsInAnyTeam && (
 				<Flex
 					bdrs={'lg'}
 					p={'md'}
@@ -94,6 +103,24 @@ export const EventPage = () => {
 					</Button>
 				</>
 			)}
+			{/* Catch knapp*/}
+
+			<>
+				<BaseModal title='Add new catch' opened={opened} close={close}>
+					<Catch close={close}></Catch>
+				</BaseModal>
+				<ActionIcon
+					radius={'xl'}
+					size={'50px'}
+					fz={'xl'}
+					pos={'fixed'}
+					right={'1.5rem'}
+					bottom={'1.5rem'}
+					color='var(--bg-black-color)'
+					onClick={open}>
+					+
+				</ActionIcon>
+			</>
 
 			{/* Leaderboard/Activity tab  */}
 			<Tabs
@@ -123,7 +150,7 @@ export const EventPage = () => {
 										team={team}
 										userId={user?.userId}
 										rankNr={index + 1}
-										userExistInTeam={userExistInTeam}
+										userIsInAnyTeam={userIsInAnyTeam}
 										eventId={id}></Teams>
 								);
 							})}

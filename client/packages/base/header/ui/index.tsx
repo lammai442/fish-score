@@ -11,10 +11,14 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { IconBell } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import { useUserStore } from '@fishScore/useUserStore';
 
 export const Header = () => {
 	const navigate = useNavigate();
 	const [visible, { toggle }] = useDisclosure();
+	const { user } = useUserStore();
+
+	const userFullName = `${user?.firstName} ${user?.lastName}`;
 
 	return (
 		<Container size='lg'>
@@ -45,10 +49,8 @@ export const Header = () => {
 						onClick={() => navigate('/profile')}
 						color='var(--bg-primary-color)'
 						radius='xl'
-						style={{ cursor: 'pointer' }}>
-						{' '}
-						SL
-					</Avatar>
+						style={{ cursor: 'pointer' }}
+						name={userFullName}></Avatar>
 				</Flex>
 			</Flex>
 			<Divider mb='0.5rem' />
