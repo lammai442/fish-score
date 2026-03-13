@@ -1,9 +1,3 @@
-.scoreboard__list {
-	padding: 0.2rem;
-	background-color: var(--bg-medium-light-grey-color);
-	border-radius: 15px;
-}
-
 .scoreboard__tab {
 	transition: 0.3s;
 }
