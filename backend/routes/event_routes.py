@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g
 from middlewares.require_auth import require_auth
-from schemas.event_schema import EventSchema, TeamSchema, UpdateEventSchema
+from schemas.event_schema import EventSchema, TeamSchema, UpdateEventSchema, CatchSchema
 from middlewares.validate_schema import validate_schema
 from services.events import (
     get_event_in_db,
@@ -9,6 +9,7 @@ from services.events import (
     create_new_team_in_db,
     update_event_in_db,
     join_team_in_db,
+    add_catch_in_db,
 )
 
 # Skapa blueprint instans
@@ -111,5 +112,26 @@ def join_team(event_id, team_id):
 
     if response["success"]:
         return jsonify({"success": True, "message": response["message"]}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Lägg till en catch
+@event_bp.route(
+    "/events/<string:event_id>/teams/<string:team_id>/add-catch", methods=["POST"]
+)
+@require_auth
+@validate_schema(CatchSchema)
+def add_catch(event_id, team_id):
+
+    # Hämtar data från bodyn
+    data = request.get_json()
+    catch_weight = data.get("catchWeight")
+    user_id = g.user["sub"]
+
+    response = add_catch_in_db(event_id, team_id, user_id, catch_weight)
+
+    if response["success"]:
+        return jsonify({"success": True, "updatedTeam": response["updatedTeam"]}), 200
     else:
         return jsonify(response), 409

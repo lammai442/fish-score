@@ -2,17 +2,18 @@ import { Button, Stack, Text, TextInput } from '@mantine/core';
 import { useState } from 'react';
 import { useUserStore } from '@fishScore/useUserStore';
 import { useParams } from 'react-router-dom';
+import { fetchAddCatch } from '@fishScore/apievents';
 
 type Props = {
 	close: () => void;
-	eventId: string;
+	eventId: string | undefined;
+	teamId: string | undefined;
 };
 
-export const Catch = ({ close, eventId }: Props) => {
+export const Catch = ({ close, eventId, teamId }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState<string>('');
 	const { user } = useUserStore();
-	const { id } = useParams();
 
 	const handleCreateItem = async () => {
 		// Rensa tidigare fel
@@ -30,10 +31,14 @@ export const Catch = ({ close, eventId }: Props) => {
 			return;
 		}
 
-		const roundedDown = Math.floor(numberValue * 10) / 10;
+		const roundedDownCatchWeight = Math.floor(numberValue * 10) / 10;
+		const response = await fetchAddCatch(
+			eventId,
+			roundedDownCatchWeight,
+			teamId,
+		);
 
-		const response = 
-
+		console.log('response: ', response);
 	};
 	return (
 		<Stack>
