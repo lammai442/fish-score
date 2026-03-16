@@ -185,7 +185,7 @@ export const fetchAddCatch = async (
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/${eventId}/teams/${teamId}/add-catch`,
-			{ weight: catchWeight },
+			{ catchWeight: catchWeight },
 			{
 				withCredentials: true,
 			},

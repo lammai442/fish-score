@@ -5,9 +5,13 @@ import { useState } from 'react';
 import { useUserStore } from '@fishScore/useUserStore';
 import type { FishEvent, NewFishEvent } from '@fishScore/eventsdata';
 import { fetchCreateEvent, fetchCreateTeam } from '@fishScore/apievents';
-import { ApiResponse } from '../../../core/interfaces/apidata/data';
+import type { ApiResponse } from '../../../core/interfaces/apidata/data';
 import { useParams } from 'react-router-dom';
-import { createNewTeam, Team } from '../../../core/interfaces/teamsdata/data';
+import type {
+	createNewTeam,
+	Team,
+} from '../../../core/interfaces/teamsdata/data';
+import { Loading } from '@fishScore/loading';
 
 type Props = {
 	close: () => void;
@@ -19,6 +23,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 	const [inputValue, setInputValue] = useState<string>('');
 	const { user } = useUserStore();
 	const { id } = useParams();
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleCreateItem = async () => {
 		const emojiRegex = /[\p{Extended_Pictographic}]/u;
@@ -52,6 +57,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 		}
 
 		let response: ApiResponse<FishEvent | Team>;
+		setLoading(true);
 		if (type === 'event') {
 			const createEventDesc: NewFishEvent = {
 				eventName: value,
@@ -73,6 +79,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			response = await fetchCreateTeam(createTeamDesc);
 		}
 
+		setLoading(false);
 		if (response.success) {
 			showNotification({
 				title: `New ${type} created`,
@@ -84,32 +91,41 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			setInputValue('');
 
 			close();
-		} else {
-			setErrorInput(response.error ?? `Unable to create ${type}`);
+		} else if (!response.success) {
+			if (response.data && 'error' in response.data) {
+				setErrorInput(response.data.error);
+			} else if (response.error) {
+				setErrorInput(response.error);
+			} else {
+				setErrorInput('Something went wrong');
+			}
 		}
 	};
 	return (
-		<Stack>
-			<Text>
-				{type === 'event'
-					? 'Add a new fishing event'
-					: 'Add a new team'}
-			</Text>
-			<TextInput
-				label={type === 'event' ? 'Event name' : 'Team name'}
-				value={inputValue}
-				onChange={(event) => {
-					setInputValue(event.currentTarget.value);
-					setErrorInput('');
-				}}
-				error={errorInput}></TextInput>
-			<Button
-				color='var(--bg-black-color)'
-				radius={'md'}
-				size='md'
-				onClick={handleCreateItem}>
-				Create
-			</Button>
-		</Stack>
+		<>
+			<Loading visible={loading} text='Creating new event'></Loading>
+			<Stack>
+				<Text>
+					{type === 'event'
+						? 'Add a new fishing event'
+						: 'Add a new team'}
+				</Text>
+				<TextInput
+					label={type === 'event' ? 'Event name' : 'Team name'}
+					value={inputValue}
+					onChange={(event) => {
+						setInputValue(event.currentTarget.value);
+						setErrorInput('');
+					}}
+					error={errorInput}></TextInput>
+				<Button
+					color='var(--bg-black-color)'
+					radius={'md'}
+					size='md'
+					onClick={handleCreateItem}>
+					Create
+				</Button>
+			</Stack>
+		</>
 	);
 };
