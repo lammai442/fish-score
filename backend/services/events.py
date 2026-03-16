@@ -4,6 +4,7 @@ from .table import get_dynamodb_table
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from .users import get_user_by_user_id
+from decimal import Decimal
 
 table = get_dynamodb_table()
 
@@ -318,6 +319,7 @@ def join_team_in_db(event_id, team_id, user_id):
 
 def add_catch_in_db(event_id, team_id, user_id, catch_weight):
     user = get_user_by_user_id(user_id)
+    catch_weight_decimal = Decimal(str(catch_weight))
 
     if user is None:
         return {"success": False, "error": "User not found"}
@@ -358,7 +360,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
             "catchedBy": user_id,
             "catchersFullName": user_full_name,
             "createdAt": now,
-            "catchWeight": catch_weight,
+            "catchWeight": catch_weight_decimal,
         }
 
         catches.append(item)
@@ -368,7 +370,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
 
         # Uppdatera teamets totalvikt
         team_found["totalCatchWeight"] = round(
-            team_found.get("totalCatchWeight", 0) + catch_weight, 1
+            team_found.get("totalCatchWeight", 0) + catch_weight_decimal, 1
         )
 
         table.update_item(

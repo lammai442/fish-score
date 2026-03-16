@@ -20,8 +20,8 @@ import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
 import { IconUsers } from '@tabler/icons-react';
-import { Team } from '../../../core/interfaces/teamsdata/data';
 import { Catch } from '../../../base/catch/ui';
+import type { Team } from '../../../core/interfaces/teamsdata/data';
 
 export const EventPage = () => {
 	const { id } = useParams();
@@ -35,7 +35,6 @@ export const EventPage = () => {
 	const usersTeam = currentEvent?.teams.find((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
-
 	// Synka liveuppdateringar från websocket
 	useEffect(() => {
 		const updatedEvent = events.find((e) => e.id === id);
@@ -64,7 +63,7 @@ export const EventPage = () => {
 			</Stack>
 
 			{/* Join a team message */}
-			{!!usersTeam && (
+			{!usersTeam && (
 				<Flex
 					bdrs={'lg'}
 					p={'md'}
@@ -120,6 +119,8 @@ export const EventPage = () => {
 					right={'1.5rem'}
 					bottom={'1.5rem'}
 					color='var(--bg-black-color)'
+					disabled={!usersTeam ? true : false}
+					style={{ zIndex: 1000 }}
 					onClick={open}>
 					+
 				</ActionIcon>
