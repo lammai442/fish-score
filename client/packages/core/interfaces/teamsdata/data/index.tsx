@@ -11,7 +11,6 @@ export interface createNewTeam {
 	eventId?: string;
 	teamName: string;
 	createdBy: string;
-	members: [{ userId: string; name: string }];
 }
 
 export interface FishCatch {

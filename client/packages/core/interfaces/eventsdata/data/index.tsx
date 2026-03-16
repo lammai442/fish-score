@@ -7,7 +7,7 @@ export interface FishEvent {
 	eventName: string;
 	createdAt?: string;
 	createdBy: string | undefined;
-	entityType: string;
+	entityType?: string;
 	lookupType: string;
 	lookupValue: string;
 	status: string;

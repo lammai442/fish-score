@@ -45,25 +45,3 @@ class TeamSchema(Schema):
             ),
         ],
     )
-    members = fields.List(
-        fields.Nested(
-            {
-                "userId": fields.String(
-                    required=True,
-                    validate=[
-                        validate.Length(equal=10),
-                        validate.Regexp(
-                            r"^user-[a-zA-Z0-9]{5}$",
-                            error="userId must match format user-xxxxx",
-                        ),
-                    ],
-                ),
-                "name": fields.String(
-                    required=True,
-                    validate=validate.Length(min=1, max=50),
-                ),
-            }
-        ),
-        required=True,
-        validate=validate.Length(min=1),
-    )

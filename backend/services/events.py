@@ -54,6 +54,53 @@ def get_event_in_db(event_id):
         return None
 
 
+def get_event_view_in_db(event_id):
+    try:
+        response = table.query(KeyConditionExpression=Key("PK").eq(f"EVENT#{event_id}"))
+
+        items = response.get("Items", [])
+
+        event_item = None
+        teams = []
+        catches = []
+
+        for item in items:
+            sk = item["SK"]
+
+            if sk == "EVENT":
+                event_item = item
+
+            elif sk.startswith("TEAM#"):
+                teams.append(item)
+
+            elif sk.startswith("CATCH#"):
+                catches.append(item)
+
+        if not event_item:
+            return {"success": False, "error": "Event not found"}
+
+        # Koppla catches till rätt team
+        catches_by_team = {}
+        for catch in catches:
+            team_id = catch["teamId"]
+            catches_by_team.setdefault(team_id, []).append(catch)
+
+        # Lägg catches på varje team
+        for team in teams:
+            team_id = team["teamId"]
+            team["catches"] = catches_by_team.get(team_id, [])
+
+        event_view = {
+            **event_item,
+            "teams": teams,
+        }
+
+        return {"success": True, "event": event_view}
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
+
+
 def create_new_event_in_db(event_name, created_by):
     try:
         # Kontrollera om event med samma namn redan finns
@@ -100,107 +147,6 @@ def create_new_event_in_db(event_name, created_by):
         return {"success": False, "error": str(e)}
 
 
-def create_new_team_in_db(data):
-    event_id = data["eventId"]
-    team_name = data["teamName"]
-    members = data["members"]
-
-    try:
-        response = table.get_item(
-            Key={
-                "PK": f"EVENT#{event_id}",
-                "SK": "EVENT",
-            }
-        )
-
-        event_item = response.get("Item")
-
-        if not event_item:
-            return {"success": False, "error": "Event not found"}
-
-        teams = event_item.get("teams", [])
-
-        for team in teams:
-            existing_name = team.get("teamName")
-            if existing_name == team_name:
-                return {
-                    "success": False,
-                    "error": "A team with this name already exists in this event",
-                }
-
-        team_id = str(uuid.uuid4())[:5]
-        now = datetime.now(timezone.utc).isoformat()
-
-        new_team = {
-            "teamId": f"team_{team_id}",
-            "teamName": team_name.strip(),
-            "createdAt": now,
-            "members": members,
-            "catches": [],
-            "totalCatchWeight": 0,
-        }
-
-        teams.append(new_team)
-
-        table.update_item(
-            Key={
-                "PK": f"EVENT#{event_id}",
-                "SK": "EVENT",
-            },
-            UpdateExpression="SET teams = :teams",
-            ExpressionAttributeValues={
-                ":teams": teams,
-            },
-        )
-
-        return {"success": True, "team": new_team}
-
-    except ClientError as e:
-        return {"success": False, "error": str(e)}
-
-    # teamExist = get_team_by_team_name(data["teamName"])
-
-    # if teamExist["success"]:
-    #     return {"success": False, "error": "Team with this name already exist"}
-
-    # team_id = str(uuid.uuid4())[:5]
-    # now = datetime.now(timezone.utc).isoformat()
-
-    # team_item = {
-    #     "PK": f"EVENT#{data["eventId"]}",
-    #     "SK": f"TEAM#team-{team_id}",
-    #     "id": f"team_{team_id}",
-    #     "eventId": f"event_{data["eventId"]}",
-    #     "teamName": data["teamName"],
-    #     "createdBy": data["createdBy"],
-    #     "lookupType": "EVENT#TEAMNAME",
-    #     "lookupValue": data["teamName"],
-    #     "entityType": "TEAM",
-    #     "createdAt": now,
-    #     "members": data["members"],
-    #     "totalCatches": 0,
-    # }
-
-    # try:
-    #     table.put_item(
-    #         Item=team_item,
-    #         ConditionExpression="attribute_not_exists(PK)",
-    #     )
-
-    #     return {
-    #         "success": True,
-    #         "team": {
-    #             "teamId": f"team-{team_id}",
-    #             "eventName": data["teamName"],
-    #             "createdBy": data["createdBy"],
-    #             "createdAt": now,
-    #         },
-    #     }
-
-    # except ClientError as e:
-    #     return {"success": False, "error": str(e)}
-
-
 def get_event_by_event_name(event_name):
     event_name_lower = event_name.lower()
     response = table.query(
@@ -223,99 +169,6 @@ def get_event_by_event_name(event_name):
             return {"success": True, "event": matching_event}
 
     return {"success": False, "error": "Event not found"}
-
-
-def get_team_by_team_name(event_id, team_name):
-    team_name_lower = team_name.lower()
-
-    try:
-        response = table.query(
-            IndexName="LookupIndex",
-            KeyConditionExpression=Key("lookupType").eq("EVENT#TEAMNAME"),
-        )
-
-        if response["Count"] > 0:
-            # Kontroll om något av Teamen har samma namn
-            matching_team = next(
-                (
-                    item
-                    for item in response["Items"]
-                    if item.get("teamName", "").lower() == team_name_lower
-                ),
-                None,
-            )
-
-            if matching_team:
-                return {"success": True, "team": matching_team}
-
-        return {"success": False, "error": "Team not found"}
-
-    except ClientError as e:
-        return {"success": False, "error": str(e)}
-
-
-def join_team_in_db(event_id, team_id, user_id):
-    user = get_user_by_user_id(user_id)
-
-    if user is None:
-        return {"success": False, "error": "User not found"}
-
-    user_full_name = f"{user['firstName']} {user['lastName']}"
-
-    try:
-        response = table.get_item(
-            Key={
-                "PK": f"EVENT#{event_id}",
-                "SK": "EVENT",
-            }
-        )
-
-        event_item = response.get("Item")
-
-        if not event_item:
-            return {"success": False, "error": "Event not found"}
-
-        teams = event_item.get("teams", [])
-        team_found = None
-
-        for team in teams:
-            if team.get("teamId") == team_id:
-                team_found = team
-                break
-
-        if not team_found:
-            return {"success": False, "error": "Team not found"}
-
-        members = team_found.get("members", [])
-
-        already_member = any(member["userId"] == user_id for member in members)
-        if already_member:
-            return {"success": False, "error": "User already in team"}
-
-        members.append(
-            {
-                "userId": user_id,
-                "name": user_full_name,
-            }
-        )
-
-        team_found["members"] = members
-
-        table.update_item(
-            Key={
-                "PK": f"EVENT#{event_id}",
-                "SK": "EVENT",
-            },
-            UpdateExpression="SET teams = :teams",
-            ExpressionAttributeValues={
-                ":teams": teams,
-            },
-        )
-
-        return {"success": True, "message": "Joined team successfully"}
-
-    except ClientError as e:
-        return {"success": False, "error": str(e)}
 
 
 def add_catch_in_db(event_id, team_id, user_id, catch_weight):
