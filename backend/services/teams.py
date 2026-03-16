@@ -54,6 +54,19 @@ def create_new_team_in_db(event_id, team_name, created_by):
 
         table.put_item(Item=db_team_item)
 
+        # Uppdaterar eventet med teamCount
+        table.update_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            },
+            UpdateExpression="SET teamCount = if_not_exists(teamCount, :zero) + :one",
+            ExpressionAttributeValues={
+                ":zero": 0,
+                ":one": 1,
+            },
+        )
+
         return {"success": True, "team": db_team_item}
 
     except ClientError as e:

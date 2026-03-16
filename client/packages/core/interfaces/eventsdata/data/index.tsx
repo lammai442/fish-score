@@ -11,7 +11,8 @@ export interface FishEvent {
 	lookupType: string;
 	lookupValue: string;
 	status: string;
-	teams: Team[];
+	teams?: Team[];
+	teamCount?: number;
 }
 
 export interface NewFishEvent {

@@ -53,7 +53,7 @@ export const Events = ({ events = [] }: Props) => {
 									{[
 										{
 											label: 'Teams',
-											value: event.teams?.length,
+											value: event.teamCount,
 										},
 									].map((item) => (
 										<Flex
