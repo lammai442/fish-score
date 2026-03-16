@@ -8,7 +8,6 @@ from services.events import (
     create_new_event_in_db,
     get_all_events_in_db,
     update_event_in_db,
-    add_catch_in_db,
 )
 
 # Skapa blueprint instans
@@ -73,26 +72,5 @@ def create_new_event():
     if response["success"]:
         saved_event = response["event"]
         return jsonify({"success": True, "event": saved_event}), 200
-    else:
-        return jsonify(response), 409
-
-
-# Lägg till en catch
-@event_bp.route(
-    "/events/<string:event_id>/teams/<string:team_id>/add-catch", methods=["POST"]
-)
-@require_auth
-@validate_schema(CatchSchema)
-def add_catch(event_id, team_id):
-
-    # Hämtar data från bodyn
-    data = request.get_json()
-    catch_weight = data.get("catchWeight")
-    user_id = g.user["sub"]
-
-    response = add_catch_in_db(event_id, team_id, user_id, catch_weight)
-
-    if response["success"]:
-        return jsonify({"success": True, "updatedTeam": response["updatedTeam"]}), 200
     else:
         return jsonify(response), 409

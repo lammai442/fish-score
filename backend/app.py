@@ -6,6 +6,7 @@ from routes.auth_routes import auth_bp
 from routes.user_routes import user_bp
 from routes.event_routes import event_bp
 from routes.team_routes import team_bp
+from routes.catch_routes import catch_bp
 
 app = Flask(__name__)
 
@@ -21,6 +22,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(event_bp)
 app.register_blueprint(team_bp)
+app.register_blueprint(catch_bp)
 
 
 @app.errorhandler(404)

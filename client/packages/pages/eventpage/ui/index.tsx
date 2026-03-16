@@ -72,7 +72,11 @@ export const EventPage = () => {
 
 	// Synka liveuppdateringar från websocket
 	// useEffect(() => {
-	// 	const updatedEvent = events.find((e) => e.eventId === id);
+	// 	const updatedEvent = events.find((e) => e.eventId === eventId);
+	// 	console.log('updatedEvent: ', updatedEvent);
+	// 	if (!updatedEvent) {
+	// 		return;
+	// 	}
 	// 	setCurrentEvent(updatedEvent);
 
 	// 	const sortedLeaderboard: Team[] = updatedEvent.teams.sort(
