@@ -1,7 +1,10 @@
 import { fetchJoinTeam } from '@fishScore/apievents';
 import { Button, Flex, Stack, Text, Title } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
-import { Team, TeamUserData } from '../../../core/interfaces/teamsdata/data';
+import type {
+	Team,
+	TeamUserData,
+} from '../../../core/interfaces/teamsdata/data';
 type Props = {
 	team: Team;
 	userId: string | undefined;
@@ -43,6 +46,7 @@ export const Teams = ({
 		};
 
 		const response = await fetchJoinTeam(teamUserData);
+		console.log('response: ', response);
 	};
 	return (
 		<>

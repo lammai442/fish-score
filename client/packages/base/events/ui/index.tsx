@@ -1,4 +1,4 @@
-import { FishEvent } from '@fishScore/eventsdata';
+import type { FishEvent } from '@fishScore/eventsdata';
 import { Text, Title, Flex } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ type Props = {
 export const Events = ({ events = [] }: Props) => {
 	const navigate = useNavigate();
 	const handleToEvent = (event: FishEvent) => {
-		navigate(`/event/${event.id}`);
+		navigate(`/event/${event.eventId}`);
 	};
 
 	return (

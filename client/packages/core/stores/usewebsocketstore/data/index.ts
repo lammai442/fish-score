@@ -1,5 +1,6 @@
+import type { FishEvent } from '@fishScore/eventsdata';
+import type { User } from '@fishScore/usersdata';
 import { create } from 'zustand';
-import type { User, FishEvent } from '@fishScore/interfaces';
 
 type WebSocketState = {
 	ws: WebSocket | null;
@@ -36,7 +37,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 	updateEvent: (updatedEvent: FishEvent): void => {
 		set((state) => {
 			const existingIndex = state.events.findIndex(
-				(e) => e.PK === updatedEvent.PK,
+				(e) => e.eventId === updatedEvent.eventId,
 			);
 			if (existingIndex >= 0) {
 				// Uppdatera befintligt event

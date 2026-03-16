@@ -22,7 +22,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState<string>('');
 	const { user } = useUserStore();
-	const { id } = useParams();
+	const { eventId } = useParams();
 	const [loading, setLoading] = useState<boolean>(false);
 
 	const handleCreateItem = async () => {
@@ -66,19 +66,14 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			response = await fetchCreateEvent(createEventDesc);
 		} else {
 			const createTeamDesc: createNewTeam = {
-				eventId: id,
+				eventId: eventId,
 				teamName: value,
-				members: [
-					{
-						userId: user.userId,
-						name: `${user.firstName} ${user.lastName}`,
-					},
-				],
 				createdBy: user.userId,
 			};
 			response = await fetchCreateTeam(createTeamDesc);
 		}
 
+		console.log('response: ', response);
 		setLoading(false);
 		if (response.success) {
 			showNotification({

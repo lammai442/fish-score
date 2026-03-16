@@ -79,6 +79,10 @@ def get_event_view_in_db(event_id):
         if not event_item:
             return {"success": False, "error": "Event not found"}
 
+        for team in teams:
+            for key in ["PK", "SK", "lookupType", "lookupValue"]:
+                team.pop(key, None)
+
         # Koppla catches till rätt team
         catches_by_team = {}
         for catch in catches:

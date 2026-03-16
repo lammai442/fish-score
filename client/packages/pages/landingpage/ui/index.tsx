@@ -13,7 +13,6 @@ import { fetchAllEvents } from '@fishScore/apievents';
 export const LandingPage = () => {
 	const { events, setEvents } = useWebSocketStore();
 	const [opened, { open, close }] = useDisclosure(false);
-	const { user } = useUserStore();
 
 	useEffect(() => {
 		const getAllEvents = async () => {
@@ -26,7 +25,6 @@ export const LandingPage = () => {
 		getAllEvents();
 	}, []);
 
-	useEffect;
 	return (
 		<>
 			{/* Modal för att skapa ett nytt event */}

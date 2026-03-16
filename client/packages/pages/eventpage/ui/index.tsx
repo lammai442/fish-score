@@ -22,9 +22,10 @@ import { useUserStore } from '@fishScore/useUserStore';
 import { IconUsers } from '@tabler/icons-react';
 import { Catch } from '../../../base/catch/ui';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
+import { fetchEventView } from '@fishScore/apievents';
 
 export const EventPage = () => {
-	const { id } = useParams();
+	const { eventId } = useParams();
 	const { events } = useWebSocketStore();
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
@@ -33,23 +34,55 @@ export const EventPage = () => {
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const { user } = useUserStore();
 
+	// Kontroll om user finns i team
 	const usersTeam = currentEvent?.teams.find((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
-	// Synka liveuppdateringar från websocket
-	useEffect(() => {
-		const updatedEvent = events.find((e) => e.id === id);
 
-		setCurrentEvent(updatedEvent);
+	const loadEvent = async () => {
+		if (!eventId) return;
 
-		const sortedLeaderboard: Team[] = updatedEvent.teams.sort(
+		const response = await fetchEventView(eventId);
+		if (!response.success) {
+			setCurrentEvent(null);
+			setLeaderboard([]);
+			return;
+		}
+
+		const event = response.data.event;
+		setCurrentEvent(event);
+		const sortedLeaderboard = [...event.teams].sort(
 			(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
 		);
 
-		if (sortedLeaderboard) {
-			setLeaderboard(sortedLeaderboard);
-		}
-	}, [events]);
+		setLeaderboard(sortedLeaderboard);
+	};
+
+	useEffect(() => {
+		loadEvent();
+	}, [eventId]);
+
+	useEffect(() => {
+		const updatedEventSummary = events.find((e) => e.eventId === eventId);
+
+		if (!updatedEventSummary) return;
+
+		loadEvent();
+	}, [events, eventId]);
+
+	// Synka liveuppdateringar från websocket
+	// useEffect(() => {
+	// 	const updatedEvent = events.find((e) => e.eventId === id);
+	// 	setCurrentEvent(updatedEvent);
+
+	// 	const sortedLeaderboard: Team[] = updatedEvent.teams.sort(
+	// 		(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
+	// 	);
+
+	// 	if (sortedLeaderboard) {
+	// 		setLeaderboard(sortedLeaderboard);
+	// 	}
+	// }, [events]);
 
 	return (
 		<>
@@ -111,7 +144,7 @@ export const EventPage = () => {
 					close={addCatchHandlers.close}>
 					<Catch
 						close={addCatchHandlers.close}
-						eventId={id}
+						eventId={eventId}
 						teamId={usersTeam?.teamId}></Catch>
 				</BaseModal>
 				<ActionIcon
@@ -158,7 +191,7 @@ export const EventPage = () => {
 										userId={user?.userId}
 										rankNr={index + 1}
 										userIsInAnyTeam={!!usersTeam}
-										eventId={id}></Teams>
+										eventId={eventId}></Teams>
 								);
 							})}
 					</Stack>
