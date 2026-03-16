@@ -28,7 +28,8 @@ export const EventPage = () => {
 	const { events } = useWebSocketStore();
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
-	const [opened, { open, close }] = useDisclosure(false);
+	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
+	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const { user } = useUserStore();
 
@@ -87,27 +88,29 @@ export const EventPage = () => {
 				<>
 					<BaseModal
 						title='Create team'
-						opened={opened}
-						close={close}>
+						opened={createTeamOpened}
+						close={createTeamHandlers.close}>
 						<CreateItemModal
-							close={close}
+							close={createTeamHandlers.close}
 							type='team'></CreateItemModal>
 					</BaseModal>
 					<Button
 						color='var(--bg-black-color)'
 						size='lg'
 						radius='md'
-						onClick={open}>
+						onClick={createTeamHandlers.open}>
 						+ Create team
 					</Button>
 				</>
 			)}
 			{/* Catch knapp*/}
-
 			<>
-				<BaseModal title='Add new catch' opened={opened} close={close}>
+				<BaseModal
+					title='Add new catch'
+					opened={addCatchOpened}
+					close={addCatchHandlers.close}>
 					<Catch
-						close={close}
+						close={addCatchHandlers.close}
 						eventId={id}
 						teamId={usersTeam?.teamId}></Catch>
 				</BaseModal>
@@ -121,7 +124,7 @@ export const EventPage = () => {
 					color='var(--bg-black-color)'
 					disabled={!usersTeam ? true : false}
 					style={{ zIndex: 1000 }}
-					onClick={open}>
+					onClick={addCatchHandlers.open}>
 					+
 				</ActionIcon>
 			</>

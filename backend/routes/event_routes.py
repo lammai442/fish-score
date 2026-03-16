@@ -77,7 +77,7 @@ def create_new_event():
         return jsonify(response), 409
 
 
-# Create new team
+# Skapa ett nytt team
 @event_bp.route("/events/newteam", methods=["POST"])
 @require_auth
 @validate_schema(TeamSchema)

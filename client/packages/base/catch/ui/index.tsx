@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useUserStore } from '@fishScore/useUserStore';
 import { useParams } from 'react-router-dom';
 import { fetchAddCatch } from '@fishScore/apievents';
+import { showNotification } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 
 type Props = {
 	close: () => void;
@@ -37,7 +39,17 @@ export const Catch = ({ close, eventId, teamId }: Props) => {
 			roundedDownCatchWeight,
 			teamId,
 		);
+		if (response.status) {
+			showNotification({
+				title: `New catch added`,
+				message: `Nice catch! It has been added to your team`,
+				color: 'var(--bg-primary-color)',
+				icon: <IconCheck />,
+				position: 'top-center',
+			});
 
+			close();
+		}
 		console.log('response: ', response);
 	};
 	return (
