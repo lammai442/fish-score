@@ -55,43 +55,44 @@ def get_event_in_db(event_id):
 
 
 def create_new_event_in_db(event_name, created_by):
-
-    eventExist = get_event_by_event_name(event_name)
-
-    # Cancel if event already exist in database
-    if eventExist["success"]:
-        return {"success": False, "error": "Event with this name already exist"}
-
-    event_id = str(uuid.uuid4())[:5]
-    now = datetime.now(timezone.utc).isoformat()
-
-    event_item = {
-        "PK": f"EVENT#event-{event_id}",
-        "SK": "EVENT",
-        "id": f"event-{event_id}",
-        "eventName": event_name,
-        "createdBy": created_by,
-        "lookupType": "EVENT#NAME",
-        "lookupValue": f"event-{event_id}",
-        "entityType": "EVENT",
-        "createdAt": now,
-        "teams": [],
-        "status": "ongoing",
-    }
-
     try:
-        table.put_item(
-            Item=event_item,
-            ConditionExpression="attribute_not_exists(PK)",
+        # Kontrollera om event med samma namn redan finns
+        existing_event_response = table.query(
+            IndexName="LookupIndex",
+            KeyConditionExpression=Key("lookupType").eq("EVENT#NAME")
+            & Key("lookupValue").eq(event_name.lower()),
         )
 
+        if existing_event_response.get("Items"):
+            return {"success": False, "error": "Event with this name already exist"}
+
+        event_id = f"event-{str(uuid.uuid4())[:5]}"
+        now = datetime.now(timezone.utc).isoformat()
+
+        db_item = {
+            "PK": f"EVENT#{event_id}",
+            "SK": "EVENT",
+            "eventId": event_id,
+            "eventName": event_name,
+            "status": "ongoing",
+            "createdBy": created_by,
+            "createdAt": now,
+            "lookupType": "EVENT#NAME",
+            "lookupValue": event_name.lower(),
+        }
+
+        table.put_item(Item=db_item)
+
+        # Returnera gärna i samma shape som frontend redan förväntar sig
         return {
             "success": True,
             "event": {
-                "eventId": f"event-{event_id}",
+                "id": event_id,
                 "eventName": event_name,
+                "status": "ongoing",
                 "createdBy": created_by,
                 "createdAt": now,
+                "teams": [],
             },
         }
 
