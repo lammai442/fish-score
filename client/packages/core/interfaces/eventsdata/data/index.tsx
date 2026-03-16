@@ -1,9 +1,9 @@
-import { Team } from '../../teamsdata/data';
+import type { Team } from '../../teamsdata/data';
 
 export interface FishEvent {
 	PK: string;
 	SK: string;
-	id: string;
+	eventId: string;
 	eventName: string;
 	createdAt?: string;
 	createdBy: string | undefined;

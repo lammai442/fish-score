@@ -84,7 +84,7 @@ export const fetchCreateEvent = async (createEventDesc: NewFishEvent) => {
 export const fetchCreateTeam = async (createTeamDesc: createNewTeam) => {
 	try {
 		const response = await axios.post(
-			`${apiUrl}/events/newteam`,
+			`${apiUrl}/teams/newteam`,
 			createTeamDesc,
 			{
 				withCredentials: true,
@@ -190,6 +190,33 @@ export const fetchAddCatch = async (
 				withCredentials: true,
 			},
 		);
+
+		// Open loginModal if response is 401 (No token)
+		if (response.status === 401) {
+			useAuthStore.getState().openLoginModal();
+			return { success: false, error: response.data.error };
+		}
+
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status: error.response?.status || 500,
+		};
+	}
+};
+
+// Registrera ny fångst
+export const fetchEventView = async (eventId: string | undefined) => {
+	try {
+		const response = await axios.get(`${apiUrl}/events/${eventId}`, {
+			withCredentials: true,
+		});
 
 		// Open loginModal if response is 401 (No token)
 		if (response.status === 401) {
