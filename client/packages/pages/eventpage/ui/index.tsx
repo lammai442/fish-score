@@ -23,6 +23,7 @@ import { IconUsers } from '@tabler/icons-react';
 import { Catch } from '../../../base/catch/ui';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
 import { fetchEventView } from '@fishScore/apievents';
+import { Loading } from '@fishScore/loading';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -32,30 +33,39 @@ export const EventPage = () => {
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
 	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
 	const { user } = useUserStore();
 
 	// Kontroll om user finns i team
-	const usersTeam = currentEvent?.teams.find((team) =>
+	const usersTeam = currentEvent?.teams?.find((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
 
+	const eventCreatedByUser = currentEvent?.createdBy === user?.userId;
+
 	const loadEvent = async () => {
 		if (!eventId) return;
+		setLoading(true);
 
-		const response = await fetchEventView(eventId);
-		if (!response.success) {
-			setCurrentEvent(null);
-			setLeaderboard([]);
-			return;
+		try {
+			const response = await fetchEventView(eventId);
+
+			if (!response.success) {
+				setCurrentEvent(null);
+				setLeaderboard([]);
+				return;
+			}
+
+			const event = response.data.event;
+			setCurrentEvent(event);
+			const sortedLeaderboard = [...event.teams].sort(
+				(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
+			);
+
+			setLeaderboard(sortedLeaderboard);
+		} finally {
+			setLoading(false);
 		}
-
-		const event = response.data.event;
-		setCurrentEvent(event);
-		const sortedLeaderboard = [...event.teams].sort(
-			(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
-		);
-
-		setLeaderboard(sortedLeaderboard);
 	};
 
 	useEffect(() => {
@@ -90,18 +100,19 @@ export const EventPage = () => {
 
 	return (
 		<>
-			<Stack>
-				{currentEvent && (
+			<Loading visible={loading} text='Loading event'></Loading>
+			{!loading && currentEvent && (
+				<Stack>
 					<PageHeader
 						title={currentEvent.eventName}
 						subTitle={capitilizeFirstLetter(
 							currentEvent.status,
 						)}></PageHeader>
-				)}
-			</Stack>
+				</Stack>
+			)}
 
 			{/* Join a team message */}
-			{!usersTeam && (
+			{!loading && currentEvent && !usersTeam && (
 				<Flex
 					bdrs={'lg'}
 					p={'md'}
@@ -121,7 +132,7 @@ export const EventPage = () => {
 			{/* Rendera teams */}
 
 			{/* Skapa nytt team button genom öppna modal */}
-			{leaderboard.length === 0 && (
+			{eventCreatedByUser && currentEvent && (
 				<>
 					<BaseModal
 						title='Create team'
@@ -167,44 +178,46 @@ export const EventPage = () => {
 			</>
 
 			{/* Leaderboard/Activity tab  */}
-			<Tabs
-				variant='pills'
-				value={mode}
-				onChange={setMode}
-				classNames={{
-					tab: 'scoreboard__tab',
-					list: 'scoreboard__list',
-				}}>
-				<Tabs.List
-					grow
-					justify='center'
-					p={'0.2rem'}
-					bg={'var(--bg-medium-light-grey-color)'}
-					bdrs={15}>
-					<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
-					<Tabs.Tab value='activity'>Activity</Tabs.Tab>
-				</Tabs.List>
-				<Tabs.Panel value='leaderboard' pt='md'>
-					<Stack>
-						{currentEvent &&
-							leaderboard.map((team: Team, index) => {
-								return (
-									<Teams
-										key={team.teamId}
-										team={team}
-										userId={user?.userId}
-										rankNr={index + 1}
-										userIsInAnyTeam={!!usersTeam}
-										eventId={eventId}></Teams>
-								);
-							})}
-					</Stack>
-				</Tabs.Panel>
+			{!loading && currentEvent && (
+				<Tabs
+					variant='pills'
+					value={mode}
+					onChange={setMode}
+					classNames={{
+						tab: 'scoreboard__tab',
+						list: 'scoreboard__list',
+					}}>
+					<Tabs.List
+						grow
+						justify='center'
+						p={'0.2rem'}
+						bg={'var(--bg-medium-light-grey-color)'}
+						bdrs={15}>
+						<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
+						<Tabs.Tab value='activity'>Activity</Tabs.Tab>
+					</Tabs.List>
+					<Tabs.Panel value='leaderboard' pt='md'>
+						<Stack>
+							{currentEvent &&
+								leaderboard.map((team: Team, index) => {
+									return (
+										<Teams
+											key={team.teamId}
+											team={team}
+											userId={user?.userId}
+											rankNr={index + 1}
+											userIsInAnyTeam={!!usersTeam}
+											eventId={eventId}></Teams>
+									);
+								})}
+						</Stack>
+					</Tabs.Panel>
 
-				<Tabs.Panel value='activity' pt='md'>
-					<p>Activity content</p>
-				</Tabs.Panel>
-			</Tabs>
+					<Tabs.Panel value='activity' pt='md'>
+						<p>Activity content</p>
+					</Tabs.Panel>
+				</Tabs>
+			)}
 		</>
 	);
 };

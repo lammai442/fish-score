@@ -25,6 +25,6 @@ def add_catch(event_id, team_id):
     response = add_catch_in_db(event_id, team_id, user_id, catch_weight)
 
     if response["success"]:
-        return jsonify({"success": True, "updatedTeam": response["updatedTeam"]}), 200
+        return jsonify({"success": True, "updatedTeam": response["catch"]}), 200
     else:
         return jsonify(response), 409

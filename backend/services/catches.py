@@ -23,31 +23,28 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
             Key={
                 "PK": f"EVENT#{event_id}",
                 "SK": f"TEAM#{team_id}",
-            }
+            },
         )
+        team_item = team_response["Item"]
 
-        team_item = team_response.get("Item")
-
-        if not team_item:
-            return {"success": False, "error": "Team not found"}
-
-        catch_id = str(uuid.uuid4())[:5]
+        catch_id = f"catch-{str(uuid.uuid4())[:5]}"
         now = datetime.now(timezone.utc).isoformat()
 
-        catches = team_item.get("catches", [])
-
-        item = {
+        catch_item = {
+            "PK": f"EVENT#{event_id}",
+            "SK": f"CATCH#{catch_id}",
             "catchId": catch_id,
             "catchedBy": user_id,
             "catchersFullName": user_full_name,
             "createdAt": now,
             "catchWeight": catch_weight_decimal,
+            "teamId": team_id,
+            "teamName": team_item["teamName"],
+            "lookupType": f"USER#{user_id}#CATCH",
+            "lookupValue": now,
         }
 
-        catches.append(item)
-
-        # Spara över nya catches
-        team_item["catches"] = catches
+        table.put_item(Item=catch_item)
 
         # Uppdatera teamets totalvikt
         team_item["totalCatchWeight"] = round(
@@ -59,14 +56,13 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
                 "PK": f"EVENT#{event_id}",
                 "SK": f"TEAM#{team_id}",
             },
-            UpdateExpression="SET catches = :catches, totalCatchWeight = :totalCatchWeight",
+            UpdateExpression="SET totalCatchWeight = :totalCatchWeight",
             ExpressionAttributeValues={
-                ":catches": catches,
                 ":totalCatchWeight": team_item["totalCatchWeight"],
             },
         )
 
-        return {"success": True, "updatedTeam": team_item}
+        return {"success": True, "catch": catch_item}
 
     except ClientError as e:
         return {"success": False, "error": str(e)}
