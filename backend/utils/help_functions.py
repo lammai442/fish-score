@@ -16,3 +16,18 @@ def filter_user(user):
         filtered["userId"] = user["PK"][5:]  # tar bort första 5 tecknen
 
     return filtered
+
+
+# Filter keys from db-item list
+def filter_item_keys(item):
+    cleaned_item = item.copy()
+
+    for key in ["PK", "SK", "lookupType", "lookupValue"]:
+        cleaned_item.pop(key, None)
+
+    return cleaned_item
+
+
+# Filter keys from db-item dict
+def filter_items_keys(items):
+    return [filter_item_keys(item) for item in items]

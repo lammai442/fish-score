@@ -3,6 +3,7 @@ import uuid
 from .table import get_dynamodb_table
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
+from utils.help_functions import filter_items_keys, filter_item_keys
 
 table = get_dynamodb_table()
 
@@ -52,8 +53,10 @@ def get_event_in_db(event_id):
         return None
 
 
+# Eventobjekt som används för Websocket och EventPage
 def get_event_view_in_db(event_id):
     try:
+        # Hämtar hem alla items som är inom ett event
         response = table.query(KeyConditionExpression=Key("PK").eq(f"EVENT#{event_id}"))
 
         items = response.get("Items", [])
@@ -62,6 +65,7 @@ def get_event_view_in_db(event_id):
         teams = []
         catches = []
 
+        # Loopar och lägger in varje item i respektive variabel
         for item in items:
             sk = item["SK"]
 
@@ -77,24 +81,31 @@ def get_event_view_in_db(event_id):
         if not event_item:
             return {"success": False, "error": "Event not found"}
 
-        for team in teams:
-            for key in ["PK", "SK", "lookupType", "lookupValue"]:
-                team.pop(key, None)
+        # Filtrerar bort nycklar
+        cleaned_teams = filter_items_keys(teams)
+        cleaned_catches = filter_items_keys(catches)
+        cleaned_event_view = filter_item_keys(event_item)
 
-        # Koppla catches till rätt team
+        # Lägg catches till rätt team
         catches_by_team = {}
-        for catch in catches:
+        for catch in cleaned_catches:
             team_id = catch["teamId"]
             catches_by_team.setdefault(team_id, []).append(catch)
 
         # Lägg catches på varje team
-        for team in teams:
+        for team in cleaned_teams:
             team_id = team["teamId"]
             team["catches"] = catches_by_team.get(team_id, [])
 
+        # Sortera alla catches med senaste först
+        activity = sorted(
+            cleaned_catches, key=lambda catch: catch["createdAt"], reverse=True
+        )
+
         event_view = {
-            **event_item,
-            "teams": teams,
+            **cleaned_event_view,
+            "teams": cleaned_teams,
+            "activity": activity,
         }
 
         return {"success": True, "event": event_view}

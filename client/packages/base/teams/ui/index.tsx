@@ -5,6 +5,8 @@ import type {
 	Team,
 	TeamUserData,
 } from '../../../core/interfaces/teamsdata/data';
+import { useState } from 'react';
+import { Loading } from '@fishScore/loading';
 type Props = {
 	team: Team;
 	userId: string | undefined;
@@ -20,6 +22,7 @@ export const Teams = ({
 	eventId,
 	userIsInAnyTeam,
 }: Props) => {
+	const [loading, setLoading] = useState<boolean>(false);
 	const userExistInTeam = team.members.some(
 		(member) => member.userId === userId,
 	);
@@ -44,12 +47,19 @@ export const Teams = ({
 			eventId: eventId,
 			teamId: team.teamId,
 		};
-
-		const response = await fetchJoinTeam(teamUserData);
-		console.log('response: ', response);
+		try {
+			setLoading(true);
+			const response = await fetchJoinTeam(teamUserData);
+		} finally {
+			setLoading(false);
+		}
 	};
+
 	return (
 		<>
+			{loading && (
+				<Loading visible={loading} text='Joining team'></Loading>
+			)}
 			<Stack
 				key={team.createdAt}
 				bdrs={'15px'}

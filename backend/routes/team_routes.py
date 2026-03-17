@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from middlewares.require_auth import require_auth
 from schemas.event_schema import TeamSchema
 from middlewares.validate_schema import validate_schema
-from services.teams import create_new_team_in_db, join_team_in_db
+from services.teams import create_new_team_in_db, join_team_in_db, get_team_in_db
 
 # Skapa blueprint instans
 team_bp = Blueprint("team_bp", __name__)
@@ -46,5 +46,18 @@ def join_team(event_id, team_id):
 
     if response["success"]:
         return jsonify({"success": True, "message": response["message"]}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Hämta ett team
+@team_bp.route("/events/<string:event_id>/teams/<string:team_id>", methods=["GET"])
+@require_auth
+def get_team(event_id, team_id):
+
+    response = get_team_in_db(event_id, team_id)
+
+    if response["success"]:
+        return jsonify({"success": True, "message": response["team"]}), 200
     else:
         return jsonify(response), 409

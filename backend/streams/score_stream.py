@@ -100,6 +100,7 @@ def handler(event, context):
 
         sent_event_ids.add(event_id)
 
+        # Skapar eventobjekt som skickas till client
         event_response = get_event_view_in_db(event_id)
         if not event_response["success"]:
             continue

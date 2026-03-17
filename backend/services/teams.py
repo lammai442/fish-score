@@ -9,6 +9,17 @@ from decimal import Decimal
 table = get_dynamodb_table()
 
 
+def get_team_in_db(event_id, team_id):
+    try:
+        team_response = table.get_item(
+            Key={"PK": f"EVENT#{event_id}", "SK": f"TEAM#{team_id}"}
+        )
+        team_item = team_response["Item"]
+        return {"success": True, "team": team_item}
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
+
+
 def create_new_team_in_db(event_id, team_name, created_by):
     try:
         event_response = table.get_item(
