@@ -1,18 +1,13 @@
 import type { Team } from '../../teamsdata/data';
 
 export interface FishEvent {
-	PK: string;
-	SK: string;
 	eventId: string;
 	eventName: string;
-	createdAt?: string;
+	createdAt: string;
 	createdBy: string | undefined;
-	entityType?: string;
-	lookupType: string;
-	lookupValue: string;
 	status: string;
-	teams?: Team[];
-	teamCount?: number;
+	teams: Team[];
+	teamCount: number;
 }
 
 export interface NewFishEvent {

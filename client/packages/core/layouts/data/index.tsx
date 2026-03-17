@@ -9,6 +9,7 @@ import { useAuthStore } from '@fishScore/useAuthStore';
 import { BaseModal } from '@fishScore/basemodal';
 import { useUserStore } from '@fishScore/useUserStore';
 import { fetchMe } from '@fishScore/apiauth';
+import { FishEvent } from '@fishScore/eventsdata';
 
 export const AuthLayout = () => {
 	return <Outlet />;
@@ -24,7 +25,7 @@ export const AppLayout = () => {
 		const getAllEvents = async () => {
 			const response = await fetchAllEvents();
 			if (response.success && response.data.events.length > 0) {
-				const events = response.data.events;
+				const events: FishEvent[] = response.data.events;
 
 				setEvents(events);
 			}

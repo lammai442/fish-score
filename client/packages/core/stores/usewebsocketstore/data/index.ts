@@ -55,7 +55,7 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 		set({ isConnected: status });
 	},
 
-	// For when you need to manually close the connection. Otherwise the backend does that automatically whenever connection is lost
+	// Manuell close av connection.
 	closeConnection: () => {
 		const { ws } = get();
 		if (ws) {
