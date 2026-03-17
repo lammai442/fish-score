@@ -11,7 +11,7 @@ import {
 	Text,
 	Title,
 } from '@mantine/core';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, act } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { BaseModal } from '@fishScore/basemodal';
@@ -20,10 +20,12 @@ import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
 import { IconUsers } from '@tabler/icons-react';
-import { Catch } from '../../../base/catch/ui';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
 import { fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
+import { Catch } from '../../../base/catch';
+import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
+import { ActivityCatch } from '../../../base/activitycatch/ui';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -33,6 +35,7 @@ export const EventPage = () => {
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
 	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
+	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { user } = useUserStore();
 
@@ -53,16 +56,19 @@ export const EventPage = () => {
 			if (!response.success) {
 				setCurrentEvent(null);
 				setLeaderboard([]);
+				setActivity([]);
 				return;
 			}
 
 			const event = response.data.event;
+
 			setCurrentEvent(event);
 			const sortedLeaderboard = [...event.teams].sort(
 				(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
 			);
 
 			setLeaderboard(sortedLeaderboard);
+			setActivity(event.activity);
 		} finally {
 			setLoading(false);
 		}
@@ -196,6 +202,7 @@ export const EventPage = () => {
 						<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
 						<Tabs.Tab value='activity'>Activity</Tabs.Tab>
 					</Tabs.List>
+					{/* Leaderboard tab */}
 					<Tabs.Panel value='leaderboard' pt='md'>
 						<Stack>
 							{currentEvent &&
@@ -212,9 +219,26 @@ export const EventPage = () => {
 								})}
 						</Stack>
 					</Tabs.Panel>
-
+					{/* Activity tab */}
 					<Tabs.Panel value='activity' pt='md'>
-						<p>Activity content</p>
+						<Stack>
+							{activity.length > 0 ? (
+								activity.map((fishCatch) => {
+									return (
+										<ActivityCatch
+											key={fishCatch.catchId}
+											fishCatch={
+												fishCatch
+											}></ActivityCatch>
+									);
+								})
+							) : (
+								<Text ta={'center'}>
+									No fish has been caught! Who will be the
+									first one?
+								</Text>
+							)}
+						</Stack>
 					</Tabs.Panel>
 				</Tabs>
 			)}

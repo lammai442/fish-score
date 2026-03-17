@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/fishcatchdata",
+	"main": "./index.ts"
+}

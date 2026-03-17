@@ -26,12 +26,14 @@ def update_event_in_db(event_id, new_event_name):
 
 def get_all_events_in_db():
     try:
-        response = table.query(
+        events_response = table.query(
             IndexName="LookupIndex",
             KeyConditionExpression=Key("lookupType").eq("EVENT#NAME"),
         )
 
-        return response.get("Items", [])
+        event_items = events_response.get("Items", [])
+        cleaned_event_items = filter_items_keys(event_items)
+        return cleaned_event_items
 
     except ClientError as e:
         print("DynamoDB ClientError:", e)

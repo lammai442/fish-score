@@ -1,3 +1,4 @@
+import { FishCatch } from '../../fishcatchdata/data';
 import type { Team } from '../../teamsdata/data';
 
 export interface FishEvent {
@@ -6,8 +7,9 @@ export interface FishEvent {
 	createdAt: string;
 	createdBy: string | undefined;
 	status: string;
-	teams: Team[];
+	teams?: Team[];
 	teamCount: number;
+	activity?: FishCatch[];
 }
 
 export interface NewFishEvent {

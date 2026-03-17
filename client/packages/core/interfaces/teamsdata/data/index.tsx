@@ -1,3 +1,5 @@
+import { FishCatch } from '../../fishcatchdata/data';
+
 export interface Team {
 	teamId?: string;
 	teamName: string;
@@ -11,12 +13,6 @@ export interface createNewTeam {
 	eventId?: string;
 	teamName: string;
 	createdBy: string;
-}
-
-export interface FishCatch {
-	userId: string;
-	weight: number;
-	createdAt: number;
 }
 
 export interface TeamUserData {
