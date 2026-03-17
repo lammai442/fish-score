@@ -12,9 +12,15 @@ export const ActivityCatch = ({ fishCatch }: Props) => {
 
 	return (
 		<>
-			<Stack p={2} bg={'red'}>
+			<Stack
+				bd={'1px solid var(--br-grey)'}
+				bdrs={'15px'}
+				p={'20px'}
+				bg={'var(--bg-white-color)'}>
 				<Flex>
-					<IconFish size={50}></IconFish>
+					<Flex justify={'center'} bg={'red'} bdrs={50}>
+						<IconFish size={50}></IconFish>
+					</Flex>
 					<Stack>
 						<Text>
 							{fishCatch.catchersFullName} from team{' '}
