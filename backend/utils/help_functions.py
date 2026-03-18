@@ -4,7 +4,6 @@ def filter_user(user):
         "email",
         "firstName",
         "lastName",
-        "maxCatchWeight",
         "totalCatchWeight",
         "createdAt",
     ]
