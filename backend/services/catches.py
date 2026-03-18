@@ -38,6 +38,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
             "catchersFullName": user_full_name,
             "createdAt": now,
             "catchWeight": catch_weight_decimal,
+            "eventId": event_id,
             "teamId": team_id,
             "teamName": team_item["teamName"],
             "lookupType": f"USER#{user_id}#CATCH",
