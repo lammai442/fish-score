@@ -34,7 +34,7 @@ export const EditCatch = ({
 	return (
 		<>
 			<CatchForm
-				title='Edit your fish catch'
+				title='Make change to your catch'
 				submitLabel='Add catch'
 				loadingText='Adding new catch'
 				initialValue={String(initialWeight)}
