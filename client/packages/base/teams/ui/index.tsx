@@ -92,10 +92,11 @@ export const Teams = ({
 								alignItems: 'center',
 								justifyContent: 'center',
 								borderRadius: '50%',
+								flexShrink: 0,
 							}}>
 							{rankNr}
 						</Text>
-						<Flex gap={'0.5rem'}>
+						<Flex gap={'0.5rem'} wrap={'wrap'}>
 							<Title order={3}>{team.teamName}</Title>
 							{userExistInTeam && (
 								<Text

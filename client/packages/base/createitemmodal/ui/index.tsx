@@ -73,7 +73,6 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			response = await fetchCreateTeam(createTeamDesc);
 		}
 
-		console.log('response: ', response);
 		setLoading(false);
 		if (response.success) {
 			showNotification({
