@@ -66,9 +66,8 @@ export const ActivityCatch = ({ fishCatch, userId }: Props) => {
 						<EditCatch
 							close={close}
 							catchId={fishCatch.catchId}
-							initialWeight={Number(
-								fishCatch.catchWeight,
-							)}></EditCatch>
+							initialWeight={Number(fishCatch.catchWeight)}
+							eventId={fishCatch.eventId}></EditCatch>
 					</BaseModal>
 					{catchedByUser && (
 						<ActionIcon

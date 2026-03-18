@@ -7,4 +7,5 @@ export interface FishCatch {
 	modifiedAt?: string;
 	teamId: string;
 	teamName: string;
+	eventId: string;
 }
