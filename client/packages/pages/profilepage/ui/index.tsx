@@ -5,6 +5,7 @@ import { PageHeader } from '@fishScore/pageheader';
 import { useEffect, useState } from 'react';
 import { fetchUserMe, fetchUserStats } from '@fishScore/apiuser';
 import { Loading } from '@fishScore/loading';
+import { ProfileOverview } from '../../../base/profileoverview/ui';
 
 export const ProfilePage = () => {
 	const [loading, setLoading] = useState(false);
@@ -21,17 +22,12 @@ export const ProfilePage = () => {
 
 		getUser();
 	}, []);
-	const navigate = useNavigate();
-	const handleLogout = async () => {
-		const response = await fetchLogout();
-		navigate('/auth', { replace: true });
-	};
 
 	return (
 		<Stack>
 			<Loading visible={loading} text='Getting profile'></Loading>
 			<PageHeader title='Profile' />
-			<Button onClick={() => handleLogout()}>Log out</Button>
+			<ProfileOverview></ProfileOverview>
 		</Stack>
 	);
 };
