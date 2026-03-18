@@ -13,7 +13,7 @@ export const Loading = ({ visible, text }: Props) => {
 			loaderProps={{
 				children: (
 					<Flex direction='column' align='center' justify='center'>
-						<Loader />
+						<Loader color={'var(--color-primary)'} />
 						<Text mt='sm'>{text}</Text>
 					</Flex>
 				),
