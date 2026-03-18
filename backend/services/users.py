@@ -1,24 +1,30 @@
 from .table import get_dynamodb_table
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
-from utils.help_functions import filter_items_keys
+from utils.help_functions import filter_items_keys, filter_item_keys
 from decimal import Decimal
 
 table = get_dynamodb_table()
 
 
 def get_user_by_email(email):
+    try:
+        user_response = table.query(
+            IndexName="LookupIndex",
+            KeyConditionExpression=Key("lookupType").eq("USER#EMAIL")
+            & Key("lookupValue").eq(email),
+        )
 
-    user_response = table.query(
-        IndexName="LookupIndex",
-        KeyConditionExpression=Key("lookupType").eq("USER#EMAIL")
-        & Key("lookupValue").eq(email),
-    )
+        user_item = user_response.get("Items", [])
 
-    if user_response["Count"] > 0:
-        return {"success": True, "user": user_response["Items"][0]}
-    else:
-        return {"success": False, "error": "User not found"}
+        if not user_item:
+            return None
+
+        return user_item
+
+    except ClientError as e:
+        print(f"Error fetching user by email: {e}")
+        return None
 
 
 def get_user_by_user_id(user_id):
@@ -30,7 +36,7 @@ def get_user_by_user_id(user_id):
     return None
 
 
-def get_user_stats_in_db(user_id):
+def get_user_profile_in_db(user_id):
     try:
         user_response = table.get_item(Key={"PK": f"USER#{user_id}", "SK": "PROFILE"})
 
@@ -51,18 +57,29 @@ def get_user_stats_in_db(user_id):
         )
         highest_catch = max(user_catches, key=lambda c: c["catchWeight"], default=None)
 
-        user_stats = {
-            "userId": user_id,
-            "totalCatches": total_catches,
-            "totalCatchWeight": float(total_catches_weight),
-            "highestCatchWeight": (
-                float(highest_catch["catchWeight"]) if highest_catch else 0
-            ),
+        # Ändrar om catchWeight till float istället sträng
+        for c in user_catches:
+            c["catchWeight"] = float(c["catchWeight"])
+
+        filtered_user = {
+            "createdAt": user_item["createdAt"],
+            "email": user_item["email"],
+            "firstName": user_item["firstName"],
+            "lastName": user_item["lastName"],
+            "userId": user_item["id"],
+        }
+        user_profile = {
+            "stats": {
+                "totalCatches": total_catches,
+                "totalCatchWeight": float(total_catches_weight),
+                "highestCatchWeight": (
+                    float(highest_catch["catchWeight"]) if highest_catch else 0
+                ),
+            },
             "catches": filter_items_keys(user_catches),
-            "userFirstName": user_item["firstName"],
-            "userLastName": user_item["lastName"],
+            "user": filtered_user,
         }
 
-        return {"success": True, "userStats": user_stats}
+        return {"success": True, "userProfile": user_profile}
     except ClientError as e:
         return {"success": False, "error": str(e)}

@@ -1,6 +1,6 @@
 from flask import Blueprint, g, jsonify
 from middlewares.require_auth import require_auth
-from services.users import get_user_by_user_id, get_user_stats_in_db
+from services.users import get_user_by_user_id, get_user_profile_in_db
 from utils.help_functions import filter_user
 
 # Skapar blueprint
@@ -26,18 +26,18 @@ def get_current_user():
     return jsonify({"success": True, "user": filtered_user}), 200
 
 
-@user_bp.route("/users/stats", methods=["GET"])
+@user_bp.route("/users/profile", methods=["GET"])
 @require_auth
-def get_user_stats():
+def get_user_profile():
     # Get userId from token
     user_id = g.user["sub"]
 
-    user_stats = get_user_stats_in_db(user_id)
+    user_profile = get_user_profile_in_db(user_id)
 
-    if not user_stats:
+    if not user_profile:
         return (
             jsonify({"success": False, "error": "Could not find user by user id"}),
             404,
         )
 
-    return jsonify({"success": True, "userStats": user_stats["userStats"]}), 200
+    return jsonify({"success": True, "userProfile": user_profile["userProfile"]}), 200
