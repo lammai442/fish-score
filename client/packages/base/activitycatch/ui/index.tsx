@@ -13,12 +13,24 @@ type Props = {
 
 export const ActivityCatch = ({ fishCatch, userId }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
-
 	const catchDate = dateFormatter(fishCatch.createdAt);
 	const catchedByUser = fishCatch.catchedBy === userId;
 
+	let modifiedCatchDate: string | null = null;
+	if (fishCatch.modifiedAt) {
+		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);
+	}
+
 	return (
 		<>
+			{/* Modal för att öppna redigera en catch */}
+			<BaseModal title='Edit catch' opened={opened} close={close}>
+				<EditCatch
+					close={close}
+					catchId={fishCatch.catchId}
+					initialWeight={Number(fishCatch.catchWeight)}
+					eventId={fishCatch.eventId}></EditCatch>
+			</BaseModal>
 			<Stack
 				bd={
 					catchedByUser
@@ -50,39 +62,50 @@ export const ActivityCatch = ({ fishCatch, userId }: Props) => {
 							color='var(--color-white)'></IconFish>
 					</Flex>
 					<Stack>
-						<Text>
-							{fishCatch.catchersFullName} from{' '}
-							<Text span fw={700}>
-								{fishCatch.teamName}
+						<Flex gap={'xs'}>
+							<Text>
+								<span style={{ fontStyle: 'italic' }}>
+									{fishCatch.catchersFullName}
+								</span>{' '}
+								from{' '}
+								<span style={{ fontWeight: 700 }}>
+									{fishCatch.teamName}
+								</span>
 							</Text>
-						</Text>
+							{catchedByUser && (
+								<ActionIcon
+									variant='filled'
+									bg={'var(--color-grey)'}
+									radius={'lg'}
+									p={'5px'}
+									onClick={open}>
+									<IconPencil color='var(--color-black)'></IconPencil>
+								</ActionIcon>
+							)}
+						</Flex>
 						<Text>Caught {fishCatch.catchWeight} kg</Text>
 						<Flex gap={'xs'}>
 							<IconClockHour5></IconClockHour5>
-							<Text>{catchDate}</Text>
+							<Text>
+								{fishCatch.modifiedAt ? (
+									<>
+										{modifiedCatchDate}{' '}
+										<Text
+											bg={'var(--color-grey)'}
+											p={'5px'}
+											fz={'xs'}
+											bdrs={'sm'}
+											fw={600}
+											span>
+											Edited
+										</Text>
+									</>
+								) : (
+									catchDate
+								)}
+							</Text>
 						</Flex>
 					</Stack>
-					<BaseModal title='Edit catch' opened={opened} close={close}>
-						<EditCatch
-							close={close}
-							catchId={fishCatch.catchId}
-							initialWeight={Number(fishCatch.catchWeight)}
-							eventId={fishCatch.eventId}></EditCatch>
-					</BaseModal>
-					{catchedByUser && (
-						<ActionIcon
-							variant='filled'
-							bg={
-								catchedByUser
-									? 'var(--bg-primary)'
-									: 'var(--color-black)'
-							}
-							radius={'lg'}
-							p={'5px'}
-							onClick={open}>
-							<IconPencil color='var(--color-white)'></IconPencil>
-						</ActionIcon>
-					)}
 				</Flex>
 			</Stack>
 		</>

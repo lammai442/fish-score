@@ -43,7 +43,6 @@ export const EventPage = () => {
 	const usersTeam = currentEvent?.teams?.find((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
-
 	const eventCreatedByUser = currentEvent?.createdBy === user?.userId;
 
 	const loadEvent = async () => {

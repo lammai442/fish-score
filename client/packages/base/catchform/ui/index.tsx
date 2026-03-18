@@ -26,11 +26,15 @@ export const CatchForm = ({
 
 		const numberValue = Number(inputValue);
 
-		if (!numberValue) {
+		if (inputValue.trim() === '' || Number.isNaN(numberValue)) {
 			setErrorInput('You need to fill in a number');
+			return;
+		} else if (numberValue <= 0) {
+			setErrorInput('Weight must be greater than 0');
 			return;
 		}
 
+		// Avrundar till en decimal
 		const roundedDownCatchWeight = Math.floor(numberValue * 10) / 10;
 
 		try {
