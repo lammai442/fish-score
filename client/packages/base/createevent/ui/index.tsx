@@ -48,7 +48,7 @@ export const CreateEvent = ({ close }: Props) => {
 			showNotification({
 				title: 'New event created',
 				message: `The event: ${inputValue} has created`,
-				color: 'var(--bg-primary-color)',
+				color: 'var(--bg-primary)',
 				icon: <IconCheck />,
 				position: 'top-center',
 			});
@@ -71,7 +71,7 @@ export const CreateEvent = ({ close }: Props) => {
 				}}
 				error={errorInput}></TextInput>
 			<Button
-				color='var(--bg-black-color)'
+				color='var(--color-black)'
 				radius={'md'}
 				size='md'
 				onClick={handleCreateEvent}>

@@ -47,7 +47,7 @@ export const Header = () => {
 
 					<Avatar
 						onClick={() => navigate('/profile')}
-						color='var(--bg-primary-color)'
+						color='var(--bg-primary)'
 						radius='xl'
 						style={{ cursor: 'pointer' }}
 						name={userFullName}></Avatar>

@@ -79,7 +79,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 			showNotification({
 				title: `New ${type} created`,
 				message: `The ${type}: ${inputValue} has created`,
-				color: 'var(--bg-primary-color)',
+				color: 'var(--bg-primary)',
 				icon: <IconCheck />,
 				position: 'top-center',
 			});
@@ -114,7 +114,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 					}}
 					error={errorInput}></TextInput>
 				<Button
-					color='var(--bg-black-color)'
+					color='var(--color-black)'
 					radius={'md'}
 					size='md'
 					onClick={handleCreateItem}>

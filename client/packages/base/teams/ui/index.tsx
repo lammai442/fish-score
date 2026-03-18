@@ -31,13 +31,13 @@ export const Teams = ({
 
 	switch (rankNr) {
 		case 1:
-			trophyColor = 'var(--bg-gold-color)';
+			trophyColor = 'var(--rank-gold)';
 			break;
 		case 2:
-			trophyColor = 'var(--bg-silver-color)';
+			trophyColor = 'var(--rank-silver)';
 			break;
 		case 3:
-			trophyColor = 'var(--bg-bronze-color)';
+			trophyColor = 'var(--rank-bronze)';
 			break;
 	}
 
@@ -66,13 +66,13 @@ export const Teams = ({
 				bd={
 					rankNr <= 3
 						? `2px solid ${trophyColor}`
-						: '1px solid var(--br-grey)'
+						: '1px solid var(--border-default)'
 				}
 				style={{
 					borderLeft:
 						rankNr <= 3
 							? `6px solid ${trophyColor}`
-							: '1px solid var(--br-grey)',
+							: '1px solid var(--border-default)',
 				}}
 				p={'20px'}>
 				<Flex justify={'space-between'} align={'center'}>
@@ -83,7 +83,7 @@ export const Teams = ({
 							bg={
 								rankNr <= 3
 									? `${trophyColor}`
-									: 'var(--bg-medium-light-grey-color)'
+									: 'var(--bg-muted)'
 							}
 							w={30}
 							h={30}
@@ -99,7 +99,7 @@ export const Teams = ({
 							<Title order={3}>{team.teamName}</Title>
 							{userExistInTeam && (
 								<Text
-									bg={'var(--bg-medium-light-grey-color)'}
+									bg={'var(--bg-muted)'}
 									p={'0.4rem'}
 									fz={'sm'}
 									bdrs={'0.5rem'}>
@@ -119,9 +119,7 @@ export const Teams = ({
 				<Text fz={'xl'}>Totalt: {team.totalCatchWeight} kg</Text>
 
 				{!userIsInAnyTeam && (
-					<Button
-						bg={'var(--bg-black-color)'}
-						onClick={handleJoinTeam}>
+					<Button bg={'var(--color-black)'} onClick={handleJoinTeam}>
 						Join team
 					</Button>
 				)}

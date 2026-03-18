@@ -35,7 +35,7 @@ export const LandingPage = () => {
 			</BaseModal>
 			<Stack>
 				<Button
-					color='var(--bg-black-color)'
+					color='var(--color-black)'
 					size='lg'
 					radius='md'
 					onClick={open}>

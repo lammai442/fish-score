@@ -23,9 +23,9 @@ import { IconUsers } from '@tabler/icons-react';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
 import { fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
-import { Catch } from '../../../base/catch';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { ActivityCatch } from '../../../base/activitycatch/ui';
+import { AddCatch } from '../../../base/addcatch/ui';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -122,8 +122,8 @@ export const EventPage = () => {
 				<Flex
 					bdrs={'lg'}
 					p={'md'}
-					bg={'var(--bg-light-orange-color)'}
-					bd={'1px solid var(--br-orange)'}>
+					bg={'var(--bg-orange-light)'}
+					bd={'1px solid var(--border-warning)'}>
 					<IconUsers size={50} />
 					<Stack>
 						<Title order={4}>Join a team to participate</Title>
@@ -149,7 +149,7 @@ export const EventPage = () => {
 							type='team'></CreateItemModal>
 					</BaseModal>
 					<Button
-						color='var(--bg-black-color)'
+						color='var(--color-black)'
 						size='lg'
 						radius='md'
 						onClick={createTeamHandlers.open}>
@@ -157,16 +157,16 @@ export const EventPage = () => {
 					</Button>
 				</>
 			)}
-			{/* Catch knapp*/}
+			{/* Add catch knapp*/}
 			<>
 				<BaseModal
 					title='Add new catch'
 					opened={addCatchOpened}
 					close={addCatchHandlers.close}>
-					<Catch
+					<AddCatch
 						close={addCatchHandlers.close}
 						eventId={eventId}
-						teamId={usersTeam?.teamId}></Catch>
+						teamId={usersTeam?.teamId}></AddCatch>
 				</BaseModal>
 				<ActionIcon
 					radius={'xl'}
@@ -175,7 +175,7 @@ export const EventPage = () => {
 					pos={'fixed'}
 					right={'1.5rem'}
 					bottom={'1.5rem'}
-					color='var(--bg-black-color)'
+					color='var(--color-black)'
 					disabled={!usersTeam ? true : false}
 					style={{ zIndex: 1000 }}
 					onClick={addCatchHandlers.open}>
@@ -197,7 +197,7 @@ export const EventPage = () => {
 						grow
 						justify='center'
 						p={'0.2rem'}
-						bg={'var(--bg-medium-light-grey-color)'}
+						bg={'var(--bg-muted)'}
 						bdrs={15}>
 						<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
 						<Tabs.Tab value='activity'>Activity</Tabs.Tab>
@@ -227,8 +227,9 @@ export const EventPage = () => {
 									return (
 										<ActivityCatch
 											key={fishCatch.catchId}
-											fishCatch={
-												fishCatch
+											fishCatch={fishCatch}
+											userId={
+												user?.userId
 											}></ActivityCatch>
 									);
 								})

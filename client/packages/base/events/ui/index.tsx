@@ -23,7 +23,7 @@ export const Events = ({ events = [] }: Props) => {
 								direction='column'
 								w='100%'
 								maw={{ sm: '330px' }}
-								bd={'1px solid var(--br-grey)'}
+								bd={'1px solid var(--border-default)'}
 								p={'1rem'}
 								bdrs={'10px'}
 								key={event.eventName}
@@ -38,12 +38,12 @@ export const Events = ({ events = [] }: Props) => {
 											padding: '0.3rem 0.4rem',
 											backgroundColor:
 												event.status === 'ongoing'
-													? 'var(--bg-black-color)'
-													: 'var(--bg-grey-color)',
+													? 'var(--color-black)'
+													: 'var(--color-grey)',
 											color:
 												event.status === 'ongoing'
-													? 'var(--text-white)'
-													: 'var(--text-black)',
+													? 'var(--text-inverse)'
+													: 'var(--text-primary)',
 											borderRadius: '10px',
 										}}>
 										{event.status}
