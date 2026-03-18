@@ -53,7 +53,7 @@ export const AppLayout = () => {
 				close={closeLoginModal}>
 				<Stack>
 					<Text>You must log in</Text>
-					<Button color='var(--bg-black-color)'>To login</Button>
+					<Button color='var(--color-black)'>To login</Button>
 				</Stack>
 			</BaseModal>
 			<Header></Header>

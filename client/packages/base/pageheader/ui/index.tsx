@@ -19,13 +19,13 @@ export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
 				display: 'grid',
 				gridTemplateColumns: 'auto 1fr auto',
 				alignItems: 'center',
-				background: 'var(--bg-light-grey-color)',
+				background: 'var(--bg-page)',
 				padding: '1rem',
 			}}>
 			<ActionIcon
 				variant='transparent'
 				aria-label='back icon'
-				color='var(--bg-black-color)'
+				color='var(--color-black)'
 				onClick={() => navigate(-1)}>
 				<IconArrowLeft />
 			</ActionIcon>
@@ -39,12 +39,12 @@ export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
 							borderRadius: '15px',
 							backgroundColor:
 								subTitle.toLowerCase() === 'ongoing'
-									? 'var(--bg-black-color)'
-									: 'var(--bg-grey-color)',
+									? 'var(--color-black)'
+									: 'var(--color-grey)',
 							color:
 								subTitle.toLowerCase() === 'ongoing'
-									? 'var(--text-white)'
-									: 'var(--text-black)',
+									? 'var(--text-inverse)'
+									: 'var(--text-primary)',
 						}}>
 						{subTitle}
 					</Title>

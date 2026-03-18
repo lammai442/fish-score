@@ -5,13 +5,56 @@
 }
 
 :root {
+	--color-white: #ffffff;
+	--color-black: #000000;
+
+	--color-grey: #ddd;
+	--color-grey-light: #f9fafb;
+	--color-grey-medium-light: #e9ebed;
+
+	--color-blue-light: #eff6ff;
+	--color-blue: #2b7fff;
+
+	--color-orange: #ff6900;
+	--color-orange-light: #fff7ed;
+
+	--color-primary: #63ab9f;
+	/* --color-primary-light: #eff6f5; */
+	--color-primary-light: #f9fffe;
+
+	--color-gold: #f0b100;
+	--color-silver: #99a1af;
+	--color-bronze: #bb4d00;
+
 	--bg-gradient-start: #eff6ff;
+	--bg-gradient-end: #dbeafe;
+
+	--bg-primary: var(--color-primary);
+	--bg-primary-light: var(--color-primary-light);
+	--bg-surface: var(--color-white);
+	--bg-muted: var(--color-grey-medium-light);
+	--bg-page: var(--color-grey-light);
+	--bg-blue-light: var(--color-blue-light);
+	--bg-orange: var(--color-orange);
+	--bg-orange-light: var(--color-orange-light);
+
+	--text-primary: var(--color-black);
+	--text-inverse: var(--color-white);
+
+	--border-default: var(--color-grey);
+	--border-primary: var(--color-blue);
+	--border-warning: var(--color-orange);
+
+	--rank-gold: var(--color-gold);
+	--rank-silver: var(--color-silver);
+	--rank-bronze: var(--color-bronze);
+
+	/* --bg-gradient-start: #eff6ff;
 	--bg-gradient-end: #dbeafe;
 	--bg-primary-color: #63ab9f;
 	--bg-primary-light-color: #eff6f5;
 	--bg-black-color: #000000;
 	--bg-grey-color: #ddd;
-	/* --bg-medium-light-grey-color: #f1f3f5; */
 	--bg-medium-light-grey-color: #e9ebed;
 	--bg-light-grey-color: #f9fafb;
 	--bg-white-color: #ffffff;
@@ -23,12 +66,13 @@
 	--text-black: #000000;
 
 	/* Borders */
-	--br-grey: #ddd;
+	/* --br-grey: #ddd;
 	--br-blue: #2b7fff;
-	--br-orange: #ff6900;
+	--br-orange: #ff6900; */
 
 	/* Outline */
-	--bg-gold-color: #f0b100;
+	/* --bg-gold-color: #f0b100;
 	--bg-silver-color: #99a1af;
 	--bg-bronze-color: #bb4d00;
+	--ol-white-color: #ffffff; */
 }

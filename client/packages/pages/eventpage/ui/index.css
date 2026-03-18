@@ -3,7 +3,7 @@
 }
 
 .scoreboard__tab[data-active] {
-	background-color: var(--bg-white-color);
+	background-color: var(--color-white);
 	border-radius: 15px;
-	color: var(--text-black);
+	color: var(--color-black);
 }

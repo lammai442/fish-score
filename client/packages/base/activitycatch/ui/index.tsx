@@ -1,39 +1,89 @@
-import { Flex, Stack, Text } from '@mantine/core';
+import { ActionIcon, Flex, Stack, Text } from '@mantine/core';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
-import { IconClockHour5, IconFish } from '@tabler/icons-react';
+import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
 import { dateFormatter } from '../../../core/formatters/data';
+import { BaseModal } from '@fishScore/basemodal';
+import { useDisclosure } from '@mantine/hooks';
+import { EditCatch } from '../../editcatch/ui';
 
 type Props = {
 	fishCatch: FishCatch;
+	userId?: string;
 };
 
-export const ActivityCatch = ({ fishCatch }: Props) => {
+export const ActivityCatch = ({ fishCatch, userId }: Props) => {
+	const [opened, { open, close }] = useDisclosure();
+
 	const catchDate = dateFormatter(fishCatch.createdAt);
+	const catchedByUser = fishCatch.catchedBy === userId;
 
 	return (
 		<>
 			<Stack
-				bd={'1px solid var(--br-grey)'}
+				bd={
+					catchedByUser
+						? '1px solid var(--color-primary)'
+						: '1px solid var(--border-default)'
+				}
 				bdrs={'15px'}
 				p={'20px'}
-				bg={'var(--bg-white-color)'}>
-				<Flex>
-					<Flex justify={'center'} bg={'red'} bdrs={50}>
-						<IconFish size={50}></IconFish>
+				bg={
+					catchedByUser
+						? 'var(--bg-primary-light)'
+						: 'var(--bg-surface)'
+				}>
+				<Flex gap={'sm'}>
+					<Flex
+						align={'center'}
+						justify={'center'}
+						bg={
+							catchedByUser
+								? 'var(--bg-primary)'
+								: 'var(--color-black)'
+						}
+						bdrs={50}
+						w={50}
+						h={50}
+						p={'sm'}>
+						<IconFish
+							size={40}
+							color='var(--color-white)'></IconFish>
 					</Flex>
 					<Stack>
 						<Text>
-							{fishCatch.catchersFullName} from team{' '}
+							{fishCatch.catchersFullName} from{' '}
 							<Text span fw={700}>
 								{fishCatch.teamName}
 							</Text>
 						</Text>
 						<Text>Caught {fishCatch.catchWeight} kg</Text>
-						<Flex>
+						<Flex gap={'xs'}>
 							<IconClockHour5></IconClockHour5>
 							<Text>{catchDate}</Text>
 						</Flex>
 					</Stack>
+					<BaseModal title='Edit catch' opened={opened} close={close}>
+						<EditCatch
+							close={close}
+							catchId={fishCatch.catchId}
+							initialWeight={Number(
+								fishCatch.catchWeight,
+							)}></EditCatch>
+					</BaseModal>
+					{catchedByUser && (
+						<ActionIcon
+							variant='filled'
+							bg={
+								catchedByUser
+									? 'var(--bg-primary)'
+									: 'var(--color-black)'
+							}
+							radius={'lg'}
+							p={'5px'}
+							onClick={open}>
+							<IconPencil color='var(--color-white)'></IconPencil>
+						</ActionIcon>
+					)}
 				</Flex>
 			</Stack>
 		</>
