@@ -45,7 +45,7 @@ export const fetchEditCatch = async (
 ) => {
 	try {
 		const response = await axios.post(
-			`${apiUrl}/events/${eventId}/catch/${catchId}/edit-catch`,
+			`${apiUrl}/events/${eventId}/catch/edit-catch/${catchId}`,
 			{ catchWeight: catchWeight },
 			{
 				withCredentials: true,

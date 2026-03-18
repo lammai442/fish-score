@@ -25,7 +25,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
                 "SK": f"TEAM#{team_id}",
             },
         )
-        team_item = team_response["Item"]
+        team_item = team_response.get("Item")
 
         catch_id = f"catch-{str(uuid.uuid4())[:5]}"
         now = datetime.now(timezone.utc).isoformat()
@@ -64,6 +64,75 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
         )
 
         return {"success": True, "catch": catch_item}
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}
+
+
+def edit_catch_in_db(event_id, catch_id, user_id, catch_weight):
+    try:
+        catch_response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"CATCH#{catch_id}",
+            },
+        )
+
+        catch_item = catch_response.get("Item")
+
+        if not catch_item:
+            return {
+                "success": False,
+                "error": "Catch not found",
+            }
+
+        if not catch_item["catchedBy"] == user_id:
+            return {"success": False, "error": "User is not same as catched user"}
+
+        team_response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"TEAM#{catch_item['teamId']}",
+            }
+        )
+
+        team_item = team_response.get("Item")
+        if not team_item:
+            return {"success": False, "error": "Team not found"}
+
+        # Räkna ut differens mellan gamla och nya catch_weight
+        old_catch_weight = catch_item["catchWeight"]
+        new_catch_weight = Decimal(str(catch_weight))
+
+        diff = new_catch_weight - old_catch_weight
+        now = datetime.now(timezone.utc).isoformat()
+
+        # Uppdaterar catch
+        table.update_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"CATCH#{catch_id}",
+            },
+            UpdateExpression="SET catchWeight = :catchWeight, modifiedAt = :modifiedAt",
+            ExpressionAttributeValues={
+                ":catchWeight": new_catch_weight,
+                ":modifiedAt": now,
+            },
+        )
+
+        # Uppdaterar teamets totalvikt
+        table.update_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"TEAM#{catch_item['teamId']}",
+            },
+            UpdateExpression="SET totalCatchWeight = totalCatchWeight + :diff",
+            ExpressionAttributeValues={
+                ":diff": diff,
+            },
+        )
+
+        return {"success": True, "updatedCatch": old_catch_weight}
 
     except ClientError as e:
         return {"success": False, "error": str(e)}
