@@ -1,27 +1,32 @@
 import { fetchLogout } from '@fishScore/apiauth';
-import { Avatar, Button, Stack, Text, Title } from '@mantine/core';
+import {
+	Avatar,
+	Button,
+	Flex,
+	Grid,
+	Paper,
+	Stack,
+	Text,
+	Title,
+} from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '@mantine/notifications';
-import { IconX } from '@tabler/icons-react';
+import { IconFish, IconMedal, IconScale, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { fetchUserProfile } from '@fishScore/apiuser';
 import { Loading } from '@fishScore/loading';
-import { User } from '@fishScore/usersdata/data';
+import { User, UserStats } from '@fishScore/usersdata/data';
 import { dateFormatter } from '../../../core/formatters/data';
+import { ActivityCatch } from '../../activitycatch/ui';
+import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 type Props = {};
 
 export const ProfileOverview = ({}: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [user, setUser] = useState<User | null>(null);
-	const [userStats, setUserStats] = useState<null>(null);
-	const [userCatches, setUserCatches] = useState<null>(null);
+	const [userStats, setUserStats] = useState<UserStats | null>(null);
+	const [userCatches, setUserCatches] = useState<FishCatch[] | null>(null);
 	const navigate = useNavigate();
-
-	if (!user) {
-		return;
-	}
-
-	const usersFullName = `${user.firstName} ${user.lastName}`;
 
 	useEffect(() => {
 		const getUserProfile = async () => {
@@ -37,7 +42,7 @@ export const ProfileOverview = ({}: Props) => {
 
 		getUserProfile();
 	}, []);
-	console.log(userCatches);
+
 	const handleLogout = async () => {
 		const response = await fetchLogout();
 		if (response.success) {
@@ -52,9 +57,36 @@ export const ProfileOverview = ({}: Props) => {
 			});
 		}
 	};
+
+	if (loading) {
+		return <Loading visible={loading} text='Getting profile' />;
+	}
+
+	if (!user) {
+		return <Text>No user found</Text>;
+	}
+	const usersFullName = `${user.firstName} ${user.lastName}`;
+
+	const generateUserStats = [
+		{
+			icon: <IconScale size={45} />,
+			value: userStats?.totalCatchWeight,
+			text: 'Total weight (kg)',
+		},
+		{
+			icon: <IconFish size={45} />,
+			value: userStats?.totalCatches,
+			text: 'Total catches',
+		},
+		{
+			icon: <IconMedal size={45} />,
+			value: userStats?.highestCatchWeight,
+			text: 'Best catch (kg)',
+		},
+	];
+
 	return (
 		<>
-			<Loading visible={loading} text='Getting profile'></Loading>
 			<Stack
 				align='center'
 				style={{
@@ -90,6 +122,39 @@ export const ProfileOverview = ({}: Props) => {
 						Log out
 					</Button>
 				</Stack>
+				{userStats && (
+					<Flex
+						maw={'100%'}
+						gap={15}
+						justify={'center'}
+						flex={5}
+						mt={'-xl'}>
+						{generateUserStats.map((s) => {
+							return (
+								<Paper shadow='md' p='md' bdrs={'lg'}>
+									<Stack
+										w={'100%'}
+										align='center'
+										bdrs={'sm'}
+										p={'sm'}>
+										{s.icon}
+										<Title order={4}>{s.value}</Title>
+										<Text>{s.text}</Text>
+									</Stack>
+								</Paper>
+							);
+						})}
+					</Flex>
+				)}
+				{userCatches &&
+					userCatches.map((c) => {
+						return (
+							<ActivityCatch
+								fishCatch={c}
+								eventStatus='ongoing'
+								userId={user.userId}></ActivityCatch>
+						);
+					})}
 			</Stack>
 		</>
 	);

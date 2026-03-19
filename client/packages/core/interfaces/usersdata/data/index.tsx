@@ -5,3 +5,9 @@ export interface User {
 	lastName: string;
 	createdAt: string;
 }
+
+export interface UserStats {
+	highestCatchWeight: number;
+	totalCatchWeight: number;
+	totalCatches: 7;
+}
