@@ -20,9 +20,9 @@ export const fetchUserMe = async () => {
 		};
 	}
 };
-export const fetchUserStats = async () => {
+export const fetchUserProfile = async () => {
 	try {
-		const response = await axios.get(`${apiUrl}/users/stats`, {
+		const response = await axios.get(`${apiUrl}/users/profile`, {
 			withCredentials: true,
 		});
 		return {
