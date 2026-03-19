@@ -10,6 +10,7 @@ import {
 	Tabs,
 	Text,
 	Title,
+	Tooltip,
 } from '@mantine/core';
 import { useState, useEffect, act } from 'react';
 import { useParams } from 'react-router-dom';
@@ -135,38 +136,42 @@ export const EventPage = () => {
 			)}
 
 			{/* Rendera teams */}
-
 			{/* Skapa nytt team button genom öppna modal */}
-			{eventCreatedByUser && currentEvent && (
-				<>
-					<BaseModal
-						title='Create team'
-						opened={createTeamOpened}
-						close={createTeamHandlers.close}>
-						<CreateItemModal
-							close={createTeamHandlers.close}
-							type='team'></CreateItemModal>
-					</BaseModal>
+			<BaseModal
+				title='Create team'
+				opened={createTeamOpened}
+				close={createTeamHandlers.close}>
+				<CreateItemModal
+					close={createTeamHandlers.close}
+					type='team'></CreateItemModal>
+			</BaseModal>
+			<Flex m='1rem 0'>
+				<Tooltip
+					label='Only the event admin can create new teams'
+					disabled={!eventCreatedByUser}>
 					<Button
 						color='var(--color-black)'
 						size='lg'
 						radius='md'
+						disabled={eventCreatedByUser}
 						onClick={createTeamHandlers.open}>
 						+ Create team
 					</Button>
-				</>
-			)}
-			{/* Add catch knapp*/}
-			<>
-				<BaseModal
-					title='Add new catch'
-					opened={addCatchOpened}
-					close={addCatchHandlers.close}>
-					<AddCatch
-						close={addCatchHandlers.close}
-						eventId={eventId}
-						teamId={usersTeam?.teamId}></AddCatch>
-				</BaseModal>
+				</Tooltip>
+			</Flex>
+
+			<BaseModal
+				title='Add new catch'
+				opened={addCatchOpened}
+				close={addCatchHandlers.close}>
+				<AddCatch
+					close={addCatchHandlers.close}
+					eventId={eventId}
+					teamId={usersTeam?.teamId}></AddCatch>
+			</BaseModal>
+			<Tooltip
+				label='Event has ended'
+				disabled={currentEvent?.status === 'ongoing'}>
 				<ActionIcon
 					radius={'xl'}
 					size={'50px'}
@@ -184,7 +189,7 @@ export const EventPage = () => {
 					onClick={addCatchHandlers.open}>
 					+
 				</ActionIcon>
-			</>
+			</Tooltip>
 
 			{/* Leaderboard/Activity tab  */}
 			{!loading && currentEvent && (
@@ -217,7 +222,10 @@ export const EventPage = () => {
 											userId={user?.userId}
 											rankNr={index + 1}
 											userIsInAnyTeam={!!usersTeam}
-											eventId={eventId}></Teams>
+											eventId={eventId}
+											createdBy={
+												currentEvent.createdBy
+											}></Teams>
 									);
 								})}
 						</Stack>

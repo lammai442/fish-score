@@ -7,6 +7,7 @@ import {
 	ActionIcon,
 	Container,
 	Divider,
+	Tooltip,
 } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { IconBell } from '@tabler/icons-react';
@@ -33,24 +34,28 @@ export const Header = () => {
 						fit='contain'></Image>
 				</Box>
 				<Flex gap='0.5rem'>
-					<Indicator
-						size={10}
-						color='red'
-						disabled={!visible}
-						offset={7}
-						style={{ cursor: 'pointer' }}
-						withBorder>
-						<ActionIcon variant='transparent' size='lg'>
-							<IconBell size={20} color='black' />
-						</ActionIcon>
-					</Indicator>
+					<Tooltip label={'Notifications'}>
+						<Indicator
+							size={10}
+							color='red'
+							disabled={!visible}
+							offset={7}
+							style={{ cursor: 'pointer' }}
+							withBorder>
+							<ActionIcon variant='transparent' size='lg'>
+								<IconBell size={20} color='black' />
+							</ActionIcon>
+						</Indicator>
+					</Tooltip>
 
-					<Avatar
-						onClick={() => navigate('/profile')}
-						color='var(--bg-primary)'
-						radius='xl'
-						style={{ cursor: 'pointer' }}
-						name={userFullName}></Avatar>
+					<Tooltip label={'Show profile'}>
+						<Avatar
+							onClick={() => navigate('/profile')}
+							color='var(--bg-primary)'
+							radius='xl'
+							style={{ cursor: 'pointer' }}
+							name={userFullName}></Avatar>
+					</Tooltip>
 				</Flex>
 			</Flex>
 			<Divider mb='0.5rem' />
