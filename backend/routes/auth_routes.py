@@ -38,15 +38,15 @@ def register_user():
 def login_user():
 
     data = request.validated_data
-    user_exist = get_user_by_email(data["email"])
+    response = get_user_by_email(data["email"])
 
-    if not user_exist["success"]:
+    if not response["success"]:
         return (
-            jsonify({"success": False, "error": user_exist["error"]}),
+            jsonify({"success": False, "error": response["error"]}),
             400,
         )
 
-    user = user_exist["user"]
+    user = response["user"]
 
     user_pw = user["password"]
     verify_pws = verify_password(data["password"], user_pw)

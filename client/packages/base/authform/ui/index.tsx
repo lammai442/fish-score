@@ -28,7 +28,7 @@ export const AuthForm = () => {
 	const handleLogin = async (values: LoginData) => {
 		setLoading(true);
 		const response = await fetchLogin(values as LoginData);
-
+		console.log('response: ', response);
 		setLoading(false);
 		if (!response.success) {
 			showNotification({
