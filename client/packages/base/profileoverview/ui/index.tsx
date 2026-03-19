@@ -1,5 +1,5 @@
 import { fetchLogout } from '@fishScore/apiauth';
-import { Button } from '@mantine/core';
+import { Avatar, Button, Stack, Text, Title } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { fetchUserProfile } from '@fishScore/apiuser';
 import { Loading } from '@fishScore/loading';
 import { User } from '@fishScore/usersdata/data';
+import { dateFormatter } from '../../../core/formatters/data';
 type Props = {};
 
 export const ProfileOverview = ({}: Props) => {
@@ -15,6 +16,12 @@ export const ProfileOverview = ({}: Props) => {
 	const [userStats, setUserStats] = useState<null>(null);
 	const [userCatches, setUserCatches] = useState<null>(null);
 	const navigate = useNavigate();
+
+	if (!user) {
+		return;
+	}
+
+	const usersFullName = `${user.firstName} ${user.lastName}`;
 
 	useEffect(() => {
 		const getUserProfile = async () => {
@@ -48,8 +55,42 @@ export const ProfileOverview = ({}: Props) => {
 	return (
 		<>
 			<Loading visible={loading} text='Getting profile'></Loading>
-			<div>{user?.firstName}</div>
-			<Button onClick={() => handleLogout()}>Log out</Button>
+			<Stack
+				align='center'
+				style={{
+					width: '100vw',
+					marginLeft: 'calc(50% - 50vw)',
+				}}>
+				<Stack
+					w={'100%'}
+					p={'xl'}
+					bg={'var(--color-primary-medium)'}
+					align='center'>
+					<Avatar
+						bd={'2px solid var(--color-primary)'}
+						color='var(--color-primary)'
+						size={100}
+						name={usersFullName}></Avatar>
+
+					<Stack align='center'>
+						<Title order={3}>{usersFullName}</Title>
+						<Text>{user.email}</Text>
+						<Text>
+							Member since {dateFormatter(user.createdAt)}
+						</Text>
+					</Stack>
+					<Button
+						bdrs={'sm'}
+						bg={'var(--color-black)'}
+						color={'var(--text-inverse)'}
+						style={{
+							display: 'inline',
+						}}
+						onClick={() => handleLogout()}>
+						Log out
+					</Button>
+				</Stack>
+			</Stack>
 		</>
 	);
 };

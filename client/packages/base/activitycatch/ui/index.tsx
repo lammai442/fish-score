@@ -1,4 +1,4 @@
-import { ActionIcon, Flex, Stack, Text } from '@mantine/core';
+import { ActionIcon, Flex, Stack, Text, Tooltip } from '@mantine/core';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
 import { dateFormatter } from '../../../core/formatters/data';
@@ -72,33 +72,31 @@ export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
 									{fishCatch.teamName}
 								</span>
 							</Text>
+							{/* Redigeraknapp */}
 							{eventStatus === 'ongoing' && catchedByUser && (
-								<ActionIcon
-									variant='filled'
-									bg={'var(--color-grey)'}
-									radius={'lg'}
-									p={'5px'}
-									onClick={open}>
-									<IconPencil color='var(--color-black)'></IconPencil>
-								</ActionIcon>
+								<Tooltip label={'Edit catch'}>
+									<ActionIcon
+										variant='filled'
+										bg={'var(--color-grey)'}
+										radius={'lg'}
+										p={'5px'}
+										onClick={open}>
+										<IconPencil color='var(--color-black)'></IconPencil>
+									</ActionIcon>
+								</Tooltip>
 							)}
 						</Flex>
 						<Text>Caught {fishCatch.catchWeight} kg</Text>
+						{/* Datum */}
 						<Flex gap={'xs'}>
 							<IconClockHour5></IconClockHour5>
 							<Text>
 								{fishCatch.modifiedAt ? (
 									<>
+										<Text span fw={700}>
+											Updated:
+										</Text>{' '}
 										{modifiedCatchDate}{' '}
-										<Text
-											bg={'var(--color-grey)'}
-											p={'5px'}
-											fz={'xs'}
-											bdrs={'sm'}
-											fw={600}
-											span>
-											Edited
-										</Text>
 									</>
 								) : (
 									catchDate

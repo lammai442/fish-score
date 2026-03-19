@@ -1,6 +1,7 @@
 import type { FishEvent } from '@fishScore/eventsdata';
 import { Text, Title, Flex } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import { capitilizeFirstLetter } from '../../../core/utils/helpfunctions/data';
 
 type Props = {
 	events: FishEvent[];
@@ -15,6 +16,7 @@ export const Events = ({ events = [] }: Props) => {
 	return (
 		<>
 			<Title order={3}>Events</Title>
+			{/* Rendera events */}
 			<Flex wrap={'wrap'} gap={'md'} style={{ cursor: 'pointer' }}>
 				{events.length > 0 ? (
 					events.map((event, index) => {
@@ -46,7 +48,7 @@ export const Events = ({ events = [] }: Props) => {
 													: 'var(--text-primary)',
 											borderRadius: '10px',
 										}}>
-										{event.status}
+										{capitilizeFirstLetter(event.status)}
 									</Text>
 								</Flex>
 								<Flex direction={'column'}>

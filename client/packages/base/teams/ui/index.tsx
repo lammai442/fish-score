@@ -13,6 +13,7 @@ type Props = {
 	rankNr: number;
 	eventId: string | undefined;
 	userIsInAnyTeam: boolean | undefined;
+	createdBy: string | undefined;
 };
 
 export const Teams = ({
@@ -21,6 +22,7 @@ export const Teams = ({
 	rankNr,
 	eventId,
 	userIsInAnyTeam,
+	createdBy,
 }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const userExistInTeam = team.members.some(
@@ -115,7 +117,15 @@ export const Teams = ({
 				</Flex>
 				<Text>
 					Members:{' '}
-					{team.members.map((member) => member.name).join(', ')}
+					{team.members
+						.map((member) => {
+							if (member.userId === createdBy) {
+								return member.name + ' (Admin)';
+							} else {
+								return member.name;
+							}
+						})
+						.join(', ')}
 				</Text>
 				<Text fz={'xl'}>Totalt: {team.totalCatchWeight} kg</Text>
 
