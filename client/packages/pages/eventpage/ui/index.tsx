@@ -175,7 +175,11 @@ export const EventPage = () => {
 					right={'1.5rem'}
 					bottom={'1.5rem'}
 					color='var(--color-black)'
-					disabled={!usersTeam ? true : false}
+					disabled={
+						currentEvent?.status !== 'ongoing' || !usersTeam
+							? true
+							: false
+					}
 					style={{ zIndex: 1000 }}
 					onClick={addCatchHandlers.open}>
 					+
@@ -227,6 +231,7 @@ export const EventPage = () => {
 										<ActivityCatch
 											key={fishCatch.catchId}
 											fishCatch={fishCatch}
+											eventStatus={currentEvent.status}
 											userId={
 												user?.userId
 											}></ActivityCatch>

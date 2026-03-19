@@ -9,13 +9,13 @@ import { EditCatch } from '../../editcatch/ui';
 type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
+	eventStatus: string;
 };
 
-export const ActivityCatch = ({ fishCatch, userId }: Props) => {
+export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
 	const catchedByUser = fishCatch.catchedBy === userId;
-
 	let modifiedCatchDate: string | null = null;
 	if (fishCatch.modifiedAt) {
 		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);
@@ -72,7 +72,7 @@ export const ActivityCatch = ({ fishCatch, userId }: Props) => {
 									{fishCatch.teamName}
 								</span>
 							</Text>
-							{catchedByUser && (
+							{eventStatus === 'ongoing' && catchedByUser && (
 								<ActionIcon
 									variant='filled'
 									bg={'var(--color-grey)'}

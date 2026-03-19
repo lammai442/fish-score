@@ -15,16 +15,15 @@ def get_user_by_email(email):
             & Key("lookupValue").eq(email),
         )
 
-        user_item = user_response.get("Items", [])
+        user_items = user_response.get("Items", [])
 
-        if not user_item:
-            return None
+        if not user_items:
+            return {"success": False, "error": "Could not find user by email"}
 
-        return user_item
+        return {"success": True, "user": user_items[0]}
 
     except ClientError as e:
-        print(f"Error fetching user by email: {e}")
-        return None
+        return {"success:": False, "error": "Error fetching user by email: {e}"}
 
 
 def get_user_by_user_id(user_id):
