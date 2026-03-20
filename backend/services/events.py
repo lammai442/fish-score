@@ -185,3 +185,21 @@ def get_event_by_event_name(event_name):
             return {"success": True, "event": matching_event}
 
     return {"success": False, "error": "Event not found"}
+
+
+def end_event_in_db(event_id, user_id):
+    event_response = table.get_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
+
+    event_item = event_response.get("Item")
+
+    if not event_item:
+        return {"success": False, "error": "Could not find event item"}
+
+    if not event_item["createdBy"] == user_id:
+        return {"success": False, "error": "Not authorized"}
+
+    event_item["status"] = "completed"
+
+    table.update_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
+
+    return {"success": False, "error": "Event not found"}

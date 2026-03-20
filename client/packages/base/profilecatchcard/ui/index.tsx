@@ -34,7 +34,6 @@ export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
 	const handleNavigation = (eventId: string) => {
 		navigate(`/event/${eventId}`);
 	};
-	console.log('fishCatch: ', fishCatch);
 	return (
 		<>
 			{/* Modal för att öppna redigera en catch */}
@@ -54,7 +53,10 @@ export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
 				<Stack gap={0}>
 					<Flex gap={'sm'} justify={'space-between'}>
 						{/* Eventsinfo */}
-						<Title order={4}>{fishCatch.eventName}</Title>
+						<Title order={4}>
+							<Text span>Event: </Text>
+							{fishCatch.eventName}
+						</Title>
 
 						<Flex gap={'xs'}>
 							{/* Redigeraknapp */}
@@ -73,7 +75,10 @@ export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
 								)}
 						</Flex>
 					</Flex>
-					<Text c={'var(--text-muted)'}> {fishCatch.teamName}</Text>
+					<Text c={'var(--text-muted)'}>
+						<Text span>Team: </Text>
+						{fishCatch.teamName}
+					</Text>
 				</Stack>
 				<Badge
 					p={'0.8rem'}
