@@ -1,5 +1,15 @@
+import { BaseModal } from '@fishScore/basemodal';
 import { Loading } from '@fishScore/loading';
-import { Button, Stack, Text, TextInput } from '@mantine/core';
+import {
+	ActionIcon,
+	Button,
+	Flex,
+	Stack,
+	Text,
+	TextInput,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 
 type Props = {
@@ -20,8 +30,9 @@ export const CatchForm = ({
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState(initialValue);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [opened, { open, close }] = useDisclosure();
 
-	const handleSubmit = async () => {
+	const handleAddCatch = async () => {
 		setErrorInput('');
 
 		const numberValue = Number(inputValue);
@@ -44,9 +55,33 @@ export const CatchForm = ({
 			setLoading(false);
 		}
 	};
+
+	const handleDelete = async () => {
+		console.log('här');
+	};
 	return (
 		<>
 			{loading && <Loading visible={loading} text={loadingText} />}
+			{/* Modal för att öppna delete alternativ */}
+			<BaseModal title='Delete catch' opened={opened} close={close}>
+				<Stack>
+					<Text>Do you want to delete this catch?</Text>
+					<Flex gap={'sm'}>
+						<Button
+							color='var(--color-danger)'
+							radius='md'
+							onClick={handleDelete}>
+							Yes
+						</Button>
+						<Button
+							color='var(--color-black)'
+							radius='md'
+							onClick={() => close()}>
+							No
+						</Button>
+					</Flex>
+				</Stack>
+			</BaseModal>
 			<Stack>
 				<Text>{title}</Text>
 
@@ -65,14 +100,22 @@ export const CatchForm = ({
 					}}
 					error={errorInput}
 				/>
-
-				<Button
-					color='var(--color-black)'
-					radius='md'
-					size='md'
-					onClick={handleSubmit}>
-					{submitLabel}
-				</Button>
+				<Flex gap={'xs'} align='stretch'>
+					<Button
+						flex={9}
+						color='var(--color-black)'
+						radius='md'
+						onClick={handleAddCatch}>
+						{submitLabel}
+					</Button>
+					<Button
+						flex={1}
+						color='var(--color-danger)'
+						radius='md'
+						onClick={() => open()}>
+						<IconTrash></IconTrash>
+					</Button>
+				</Flex>
 			</Stack>
 		</>
 	);

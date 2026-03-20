@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from middlewares.require_auth import require_auth
 from schemas.event_schema import CatchSchema
 from middlewares.validate_schema import validate_schema
-from services.catches import add_catch_in_db, edit_catch_in_db
+from services.catches import add_catch_in_db, edit_catch_in_db, delete_catch_in_db
 
 
 # Skapa blueprint instans
@@ -47,5 +47,22 @@ def edit_catch(event_id, catch_id):
 
     if response["success"]:
         return jsonify({"success": True, "updatedCatch": response["updatedCatch"]}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Ta bort en catch
+@catch_bp.route(
+    "/events/<string:event_id>/catch/delete-catch/<string:catch_id>", methods=["DELETE"]
+)
+@require_auth
+def delete_catch(event_id, catch_id):
+
+    user_id = g.user["sub"]
+
+    response = delete_catch_in_db(event_id, catch_id, user_id)
+
+    if response["success"]:
+        return jsonify({"success": True, "message": response["message"]}), 200
     else:
         return jsonify(response), 409
