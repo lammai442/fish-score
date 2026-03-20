@@ -22,6 +22,7 @@ export const FishCatchCard = ({
 }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
+
 	const catchedByUser = fishCatch.catchedBy === userId;
 	let modifiedCatchDate: string | null = null;
 	if (fishCatch.modifiedAt) {
@@ -118,24 +119,26 @@ export const FishCatchCard = ({
 						)}
 						<Text>Caught {fishCatch.catchWeight} kg</Text>
 						{/* Datum */}
-						<Flex gap={'xs'}>
+						<Flex gap={'.2rem'}>
 							<IconClockHour5></IconClockHour5>
-							<Text>
-								{fishCatch.modifiedAt ? (
-									<>
-										<Text span fw={700}>
-											Updated:
-										</Text>{' '}
-										{modifiedCatchDate}{' '}
-									</>
-								) : (
-									catchDate
+							<Text c={'var(--text-muted)'}>
+								{catchDate}
+								{fishCatch.modifiedAt && (
+									<Text
+										ml={'xs'}
+										bdrs={'sm'}
+										p={'0.2rem 0.3rem'}
+										fw={500}
+										span
+										bg={'var(--bg-muted)'}
+										c={'var(--text-primary)'}>
+										Edited
+									</Text>
 								)}
 							</Text>
 						</Flex>
 					</Stack>
 				</Flex>
-				{variant === 'profileCatch' && <Button>To event</Button>}
 			</Stack>
 		</>
 	);

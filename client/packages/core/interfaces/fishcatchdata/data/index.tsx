@@ -9,4 +9,5 @@ export interface FishCatch {
 	teamName: string;
 	eventId: string;
 	eventStatus?: string;
+	eventName?: string;
 }

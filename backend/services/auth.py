@@ -10,9 +10,12 @@ def register_user_to_db(data):
     table = get_dynamodb_table()
     user_exist_by_email = get_user_by_email(data["email"])
 
-    # Cancel if email already exist i database
-    if user_exist_by_email:
-        return {"success": False, "error": "Email already exists"}
+    # Avbryt om email redan finns i databasen
+    if user_exist_by_email["success"]:
+        return {
+            "success": False,
+            "error": "Email already exist",
+        }
 
     user_id = str(uuid.uuid4())[:5]
     now = datetime.now(timezone.utc).isoformat()

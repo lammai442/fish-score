@@ -7,10 +7,10 @@ import { useEffect, useState } from 'react';
 import { fetchUserProfile } from '@fishScore/apiuser';
 import { Loading } from '@fishScore/loading';
 import { User, UserStats } from '@fishScore/usersdata/data';
-import { dateFormatter } from '../../../core/formatters/data';
+import { shortDateFormatter } from '../../../core/formatters/data';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
-import { FishCatchCard } from '@fishScore/fishcatchcard';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
+import { ProfileCatchCard } from '../../profilecatchcard/ui';
 type Props = {};
 
 export const ProfileOverview = ({}: Props) => {
@@ -93,24 +93,27 @@ export const ProfileOverview = ({}: Props) => {
 				<Stack
 					w={'100%'}
 					p={'xl'}
-					bg={'var(--color-primary-medium)'}
+					bg={'var(--color-black)'}
 					align='center'>
 					<Avatar
 						bd={'2px solid var(--color-primary)'}
+						bg={'var(--bg-)'}
 						color='var(--color-primary)'
 						size={100}
 						name={usersFullName}></Avatar>
 
 					<Stack align='center'>
-						<Title order={3}>{usersFullName}</Title>
-						<Text>{user.email}</Text>
-						<Text>
-							Member since {dateFormatter(user.createdAt)}
+						<Title c={'var(--text-inverse)'} order={3}>
+							{usersFullName}
+						</Title>
+						<Text c={'var(--text-inverse)'}>{user.email}</Text>
+						<Text c={'var(--text-inverse)'}>
+							Member since {shortDateFormatter(user.createdAt)}
 						</Text>
 					</Stack>
 					<Button
 						bdrs={'sm'}
-						bg={'var(--color-black)'}
+						bg={'var(--bg-primary)'}
 						color={'var(--text-inverse)'}
 						style={{
 							display: 'inline',
@@ -121,6 +124,7 @@ export const ProfileOverview = ({}: Props) => {
 				</Stack>
 				{userStats && (
 					<Flex
+						p={'md'}
 						maw={'100%'}
 						gap={15}
 						justify={'center'}
@@ -140,7 +144,7 @@ export const ProfileOverview = ({}: Props) => {
 										p={'sm'}>
 										{s.icon}
 										<Title order={4}>{s.value}</Title>
-										<Text>{s.text}</Text>
+										<Text ta={'center'}>{s.text}</Text>
 									</Stack>
 								</Paper>
 							);
@@ -150,11 +154,16 @@ export const ProfileOverview = ({}: Props) => {
 				{userCatches &&
 					userCatches.map((c) => {
 						return (
-							<FishCatchCard
+							// <FishCatchCard
+							// 	key={c.catchId}
+							// 	fishCatch={c}
+							// 	userId={user.userId}
+							// 	variant='profileCatch'></FishCatchCard>
+							<ProfileCatchCard
 								key={c.catchId}
 								fishCatch={c}
 								userId={user.userId}
-								variant='profileCatch'></FishCatchCard>
+								variant='profileCatch'></ProfileCatchCard>
 						);
 					})}
 			</Stack>

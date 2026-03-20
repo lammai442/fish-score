@@ -1,33 +1,39 @@
-import { ActionIcon, Flex, Stack, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Flex,
+	Stack,
+	Text,
+	Title,
+	Tooltip,
+} from '@mantine/core';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
-import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
-import { dateFormatter } from '../../../core/formatters/data';
+import { IconCalendarWeekFilled, IconPencil } from '@tabler/icons-react';
+import {
+	dateFormatter,
+	shortDateFormatter,
+} from '../../../core/formatters/data';
 import { BaseModal } from '@fishScore/basemodal';
 import { useDisclosure } from '@mantine/hooks';
 import { EditCatch } from '../../editcatch/ui';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
-	eventStatus: string;
 	variant: 'activityCatch' | 'profileCatch';
 };
 
-export const ProfileCatchCard = ({
-	fishCatch,
-	userId,
-	eventStatus,
-	variant,
-}: Props) => {
+export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
-	const catchDate = dateFormatter(fishCatch.createdAt);
+	const catchDate = shortDateFormatter(fishCatch.createdAt);
 	const catchedByUser = fishCatch.catchedBy === userId;
+	const navigate = useNavigate();
 
-	let modifiedCatchDate: string | null = null;
-	if (fishCatch.modifiedAt) {
-		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);
-	}
-
+	const handleNavigation = (eventId: string) => {
+		navigate(`/event/${eventId}`);
+	};
 	console.log('fishCatch: ', fishCatch);
 	return (
 		<>
@@ -40,47 +46,17 @@ export const ProfileCatchCard = ({
 					eventId={fishCatch.eventId}></EditCatch>
 			</BaseModal>
 			<Stack
-				bd={
-					catchedByUser
-						? '1px solid var(--color-primary)'
-						: '1px solid var(--border-default)'
-				}
+				miw={'350px'}
+				bd={'1px solid var(--border-default)'}
 				bdrs={'15px'}
 				p={'20px'}
-				bg={
-					catchedByUser
-						? 'var(--bg-primary-light)'
-						: 'var(--bg-surface)'
-				}>
-				<Flex gap={'sm'}>
-					<Flex
-						align={'center'}
-						justify={'center'}
-						bg={
-							catchedByUser
-								? 'var(--bg-primary)'
-								: 'var(--color-black)'
-						}
-						bdrs={50}
-						w={50}
-						h={50}
-						p={'sm'}>
-						<IconFish
-							size={40}
-							color='var(--color-white)'></IconFish>
-					</Flex>
-					<Stack>
+				bg={'var(--color-white)'}>
+				<Stack gap={0}>
+					<Flex gap={'sm'} justify={'space-between'}>
+						{/* Eventsinfo */}
+						<Title order={4}>{fishCatch.eventName}</Title>
+
 						<Flex gap={'xs'}>
-							<Text>
-								{'Your catch in '}
-								<span style={{ fontWeight: 700 }}>
-									{fishCatch.teamName}
-								</span>
-								{' with '}
-								<span style={{ fontWeight: 700 }}>
-									{fishCatch.teamName}
-								</span>
-							</Text>
 							{/* Redigeraknapp */}
 							{fishCatch.eventStatus === 'ongoing' &&
 								catchedByUser && (
@@ -96,24 +72,38 @@ export const ProfileCatchCard = ({
 									</Tooltip>
 								)}
 						</Flex>
-						<Text>Caught {fishCatch.catchWeight} kg</Text>
-						{/* Datum */}
-						<Flex gap={'xs'}>
-							<IconClockHour5></IconClockHour5>
-							<Text>
-								{fishCatch.modifiedAt ? (
-									<>
-										<Text span fw={700}>
-											Updated:
-										</Text>{' '}
-										{modifiedCatchDate}{' '}
-									</>
-								) : (
-									catchDate
-								)}
-							</Text>
-						</Flex>
-					</Stack>
+					</Flex>
+					<Text c={'var(--text-muted)'}> {fishCatch.teamName}</Text>
+				</Stack>
+				<Badge
+					p={'0.8rem'}
+					bg={'var(--bg-primary)'}
+					c={'var(--text-inverse)'}
+					bdrs={'sm'}>
+					{fishCatch.catchWeight} kg
+				</Badge>
+				{/* Datum */}
+				<Flex gap={'xs'}>
+					<IconCalendarWeekFilled></IconCalendarWeekFilled>
+					<Text>
+						{catchDate}{' '}
+						{fishCatch.modifiedAt && <Text span>(edited)</Text>}
+					</Text>
+				</Flex>
+				<Flex>
+					<Button
+						w='fit-content'
+						bg={'var(--color-black)'}
+						onClick={() => handleNavigation(fishCatch.eventId)}>
+						To event
+					</Button>
+					{/* <Button
+						w='fit-content'
+						c={'var(--text-primary)'}
+						bg={'var(--color-grey)'}
+						onClick={() => handleNavigation(fishCatch.eventId)}>
+						Edit
+					</Button> */}
 				</Flex>
 			</Stack>
 		</>

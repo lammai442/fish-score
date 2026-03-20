@@ -17,3 +17,14 @@ export const dateFormatter = (date: string): string => {
 
 	return formatted;
 };
+export const shortDateFormatter = (date: string): string => {
+	const parsedDate = new Date(date);
+
+	const datePart = parsedDate.toLocaleDateString('en-US', {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+	});
+
+	return datePart;
+};

@@ -58,7 +58,6 @@ export const Header = () => {
 					</Tooltip>
 				</Flex>
 			</Flex>
-			<Divider mb='0.5rem' />
 		</Container>
 	);
 };
