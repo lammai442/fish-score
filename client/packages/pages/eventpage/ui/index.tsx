@@ -20,7 +20,7 @@ import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
-import { IconUsers } from '@tabler/icons-react';
+import { IconTrophy, IconUsers } from '@tabler/icons-react';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
 import { fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
@@ -35,6 +35,7 @@ export const EventPage = () => {
 	const [mode, setMode] = useState<string | null>('leaderboard');
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
 	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
+	const [endEventOpened, endEventHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -84,6 +85,10 @@ export const EventPage = () => {
 
 		loadEvent();
 	}, [events, eventId]);
+
+	const handleEndEvent = async () => {
+		console.log('click');
+	};
 
 	// Synka liveuppdateringar från websocket
 	// useEffect(() => {
@@ -135,7 +140,6 @@ export const EventPage = () => {
 			)}
 
 			{/* Rendera teams */}
-			{/* Skapa nytt team button genom öppna modal */}
 			<BaseModal
 				title='Create team'
 				opened={createTeamOpened}
@@ -144,19 +148,52 @@ export const EventPage = () => {
 					close={createTeamHandlers.close}
 					type='team'></CreateItemModal>
 			</BaseModal>
-			<Flex m='1rem 0'>
+			{/* Avsluta tävlingsmodal */}
+			<BaseModal
+				title='End event'
+				opened={endEventOpened}
+				close={endEventHandlers.close}>
+				<Stack>
+					<Text>Do you want to end this event?</Text>
+					<Button
+						bg={'var(--color-black)'}
+						c={'var(--text-inverse)'}
+						onClick={handleEndEvent}>
+						Yes
+					</Button>
+				</Stack>
+			</BaseModal>
+			<Flex m='1rem 0' gap={'sm'}>
+				{/* Skapa nytt team button genom öppna modal */}
 				<Tooltip
-					label='Only the event admin can create new teams'
-					disabled={eventCreatedByUser}>
+					label={
+						currentEvent?.status === 'completed'
+							? 'Event is completed'
+							: 'Only the event admin can create new teams'
+					}
+					disabled={currentEvent?.status !== 'completed'}>
 					<Button
 						color='var(--color-black)'
 						size='sm'
 						radius='md'
-						disabled={!eventCreatedByUser}
+						disabled={
+							!eventCreatedByUser ||
+							currentEvent?.status === 'completed'
+						}
 						onClick={createTeamHandlers.open}>
 						+ Create team
 					</Button>
 				</Tooltip>
+				{/* Avsluta tävling */}
+				{eventCreatedByUser && (
+					<Button
+						radius='md'
+						bg={'var(--color-gold)'}
+						c={'var(--text-primary)'}
+						onClick={endEventHandlers.open}>
+						<IconTrophy></IconTrophy> End event
+					</Button>
+				)}
 			</Flex>
 			<BaseModal
 				title='Add new catch'
