@@ -136,3 +136,34 @@ def edit_catch_in_db(event_id, catch_id, user_id, catch_weight):
 
     except ClientError as e:
         return {"success": False, "error": str(e)}
+
+
+def delete_catch_in_db(event_id, catch_id, user_id):
+    try:
+        catch_response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"CATCH#{catch_id}",
+            },
+        )
+
+        catch_item = catch_response.get("Item")
+
+        if not catch_item:
+            return {"success": False, "error": "Catch not found"}
+
+        if catch_item["catchedBy"] != user_id:
+            return {"success": False, "error": "Not authorized"}
+
+        # Uppdaterar teamets totalvikt
+        table.delete_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"CATCH#{catch_id}",
+            },
+        )
+
+        return {"success": True, "message": "Successfully deleted catch"}
+
+    except ClientError as e:
+        return {"success": False, "error": str(e)}

@@ -1,7 +1,8 @@
 import { showNotification } from '@mantine/notifications';
-import { IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconTrash } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';
 import { fetchEditCatch } from '../../../core/api/apicatches/data';
+import { ActionIcon, Button } from '@mantine/core';
 
 type Props = {
 	close: () => void;
@@ -31,6 +32,7 @@ export const EditCatch = ({
 			close();
 		}
 	};
+
 	return (
 		<>
 			<CatchForm
