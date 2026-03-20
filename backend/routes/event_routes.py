@@ -4,10 +4,10 @@ from schemas.event_schema import EventSchema, TeamSchema, UpdateEventSchema, Cat
 from middlewares.validate_schema import validate_schema
 from services.events import (
     get_event_view_in_db,
-    get_event_in_db,
     create_new_event_in_db,
     get_all_events_in_db,
     update_event_in_db,
+    end_event_in_db,
 )
 
 # Skapa blueprint instans
@@ -72,5 +72,20 @@ def create_new_event():
     if response["success"]:
         saved_event = response["event"]
         return jsonify({"success": True, "event": saved_event}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Avsluta ett event
+@event_bp.route("/events/<string:event_id>/end", methods=["POST"])
+@require_auth
+def end_event(event_id):
+
+    user_id = g.user["sub"]
+
+    response = end_event_in_db(event_id, user_id)
+
+    if response["success"]:
+        return jsonify({"success": True, "endedEvent": response["endedEvent"]}), 200
     else:
         return jsonify(response), 409

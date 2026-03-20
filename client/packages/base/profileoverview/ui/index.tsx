@@ -1,5 +1,14 @@
 import { fetchLogout } from '@fishScore/apiauth';
-import { Avatar, Button, Flex, Paper, Stack, Text, Title } from '@mantine/core';
+import {
+	Avatar,
+	Button,
+	Flex,
+	Paper,
+	Stack,
+	Text,
+	Title,
+	Transition,
+} from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '@mantine/notifications';
 import { IconFish, IconMedal, IconScale, IconX } from '@tabler/icons-react';
@@ -29,6 +38,7 @@ export const ProfileOverview = ({}: Props) => {
 			setUser(response.data.userProfile.user);
 			setUserStats(response.data.userProfile.stats);
 			setUserCatches(response.data.userProfile.catches);
+			setShowCatches(true);
 		}
 	};
 
@@ -125,7 +135,7 @@ export const ProfileOverview = ({}: Props) => {
 				</Stack>
 				{userStats && (
 					<Flex
-						p={'0 2rem 1rem 2rem'}
+						p={'0 2rem 0 2rem'}
 						maw={'100%'}
 						gap={15}
 						justify={'center'}
@@ -156,11 +166,6 @@ export const ProfileOverview = ({}: Props) => {
 				{userCatches &&
 					userCatches.map((c) => {
 						return (
-							// <FishCatchCard
-							// 	key={c.catchId}
-							// 	fishCatch={c}
-							// 	userId={user.userId}
-							// 	variant='profileCatch'></FishCatchCard>
 							<ProfileCatchCard
 								key={c.catchId}
 								fishCatch={c}
