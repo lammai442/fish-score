@@ -209,6 +209,7 @@ export const EventPage = () => {
 						bdrs={15}>
 						<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
 						<Tabs.Tab value='activity'>Activity</Tabs.Tab>
+						<Tabs.Tab value='messages'>Messages</Tabs.Tab>
 					</Tabs.List>
 					{/* Leaderboard tab */}
 					<Tabs.Panel value='leaderboard' pt='md'>
