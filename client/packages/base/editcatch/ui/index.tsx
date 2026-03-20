@@ -36,11 +36,14 @@ export const EditCatch = ({
 	return (
 		<>
 			<CatchForm
+				variant='editCatch'
 				title='Make change to your catch'
 				submitLabel='Add catch'
 				loadingText='Adding new catch'
 				initialValue={String(initialWeight)}
-				onSubmit={handleEditCatch}></CatchForm>
+				onSubmit={handleEditCatch}
+				catchId={catchId}
+				eventId={eventId}></CatchForm>
 		</>
 	);
 };

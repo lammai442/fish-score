@@ -150,7 +150,7 @@ export const EventPage = () => {
 					disabled={eventCreatedByUser}>
 					<Button
 						color='var(--color-black)'
-						size='lg'
+						size='sm'
 						radius='md'
 						disabled={!eventCreatedByUser}
 						onClick={createTeamHandlers.open}>

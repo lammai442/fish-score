@@ -9,8 +9,15 @@ import {
 	TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconTrash } from '@tabler/icons-react';
+import {
+	IconCancel,
+	IconCheck,
+	IconFileX,
+	IconTrash,
+} from '@tabler/icons-react';
 import { useState } from 'react';
+import { fetchDeleteCatch } from '../../../core/api/apicatches/data';
+import { showNotification } from '@mantine/notifications';
 
 type Props = {
 	initialValue?: string;
@@ -18,6 +25,9 @@ type Props = {
 	title: string;
 	loadingText: string;
 	onSubmit: (weight: number) => Promise<void>;
+	catchId?: string;
+	eventId?: string;
+	variant?: string;
 };
 
 export const CatchForm = ({
@@ -26,6 +36,9 @@ export const CatchForm = ({
 	title,
 	loadingText,
 	onSubmit,
+	catchId,
+	eventId,
+	variant,
 }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [inputValue, setInputValue] = useState(initialValue);
@@ -57,8 +70,32 @@ export const CatchForm = ({
 	};
 
 	const handleDelete = async () => {
-		console.log('här');
+		try {
+			setLoading(true);
+			const response = await fetchDeleteCatch(catchId, eventId);
+			if (response.success) {
+				close();
+				showNotification({
+					title: 'Deleted catch',
+					message: 'Your catch has been successfully deleted',
+					color: 'green',
+					icon: <IconCheck />,
+					position: 'top-center',
+				});
+			} else {
+				showNotification({
+					title: 'Delete failed',
+					message: response.data.error,
+					color: 'var(--color-danger)',
+					icon: <IconCancel />,
+					position: 'top-center',
+				});
+			}
+		} finally {
+			setLoading(false);
+		}
 	};
+
 	return (
 		<>
 			{loading && <Loading visible={loading} text={loadingText} />}
@@ -100,7 +137,7 @@ export const CatchForm = ({
 					}}
 					error={errorInput}
 				/>
-				<Flex gap={'xs'} align='stretch'>
+				<Flex gap={'xs'}>
 					<Button
 						flex={9}
 						color='var(--color-black)'
@@ -108,13 +145,15 @@ export const CatchForm = ({
 						onClick={handleAddCatch}>
 						{submitLabel}
 					</Button>
-					<Button
-						flex={1}
-						color='var(--color-danger)'
-						radius='md'
-						onClick={() => open()}>
-						<IconTrash></IconTrash>
-					</Button>
+					{variant === 'editCatch' && (
+						<Button
+							flex={1}
+							color='var(--color-danger)'
+							radius='md'
+							onClick={() => open()}>
+							<IconTrash></IconTrash>
+						</Button>
+					)}
 				</Flex>
 			</Stack>
 		</>

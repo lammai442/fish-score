@@ -140,6 +140,21 @@ def edit_catch_in_db(event_id, catch_id, user_id, catch_weight):
 
 def delete_catch_in_db(event_id, catch_id, user_id):
     try:
+        event_response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            },
+        )
+
+        event_item = event_response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Event not found"}
+
+        if event_item.get("status") != "ongoing":
+            return {"success": False, "error": "Event is closed"}
+
         catch_response = table.get_item(
             Key={
                 "PK": f"EVENT#{event_id}",
@@ -155,7 +170,28 @@ def delete_catch_in_db(event_id, catch_id, user_id):
         if catch_item["catchedBy"] != user_id:
             return {"success": False, "error": "Not authorized"}
 
+        team_id = catch_item["teamId"]
+
+        team_response = table.get_item(
+            Key={"PK": f"EVENT#{event_id}", "SK": f"TEAM#{team_id}"}
+        )
+
+        team_item = team_response.get("Item")
+
+        if not team_item:
+            return {"success": False, "error": "Team not found"}
+
         # Uppdaterar teamets totalvikt
+        table.update_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": f"TEAM#{team_id}",
+            },
+            UpdateExpression="SET totalCatchWeight = totalCatchWeight - :catch_weight",
+            ExpressionAttributeValues={":catch_weight": catch_item["catchWeight"]},
+        )
+
+        # Raderar catchen från db
         table.delete_item(
             Key={
                 "PK": f"EVENT#{event_id}",
