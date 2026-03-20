@@ -25,7 +25,7 @@ import type { Team } from '../../../core/interfaces/teamsdata/data';
 import { fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
-import { ActivityCatch } from '../../../base/activitycatch/ui';
+import { FishCatchCard } from '@fishScore/fishcatchcard';
 import { AddCatch } from '../../../base/addcatch/ui';
 
 export const EventPage = () => {
@@ -237,13 +237,12 @@ export const EventPage = () => {
 							{activity.length > 0 ? (
 								activity.map((fishCatch) => {
 									return (
-										<ActivityCatch
+										<FishCatchCard
 											key={fishCatch.catchId}
 											fishCatch={fishCatch}
 											eventStatus={currentEvent.status}
-											userId={
-												user?.userId
-											}></ActivityCatch>
+											userId={user?.userId}
+											variant='activityCatch'></FishCatchCard>
 									);
 								})
 							) : (
