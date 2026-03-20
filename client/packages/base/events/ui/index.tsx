@@ -40,12 +40,9 @@ export const Events = ({ events = [] }: Props) => {
 											padding: '0.3rem 0.4rem',
 											backgroundColor:
 												event.status === 'ongoing'
-													? 'var(--color-black)'
-													: 'var(--color-grey)',
-											color:
-												event.status === 'ongoing'
-													? 'var(--text-inverse)'
-													: 'var(--text-primary)',
+													? 'var(--bg-primary)'
+													: 'var(--color-black)',
+											color: 'var(--text-inverse)',
 											borderRadius: '10px',
 										}}>
 										{capitilizeFirstLetter(event.status)}
