@@ -1,14 +1,5 @@
 import { fetchLogout } from '@fishScore/apiauth';
-import {
-	Avatar,
-	Button,
-	Flex,
-	Grid,
-	Paper,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core';
+import { Avatar, Button, Flex, Paper, Stack, Text, Title } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { showNotification } from '@mantine/notifications';
 import { IconFish, IconMedal, IconScale, IconX } from '@tabler/icons-react';
@@ -17,8 +8,9 @@ import { fetchUserProfile } from '@fishScore/apiuser';
 import { Loading } from '@fishScore/loading';
 import { User, UserStats } from '@fishScore/usersdata/data';
 import { dateFormatter } from '../../../core/formatters/data';
-import { ActivityCatch } from '../../activitycatch/ui';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
+import { FishCatchCard } from '@fishScore/fishcatchcard';
+import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 type Props = {};
 
 export const ProfileOverview = ({}: Props) => {
@@ -27,21 +19,26 @@ export const ProfileOverview = ({}: Props) => {
 	const [userStats, setUserStats] = useState<UserStats | null>(null);
 	const [userCatches, setUserCatches] = useState<FishCatch[] | null>(null);
 	const navigate = useNavigate();
+	const { events } = useWebSocketStore();
+
+	const getUserProfile = async () => {
+		setLoading(true);
+		const response = await fetchUserProfile();
+		setLoading(false);
+		if (response.success) {
+			setUser(response.data.userProfile.user);
+			setUserStats(response.data.userProfile.stats);
+			setUserCatches(response.data.userProfile.catches);
+		}
+	};
 
 	useEffect(() => {
-		const getUserProfile = async () => {
-			setLoading(true);
-			const response = await fetchUserProfile();
-			setLoading(false);
-			if (response.success) {
-				setUser(response.data.userProfile.user);
-				setUserStats(response.data.userProfile.stats);
-				setUserCatches(response.data.userProfile.catches);
-			}
-		};
-
 		getUserProfile();
 	}, []);
+
+	useEffect(() => {
+		getUserProfile();
+	}, [events]);
 
 	const handleLogout = async () => {
 		const response = await fetchLogout();
@@ -131,7 +128,11 @@ export const ProfileOverview = ({}: Props) => {
 						mt={'-xl'}>
 						{generateUserStats.map((s) => {
 							return (
-								<Paper shadow='md' p='md' bdrs={'lg'}>
+								<Paper
+									key={s.text}
+									shadow='md'
+									p='md'
+									bdrs={'lg'}>
 									<Stack
 										w={'100%'}
 										align='center'
@@ -149,10 +150,11 @@ export const ProfileOverview = ({}: Props) => {
 				{userCatches &&
 					userCatches.map((c) => {
 						return (
-							<ActivityCatch
+							<FishCatchCard
+								key={c.catchId}
 								fishCatch={c}
-								eventStatus='ongoing'
-								userId={user.userId}></ActivityCatch>
+								userId={user.userId}
+								variant='profileCatch'></FishCatchCard>
 						);
 					})}
 			</Stack>

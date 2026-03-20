@@ -1,18 +1,25 @@
-import { ActionIcon, Flex, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Button, Flex, Stack, Text, Tooltip } from '@mantine/core';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
 import { dateFormatter } from '../../../core/formatters/data';
 import { BaseModal } from '@fishScore/basemodal';
 import { useDisclosure } from '@mantine/hooks';
 import { EditCatch } from '../../editcatch/ui';
+import { capitilizeFirstLetter } from '../../../core/utils/helpfunctions/data';
 
 type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
-	eventStatus: string;
+	eventStatus?: string;
+	variant: 'activityCatch' | 'profileCatch';
 };
 
-export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
+export const FishCatchCard = ({
+	fishCatch,
+	userId,
+	eventStatus,
+	variant,
+}: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
 	const catchedByUser = fishCatch.catchedBy === userId;
@@ -20,6 +27,9 @@ export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
 	if (fishCatch.modifiedAt) {
 		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);
 	}
+	const canEditCatch =
+		catchedByUser &&
+		(eventStatus === 'ongoing' || fishCatch.eventStatus === 'ongoing');
 
 	return (
 		<>
@@ -63,17 +73,31 @@ export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
 					</Flex>
 					<Stack>
 						<Flex gap={'xs'}>
-							<Text>
-								<span style={{ fontStyle: 'italic' }}>
-									{fishCatch.catchersFullName}
-								</span>{' '}
-								from{' '}
-								<span style={{ fontWeight: 700 }}>
-									{fishCatch.teamName}
-								</span>
-							</Text>
+							{variant === 'activityCatch' && (
+								<Text>
+									<span style={{ fontStyle: 'italic' }}>
+										{fishCatch.catchersFullName}
+									</span>{' '}
+									from{' '}
+									<span style={{ fontWeight: 700 }}>
+										{fishCatch.teamName}
+									</span>
+								</Text>
+							)}
+							{variant === 'profileCatch' && (
+								<Text>
+									{'Your catch in '}
+									<span style={{ fontWeight: 700 }}>
+										{fishCatch.teamName}
+									</span>
+									{' with '}
+									<span style={{ fontWeight: 700 }}>
+										{fishCatch.teamName}
+									</span>
+								</Text>
+							)}
 							{/* Redigeraknapp */}
-							{eventStatus === 'ongoing' && catchedByUser && (
+							{canEditCatch && (
 								<Tooltip label={'Edit catch'}>
 									<ActionIcon
 										variant='filled'
@@ -86,6 +110,12 @@ export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
 								</Tooltip>
 							)}
 						</Flex>
+						{variant === 'profileCatch' && (
+							<Text>
+								Event status:{' '}
+								{capitilizeFirstLetter(fishCatch.eventStatus)}
+							</Text>
+						)}
 						<Text>Caught {fishCatch.catchWeight} kg</Text>
 						{/* Datum */}
 						<Flex gap={'xs'}>
@@ -105,6 +135,7 @@ export const ActivityCatch = ({ fishCatch, userId, eventStatus }: Props) => {
 						</Flex>
 					</Stack>
 				</Flex>
+				{variant === 'profileCatch' && <Button>To event</Button>}
 			</Stack>
 		</>
 	);

@@ -1,7 +1,7 @@
 from .table import get_dynamodb_table
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
-from utils.help_functions import filter_items_keys, filter_item_keys
+from utils.help_functions import filter_items_keys
 from decimal import Decimal
 
 table = get_dynamodb_table()
@@ -50,14 +50,41 @@ def get_user_profile_in_db(user_id):
 
         user_catches = user_catch_response.get("Items", [])
 
-        total_catches = len(user_catches)
+        # Samla unika events ids i en lista
+        event_ids = list({c["eventId"] for c in user_catches})
+
+        event_status_by_id = {}
+
+        # Hämta hem varje event
+        for event_id in event_ids:
+            event_response = table.get_item(
+                Key={
+                    "PK": f"EVENT#{event_id}",
+                    "SK": "EVENT",
+                }
+            )
+
+            event_item = event_response.get("Item")
+            if event_item:
+                event_status_by_id[event_id] = event_item.get("status")
+
+        user_catches_with_event_status = []
+
+        for c in user_catches:
+            user_catches_with_event_status.append(
+                {**c, "eventStatus": event_status_by_id.get(c["eventId"])}
+            )
+
+        total_catches = len(user_catches_with_event_status)
         total_catches_weight = sum(
-            (c["catchWeight"] for c in user_catches), Decimal("0")
+            (c["catchWeight"] for c in user_catches_with_event_status), Decimal("0")
         )
-        highest_catch = max(user_catches, key=lambda c: c["catchWeight"], default=None)
+        highest_catch = max(
+            user_catches_with_event_status, key=lambda c: c["catchWeight"], default=None
+        )
 
         # Ändrar om catchWeight till float istället sträng
-        for c in user_catches:
+        for c in user_catches_with_event_status:
             c["catchWeight"] = float(c["catchWeight"])
 
         filtered_user = {
@@ -75,7 +102,7 @@ def get_user_profile_in_db(user_id):
                     float(highest_catch["catchWeight"]) if highest_catch else 0
                 ),
             },
-            "catches": filter_items_keys(user_catches),
+            "catches": filter_items_keys(user_catches_with_event_status),
             "user": filtered_user,
         }
 

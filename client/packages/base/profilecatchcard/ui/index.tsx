@@ -10,17 +10,25 @@ type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
 	eventStatus: string;
+	variant: 'activityCatch' | 'profileCatch';
 };
 
-export const ProfileCatchCard = ({ fishCatch, userId, eventStatus }: Props) => {
+export const ProfileCatchCard = ({
+	fishCatch,
+	userId,
+	eventStatus,
+	variant,
+}: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
 	const catchedByUser = fishCatch.catchedBy === userId;
+
 	let modifiedCatchDate: string | null = null;
 	if (fishCatch.modifiedAt) {
 		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);
 	}
 
+	console.log('fishCatch: ', fishCatch);
 	return (
 		<>
 			{/* Modal för att öppna redigera en catch */}
@@ -64,27 +72,29 @@ export const ProfileCatchCard = ({ fishCatch, userId, eventStatus }: Props) => {
 					<Stack>
 						<Flex gap={'xs'}>
 							<Text>
-								<span style={{ fontStyle: 'italic' }}>
-									{fishCatch.catchersFullName}
-								</span>{' '}
-								from{' '}
+								{'Your catch in '}
+								<span style={{ fontWeight: 700 }}>
+									{fishCatch.teamName}
+								</span>
+								{' with '}
 								<span style={{ fontWeight: 700 }}>
 									{fishCatch.teamName}
 								</span>
 							</Text>
 							{/* Redigeraknapp */}
-							{eventStatus === 'ongoing' && catchedByUser && (
-								<Tooltip label={'Edit catch'}>
-									<ActionIcon
-										variant='filled'
-										bg={'var(--color-grey)'}
-										radius={'lg'}
-										p={'5px'}
-										onClick={open}>
-										<IconPencil color='var(--color-black)'></IconPencil>
-									</ActionIcon>
-								</Tooltip>
-							)}
+							{fishCatch.eventStatus === 'ongoing' &&
+								catchedByUser && (
+									<Tooltip label={'Edit catch'}>
+										<ActionIcon
+											variant='filled'
+											bg={'var(--color-grey)'}
+											radius={'lg'}
+											p={'5px'}
+											onClick={open}>
+											<IconPencil color='var(--color-black)'></IconPencil>
+										</ActionIcon>
+									</Tooltip>
+								)}
 						</Flex>
 						<Text>Caught {fishCatch.catchWeight} kg</Text>
 						{/* Datum */}
