@@ -34,17 +34,15 @@ export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
 				{subTitle && (
 					<Title
 						order={6}
+						className='pulse'
 						style={{
 							padding: '0.5rem 0.75rem',
 							borderRadius: '15px',
 							backgroundColor:
 								subTitle.toLowerCase() === 'ongoing'
-									? 'var(--color-black)'
-									: 'var(--color-grey)',
-							color:
-								subTitle.toLowerCase() === 'ongoing'
-									? 'var(--text-inverse)'
-									: 'var(--text-primary)',
+									? 'var(--bg-primary)'
+									: 'var(--color-black)',
+							color: 'var(--text-inverse)',
 						}}>
 						{subTitle}
 					</Title>

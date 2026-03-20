@@ -85,9 +85,20 @@ export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
 				{/* Datum */}
 				<Flex gap={'xs'}>
 					<IconCalendarWeekFilled></IconCalendarWeekFilled>
-					<Text>
+					<Text c={'var(--text-muted)'}>
 						{catchDate}{' '}
-						{fishCatch.modifiedAt && <Text span>(edited)</Text>}
+						{fishCatch.modifiedAt && (
+							<Text
+								ml={'xs'}
+								bdrs={'sm'}
+								p={'0.2rem 0.3rem'}
+								fw={500}
+								span
+								bg={'var(--bg-muted)'}
+								c={'var(--text-primary)'}>
+								Edited
+							</Text>
+						)}
 					</Text>
 				</Flex>
 				<Flex>
@@ -97,13 +108,6 @@ export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
 						onClick={() => handleNavigation(fishCatch.eventId)}>
 						To event
 					</Button>
-					{/* <Button
-						w='fit-content'
-						c={'var(--text-primary)'}
-						bg={'var(--color-grey)'}
-						onClick={() => handleNavigation(fishCatch.eventId)}>
-						Edit
-					</Button> */}
 				</Flex>
 			</Stack>
 		</>

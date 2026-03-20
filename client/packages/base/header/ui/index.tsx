@@ -25,13 +25,15 @@ export const Header = () => {
 		<Container size='lg'>
 			<Flex justify='space-between' align='center' p='16px'>
 				<Box onClick={() => navigate('/')}>
-					<Image
-						src='/transparent-logo.png'
-						alt='Logo'
-						width={70}
-						height={70}
-						style={{ cursor: 'pointer' }}
-						fit='contain'></Image>
+					<Tooltip label={'Home'}>
+						<Image
+							src='/transparent-logo.png'
+							alt='Logo'
+							width={70}
+							height={70}
+							style={{ cursor: 'pointer' }}
+							fit='contain'></Image>
+					</Tooltip>
 				</Box>
 				<Flex gap='0.5rem'>
 					<Tooltip label={'Notifications'}>

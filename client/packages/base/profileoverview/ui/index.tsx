@@ -92,7 +92,8 @@ export const ProfileOverview = ({}: Props) => {
 				}}>
 				<Stack
 					w={'100%'}
-					p={'xl'}
+					// p={'xl'}
+					p={'1.6rem 0 2.8rem 0'}
 					bg={'var(--color-black)'}
 					align='center'>
 					<Avatar
@@ -124,12 +125,12 @@ export const ProfileOverview = ({}: Props) => {
 				</Stack>
 				{userStats && (
 					<Flex
-						p={'md'}
+						p={'0 2rem 1rem 2rem'}
 						maw={'100%'}
 						gap={15}
 						justify={'center'}
 						flex={5}
-						mt={'-xl'}>
+						mt={'-2.5rem'}>
 						{generateUserStats.map((s) => {
 							return (
 								<Paper
@@ -151,6 +152,7 @@ export const ProfileOverview = ({}: Props) => {
 						})}
 					</Flex>
 				)}
+				<Title order={3}>MY CATCHES</Title>
 				{userCatches &&
 					userCatches.map((c) => {
 						return (
