@@ -45,7 +45,6 @@ export const EventPage = () => {
 		team.members.some((member) => member.userId === user?.userId),
 	);
 	const eventCreatedByUser = currentEvent?.createdBy === user?.userId;
-
 	const loadEvent = async () => {
 		if (!eventId) return;
 		setLoading(true);
@@ -148,18 +147,17 @@ export const EventPage = () => {
 			<Flex m='1rem 0'>
 				<Tooltip
 					label='Only the event admin can create new teams'
-					disabled={!eventCreatedByUser}>
+					disabled={eventCreatedByUser}>
 					<Button
 						color='var(--color-black)'
 						size='lg'
 						radius='md'
-						disabled={eventCreatedByUser}
+						disabled={!eventCreatedByUser}
 						onClick={createTeamHandlers.open}>
 						+ Create team
 					</Button>
 				</Tooltip>
 			</Flex>
-
 			<BaseModal
 				title='Add new catch'
 				opened={addCatchOpened}
@@ -169,6 +167,7 @@ export const EventPage = () => {
 					eventId={eventId}
 					teamId={usersTeam?.teamId}></AddCatch>
 			</BaseModal>
+			{/* Lägg till en ny catch */}
 			<Tooltip
 				label='Event has ended'
 				disabled={currentEvent?.status === 'ongoing'}>
