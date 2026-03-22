@@ -19,6 +19,16 @@ class UpdateEventSchema(Schema):
     newEventName = fields.String(required=True, validate=validate.Length(min=1, max=18))
 
 
+class UpdateEventStatusSchema(Schema):
+    eventStatus = fields.String(
+        required=True,
+        validate=validate.OneOf(
+            ["ongoing", "completed"],
+            error="Status must be either 'ongoing' or 'completed'",
+        ),
+    )
+
+
 class CatchSchema(Schema):
     catchWeight = fields.Float(required=True, validate=validate.Range(min=0.1))
 

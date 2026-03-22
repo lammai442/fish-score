@@ -20,7 +20,7 @@ import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
-import { IconTrophy, IconUsers, IconX } from '@tabler/icons-react';
+import { IconCheck, IconTrophy, IconUsers, IconX } from '@tabler/icons-react';
 import { fetchEventStatus, fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
@@ -104,11 +104,19 @@ export const EventPage = () => {
 				newEventStatus,
 			);
 			if (response.success) {
+				endEventHandlers.close();
+
 				showNotification({
-					title: 'Event ended',
-					message: "It's official, the event has ended!",
-					color: 'red',
-					icon: <IconX />,
+					title:
+						response.data.eventStatus === 'completed'
+							? 'Event ended'
+							: "It's not over",
+					message:
+						response.data.eventStatus === 'completed'
+							? "It's official, the event has ended!"
+							: 'Event re opened, game on!',
+					color: 'var(--bg-primary)',
+					icon: <IconCheck />,
 					position: 'top-center',
 				});
 			}
@@ -159,11 +167,19 @@ export const EventPage = () => {
 			</BaseModal>
 			{/* Avsluta tävlingsmodal */}
 			<BaseModal
-				title='End event'
+				title={
+					currentEvent?.status === 'ongoing'
+						? 'End event'
+						: 'Open event'
+				}
 				opened={endEventOpened}
 				close={endEventHandlers.close}>
 				<Stack>
-					<Text>Do you want to end this event?</Text>
+					<Text>
+						{currentEvent?.status === 'ongoing'
+							? 'Do you want to end this event?'
+							: 'Do you want to open this event?'}
+					</Text>
 					<Button
 						bg={'var(--color-black)'}
 						c={'var(--text-inverse)'}
@@ -177,7 +193,7 @@ export const EventPage = () => {
 				<Tooltip
 					label={
 						currentEvent?.status === 'completed'
-							? 'Event is completed'
+							? 'Event has ended'
 							: 'Only the event admin can create new teams'
 					}
 					disabled={currentEvent?.status !== 'completed'}>
@@ -197,10 +213,21 @@ export const EventPage = () => {
 				{eventCreatedByUser && (
 					<Button
 						radius='md'
-						bg={'var(--color-gold)'}
-						c={'var(--text-primary)'}
+						bg={
+							currentEvent?.status === 'ongoing'
+								? 'var(--color-gold)'
+								: 'var(--bg-primary)'
+						}
+						c={
+							currentEvent?.status === 'ongoing'
+								? 'var(--text-primary)'
+								: 'var(--text-inverse)'
+						}
 						onClick={endEventHandlers.open}>
-						<IconTrophy></IconTrophy> End event
+						<IconTrophy></IconTrophy>{' '}
+						{currentEvent?.status === 'ongoing'
+							? 'End event'
+							: 'Open event'}
 					</Button>
 				)}
 			</Flex>

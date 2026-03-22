@@ -1,6 +1,12 @@
 from flask import Blueprint, request, jsonify, g
 from middlewares.require_auth import require_auth
-from schemas.event_schema import EventSchema, TeamSchema, UpdateEventSchema, CatchSchema
+from schemas.event_schema import (
+    EventSchema,
+    TeamSchema,
+    UpdateEventSchema,
+    CatchSchema,
+    UpdateEventStatusSchema,
+)
 from middlewares.validate_schema import validate_schema
 from services.events import (
     get_event_view_in_db,
@@ -76,16 +82,20 @@ def create_new_event():
         return jsonify(response), 409
 
 
-# Avsluta ett event
-@event_bp.route("/events/<string:event_id>/end", methods=["PUT"])
+# Redigera eventstatus
+@event_bp.route("/events/<string:event_id>/edit", methods=["PUT"])
 @require_auth
+@validate_schema(UpdateEventStatusSchema)
 def end_event(event_id):
 
+    # Validated data after middleware
+    data = request.validated_data
+    event_status = data["eventStatus"]
     user_id = g.user["sub"]
 
-    response = end_event_in_db(event_id, user_id)
+    response = end_event_in_db(event_id, event_status, user_id)
 
     if response["success"]:
-        return jsonify({"success": True, "endedEvent": response["endedEvent"]}), 200
+        return jsonify({"success": True, "eventStatus": response["eventStatus"]}), 200
     else:
         return jsonify(response), 409
