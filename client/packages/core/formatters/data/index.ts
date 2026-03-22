@@ -17,6 +17,7 @@ export const dateFormatter = (date: string): string => {
 
 	return formatted;
 };
+
 export const shortDateFormatter = (date: string): string => {
 	const parsedDate = new Date(date);
 

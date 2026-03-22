@@ -1,5 +1,5 @@
 import './index.css';
-import type { FishEvent } from '@fishScore/eventsdata';
+import type { EventMessage, FishEvent } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
 import {
@@ -28,6 +28,7 @@ import type { FishCatch } from '@fishScore/fishcatchdata';
 import { FishCatchCard } from '@fishScore/fishcatchcard';
 import { AddCatch } from '@fishScore/addcatch';
 import { showNotification } from '@mantine/notifications';
+import { EventsMessage } from '@fishScore/eventsmessage';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -124,6 +125,36 @@ export const EventPage = () => {
 			setLoading(false);
 		}
 	};
+
+	const eventMessage: EventMessage[] = [
+		{
+			messageId: 'msg-123abc',
+			eventId: 'event-d1759',
+			createdBy: 'user-3d860',
+			createdByName: 'Moa Karlsson',
+			message: 'Tjena mors',
+			createdAt: '2026-03-22T12:00:00Z',
+			modifiedAt: null,
+		},
+		{
+			messageId: 'msg-123abc',
+			eventId: 'event-d1759',
+			createdBy: 'user-3d860',
+			createdByName: 'Moa Karlsson',
+			message: 'Tjena mors',
+			createdAt: '2026-03-22T12:00:00Z',
+			modifiedAt: null,
+		},
+		{
+			messageId: 'msg-123abc',
+			eventId: 'event-d1759',
+			createdBy: 'user-3d865',
+			createdByName: 'Moa Karlsson',
+			message: 'Tjena mors',
+			createdAt: '2026-03-22T12:00:00Z',
+			modifiedAt: null,
+		},
+	];
 
 	return (
 		<>
@@ -322,6 +353,24 @@ export const EventPage = () => {
 									No fish has been caught! Who will be the
 									first one?
 								</Text>
+							)}
+						</Stack>
+					</Tabs.Panel>
+					{/* Messages tab */}
+					<Tabs.Panel value='messages' pt='md'>
+						<Stack>
+							{eventMessage.length > 0 ? (
+								eventMessage.map((message) => {
+									return (
+										<EventsMessage
+											eventMessage={message}
+											userId={
+												user?.userId
+											}></EventsMessage>
+									);
+								})
+							) : (
+								<Text ta={'center'}>No messages!</Text>
 							)}
 						</Stack>
 					</Tabs.Panel>
