@@ -1,5 +1,5 @@
 import type { FishEvent } from '@fishScore/eventsdata';
-import { Text, Title, Flex } from '@mantine/core';
+import { Text, Title, Flex, Stack } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { capitilizeFirstLetter } from '../../../core/utils/helpfunctions/data';
 
@@ -48,10 +48,13 @@ export const Events = ({ events = [] }: Props) => {
 										{capitilizeFirstLetter(event.status)}
 									</Text>
 								</Flex>
-								<Flex direction={'column'}>
+								<Stack>
 									{[
 										{
-											label: 'Teams',
+											label:
+												event.teamCount === '1'
+													? 'Team'
+													: 'Teams',
 											value: event.teamCount,
 										},
 									].map((item) => (
@@ -64,7 +67,7 @@ export const Events = ({ events = [] }: Props) => {
 											</Text>
 										</Flex>
 									))}
-								</Flex>
+								</Stack>
 							</Flex>
 						);
 					})

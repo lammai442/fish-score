@@ -2,9 +2,7 @@ import { Stack, Button } from '@mantine/core';
 
 import { useDisclosure } from '@mantine/hooks';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
-import { CreateEvent } from '@fishScore/createevent';
 import { BaseModal } from '@fishScore/basemodal';
-import { useUserStore } from '@fishScore/useUserStore';
 import { Events } from '@fishScore/events';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useEffect } from 'react';
@@ -31,7 +29,6 @@ export const LandingPage = () => {
 			<BaseModal title='Create Event' opened={opened} close={close}>
 				{' '}
 				<CreateItemModal close={close} type='event'></CreateItemModal>
-				{/* <CreateEvent close={close}></CreateEvent> */}
 			</BaseModal>
 			<Stack>
 				<Button

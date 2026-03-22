@@ -127,7 +127,7 @@ export const Teams = ({
 						})
 						.join(', ')}
 				</Text>
-				<Text fz={'xl'}>Totalt: {team.totalCatchWeight} kg</Text>
+				<Text fz={'xl'}>Total catch: {team.totalCatchWeight} kg</Text>
 
 				{!userIsInAnyTeam && (
 					<Button bg={'var(--color-black)'} onClick={handleJoinTeam}>
