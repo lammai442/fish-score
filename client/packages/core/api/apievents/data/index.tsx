@@ -1,10 +1,7 @@
-import { NewFishEvent } from '@fishScore/eventsdata';
+import type { NewFishEvent } from '@fishScore/eventsdata';
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
-import {
-	createNewTeam,
-	TeamUserData,
-} from '../../../interfaces/teamsdata/data';
+import type { createNewTeam, TeamUserData } from '@fishScore/teamsdata';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
@@ -176,20 +173,12 @@ export const fetchUpdateEvent = async (
 	}
 };
 
-// Registrera ny fångst
-export const fetchAddCatch = async (
-	eventId: string | undefined,
-	catchWeight: number,
-	teamId: string | undefined,
-) => {
+// Hämta hem eventobjekt för eventpage
+export const fetchEventView = async (eventId: string | undefined) => {
 	try {
-		const response = await axios.post(
-			`${apiUrl}/events/${eventId}/teams/${teamId}/add-catch`,
-			{ catchWeight: catchWeight },
-			{
-				withCredentials: true,
-			},
-		);
+		const response = await axios.get(`${apiUrl}/events/${eventId}`, {
+			withCredentials: true,
+		});
 
 		// Open loginModal if response is 401 (No token)
 		if (response.status === 401) {
@@ -211,12 +200,19 @@ export const fetchAddCatch = async (
 	}
 };
 
-// Registrera ny fångst
-export const fetchEventView = async (eventId: string | undefined) => {
+// Edit event status
+export const fetchEventStatus = async (
+	eventId: string | undefined,
+	eventStatus: string | undefined,
+) => {
 	try {
-		const response = await axios.get(`${apiUrl}/events/${eventId}`, {
-			withCredentials: true,
-		});
+		const response = await axios.put(
+			`${apiUrl}/events/${eventId}/edit`,
+			{ eventStatus: eventStatus },
+			{
+				withCredentials: true,
+			},
+		);
 
 		// Open loginModal if response is 401 (No token)
 		if (response.status === 401) {
