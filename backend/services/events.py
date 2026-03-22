@@ -187,19 +187,37 @@ def get_event_by_event_name(event_name):
     return {"success": False, "error": "Event not found"}
 
 
-def end_event_in_db(event_id, user_id):
-    event_response = table.get_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
+def end_event_in_db(event_id, event_status, user_id):
 
-    event_item = event_response.get("Item")
+    try:
+        event_response = table.get_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
 
-    if not event_item:
-        return {"success": False, "error": "Could not find event item"}
+        event_item = event_response.get("Item")
 
-    if not event_item["createdBy"] == user_id:
-        return {"success": False, "error": "Not authorized"}
+        if not event_item:
+            return {"success": False, "error": "Could not find event item"}
 
-    event_item["status"] = "completed"
+        if not event_item["createdBy"] == user_id:
+            return {"success": False, "error": "Not authorized"}
 
-    table.update_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
+        event_item["status"] = event_status
+        now = datetime.now(timezone.utc).isoformat()
 
-    return {"success": False, "error": "Event not found"}
+        table.update_item(
+            Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"},
+            UpdateExpression="SET #status = :event_status, modifiedAt = :modifiedAt",
+            ExpressionAttributeValues={
+                ":event_status": event_status,
+                ":modifiedAt": now,
+            },
+            ExpressionAttributeNames={"#status": "status"},
+            ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
+        )
+
+        return {"success": True, "eventStatus": event_status}
+
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            return {"success": False, "error": "Event not found"}
+
+        return {"success": False, "error": str(e)}
