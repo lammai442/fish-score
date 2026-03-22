@@ -1,5 +1,5 @@
 import { useUserStore } from '@fishScore/useUserStore';
-import { fetchAddCatch } from '@fishScore/apievents';
+import { fetchAddCatch } from '@fishScore/apicatches';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';

@@ -77,7 +77,7 @@ def create_new_event():
 
 
 # Avsluta ett event
-@event_bp.route("/events/<string:event_id>/end", methods=["POST"])
+@event_bp.route("/events/<string:event_id>/end", methods=["PUT"])
 @require_auth
 def end_event(event_id):
 

@@ -20,13 +20,14 @@ import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
-import { IconTrophy, IconUsers } from '@tabler/icons-react';
-import type { Team } from '../../../core/interfaces/teamsdata/data';
-import { fetchEventView } from '@fishScore/apievents';
+import { IconTrophy, IconUsers, IconX } from '@tabler/icons-react';
+import { fetchEventStatus, fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
-import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
+import type { Team } from '../../../core/interfaces/teamsdata/data';
+import type { FishCatch } from '@fishScore/fishcatchdata';
 import { FishCatchCard } from '@fishScore/fishcatchcard';
-import { AddCatch } from '../../../base/addcatch/ui';
+import { AddCatch } from '@fishScore/addcatch';
+import { showNotification } from '@mantine/notifications';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -87,26 +88,34 @@ export const EventPage = () => {
 	}, [events, eventId]);
 
 	const handleEndEvent = async () => {
-		console.log('click');
+		try {
+			setLoading(true);
+
+			let newEventStatus: string = '';
+
+			if (currentEvent?.status === 'ongoing') {
+				newEventStatus = 'completed';
+			} else {
+				newEventStatus = 'ongoing';
+			}
+
+			const response = await fetchEventStatus(
+				currentEvent?.eventId,
+				newEventStatus,
+			);
+			if (response.success) {
+				showNotification({
+					title: 'Event ended',
+					message: "It's official, the event has ended!",
+					color: 'red',
+					icon: <IconX />,
+					position: 'top-center',
+				});
+			}
+		} finally {
+			setLoading(false);
+		}
 	};
-
-	// Synka liveuppdateringar från websocket
-	// useEffect(() => {
-	// 	const updatedEvent = events.find((e) => e.eventId === eventId);
-	// 	console.log('updatedEvent: ', updatedEvent);
-	// 	if (!updatedEvent) {
-	// 		return;
-	// 	}
-	// 	setCurrentEvent(updatedEvent);
-
-	// 	const sortedLeaderboard: Team[] = updatedEvent.teams.sort(
-	// 		(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
-	// 	);
-
-	// 	if (sortedLeaderboard) {
-	// 		setLeaderboard(sortedLeaderboard);
-	// 	}
-	// }, [events]);
 
 	return (
 		<>
