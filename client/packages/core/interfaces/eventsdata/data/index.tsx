@@ -21,3 +21,13 @@ export interface CreateEventDesc {
 	createdBy: string | undefined;
 	teams: Team[];
 }
+
+export interface EventMessage {
+	messageId: string;
+	eventId: string;
+	createdBy: string;
+	createdByName: string;
+	message: string;
+	createdAt: string;
+	modifiedAt: string | null;
+}
