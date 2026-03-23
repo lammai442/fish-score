@@ -6,7 +6,7 @@ const apiUrl: string = import.meta.env.VITE_API_URL;
 // Registrera ny fångst
 export const fetchAddMessage = async (
 	eventId: string | undefined,
-	message: number,
+	message: string,
 	userId: string | undefined,
 ) => {
 	try {

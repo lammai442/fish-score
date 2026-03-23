@@ -31,6 +31,7 @@ import { FishCatchCard } from '@fishScore/fishcatchcard';
 import { AddCatch } from '@fishScore/addcatch';
 import { showNotification } from '@mantine/notifications';
 import { EventsMessage } from '@fishScore/eventsmessage';
+import { fetchAddMessage } from '../../../core/api/apimessages/data';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -171,7 +172,34 @@ export const EventPage = () => {
 	];
 
 	const handleSendMsg = async () => {
-		console.log('message: ', message);
+		try {
+			setLoading(true);
+			showNotification({
+				title: 'Message',
+				message: 'Your new message has been published!',
+				color: 'var(--bg-primary)',
+				icon: <IconCheck />,
+				position: 'top-center',
+			});
+			const response = await fetchAddMessage(
+				currentEvent?.eventId,
+				message,
+				user?.userId,
+			);
+
+			if (response.success) {
+				setMessage('');
+				showNotification({
+					title: 'Message',
+					message: 'Your new message has been published!',
+					color: 'var(--bg-primary)',
+					icon: <IconCheck />,
+					position: 'top-center',
+				});
+			}
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
