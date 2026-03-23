@@ -6,13 +6,13 @@ const apiUrl: string = import.meta.env.VITE_API_URL;
 // Registrera ny fångst
 export const fetchAddMessage = async (
 	eventId: string | undefined,
-	catchWeight: number,
-	teamId: string | undefined,
+	message: number,
+	userId: string | undefined,
 ) => {
 	try {
 		const response = await axios.post(
-			`${apiUrl}/events/${eventId}/teams/${teamId}/add-catch`,
-			{ catchWeight: catchWeight },
+			`${apiUrl}/events/${eventId}/messages/add-message`,
+			{ message: message, userId: userId },
 			{
 				withCredentials: true,
 			},
