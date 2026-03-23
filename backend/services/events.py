@@ -66,6 +66,7 @@ def get_event_view_in_db(event_id):
         event_item = None
         teams = []
         catches = []
+        messages = []
 
         # Loopar och lägger in varje item i respektive variabel
         for item in items:
@@ -80,6 +81,9 @@ def get_event_view_in_db(event_id):
             elif sk.startswith("CATCH#"):
                 catches.append(item)
 
+            elif sk.startswith("MESSAGE#"):
+                messages.append(item)
+
         if not event_item:
             return {"success": False, "error": "Event not found"}
 
@@ -87,6 +91,7 @@ def get_event_view_in_db(event_id):
         cleaned_teams = filter_items_keys(teams)
         cleaned_catches = filter_items_keys(catches)
         cleaned_event_view = filter_item_keys(event_item)
+        cleaned_messages = filter_items_keys(messages)
 
         # Lägg catches till rätt team
         catches_by_team = {}
@@ -100,14 +105,20 @@ def get_event_view_in_db(event_id):
             team["catches"] = catches_by_team.get(team_id, [])
 
         # Sortera alla catches med senaste först
-        activity = sorted(
+        sorted_activity = sorted(
             cleaned_catches, key=lambda catch: catch["createdAt"], reverse=True
+        )
+
+        # Sortera alla messages med senaste först
+        sorted_messages = sorted(
+            cleaned_messages, key=lambda message: message["createdAt"], reverse=True
         )
 
         event_view = {
             **cleaned_event_view,
             "teams": cleaned_teams,
-            "activity": activity,
+            "activity": sorted_activity,
+            "messages": sorted_messages,
         }
 
         return {"success": True, "event": event_view}

@@ -130,47 +130,6 @@ export const EventPage = () => {
 		}
 	};
 
-	const eventMessage: EventMessage[] = [
-		{
-			messageId: 'msg-123abc',
-			eventId: 'event-d1759',
-			createdBy: 'user-3d860',
-			createdByName: 'Moa Karlsson',
-			message: 'Tjena mors',
-			createdAt: '2026-03-22T12:00:00Z',
-			modifiedAt: null,
-		},
-		{
-			messageId: 'msg-1245bc',
-			eventId: 'event-d1759',
-			createdBy: 'user-3d860',
-			createdByName: 'Moa Karlsson',
-			message:
-				'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus qui enim ab cumque quasi. Veritatis, nemo? \n\n\nEum minus doloremque ab tenetur quo? Facere porro obcaecati delectus itaque nihil vitae iste.',
-			createdAt: '2026-03-20T12:00:00Z',
-			modifiedAt: null,
-		},
-		{
-			messageId: 'msg-12sdd',
-			eventId: 'event-d1759',
-			createdBy: 'user-3d860',
-			createdByName: 'Lars Wingefors',
-			message:
-				'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus qui enim ab cumque quasi. Veritatis, nemo? Eum minus doloremque ab tenetur quo? Facere porro obcaecati delectus itaque nihil vitae iste.',
-			createdAt: '2026-03-20T12:00:00Z',
-			modifiedAt: null,
-		},
-		{
-			messageId: 'msg-ds3abc',
-			eventId: 'event-d1759',
-			createdBy: 'user-3d865',
-			createdByName: 'Moa Karlsson',
-			message: 'Tjena mors',
-			createdAt: '2026-03-22T12:00:00Z',
-			modifiedAt: null,
-		},
-	];
-
 	const handleSendMsg = async () => {
 		try {
 			setLoading(true);
@@ -427,40 +386,44 @@ export const EventPage = () => {
 									Send
 								</Button>
 							</Flex>
-							<Stack
-								gap={'sm'}
-								bd={'1px solid var(--color-grey-dark)'}
-								p={'sm'}
-								bdrs={'lg'}>
-								{eventMessage.length > 0 ? (
-									eventMessage.map((message, index) => {
-										const isLast =
-											index === eventMessage.length - 1;
-										const hasMultiple =
-											eventMessage.length > 1;
 
-										return (
-											<Stack
-												gap={'sm'}
-												key={message.messageId}>
-												<EventsMessage
-													eventMessage={message}
-													userId={
-														user?.userId
-													}></EventsMessage>
-												{hasMultiple && !isLast && (
-													<Divider
-														key={index}
-														size={'sm'}
-													/>
-												)}
-											</Stack>
-										);
-									})
-								) : (
-									<Text ta={'center'}>No messages!</Text>
-								)}
-							</Stack>
+							{currentEvent.messages.length > 0 && (
+								<Stack
+									gap={'sm'}
+									bd={'1px solid var(--color-grey-dark)'}
+									p={'sm'}
+									bdrs={'lg'}>
+									{currentEvent.messages.map(
+										(message, index) => {
+											const isLast =
+												index ===
+												currentEvent.messages.length -
+													1;
+											const hasMultiple =
+												currentEvent.messages.length >
+												1;
+
+											return (
+												<Stack
+													gap={'sm'}
+													key={message.messageId}>
+													<EventsMessage
+														eventMessage={message}
+														userId={
+															user?.userId
+														}></EventsMessage>
+													{hasMultiple && !isLast && (
+														<Divider
+															key={index}
+															size={'sm'}
+														/>
+													)}
+												</Stack>
+											);
+										},
+									)}
+								</Stack>
+							)}
 						</Stack>
 					</Tabs.Panel>
 				</Tabs>

@@ -1,6 +1,6 @@
-import { FishCatch } from '../../fishcatchdata/data';
+import type { EventMessage } from '@fishScore/messagesdata';
+import type { FishCatch } from '../../fishcatchdata/data';
 import type { Team } from '../../teamsdata/data';
-
 export interface FishEvent {
 	eventId: string;
 	eventName: string;
@@ -10,6 +10,7 @@ export interface FishEvent {
 	teams?: Team[];
 	teamCount: number;
 	activity?: FishCatch[];
+	messages: EventMessage[];
 }
 
 export interface NewFishEvent {
@@ -20,14 +21,4 @@ export interface CreateEventDesc {
 	eventName: string;
 	createdBy: string | undefined;
 	teams: Team[];
-}
-
-export interface EventMessage {
-	messageId: string;
-	eventId: string;
-	createdBy: string;
-	createdByName: string;
-	message: string;
-	createdAt: string;
-	modifiedAt: string | null;
 }

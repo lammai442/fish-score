@@ -120,7 +120,7 @@ export const CatchForm = ({
 				<TextInput
 					inputMode='decimal'
 					type='number'
-					label='Weight'
+					label='Weight (kg)'
 					value={inputValue}
 					onChange={(event) => {
 						const value = event.currentTarget.value.replace(
