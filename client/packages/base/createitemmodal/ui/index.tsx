@@ -57,42 +57,45 @@ export const CreateItemModal = ({ close, type }: Props) => {
 		}
 
 		let response: ApiResponse<FishEvent | Team>;
-		setLoading(true);
-		if (type === 'event') {
-			const createEventDesc: NewFishEvent = {
-				eventName: value,
-				createdBy: user?.userId,
-			};
-			response = await fetchCreateEvent(createEventDesc);
-		} else {
-			const createTeamDesc: createNewTeam = {
-				eventId: eventId,
-				teamName: value,
-				createdBy: user.userId,
-			};
-			response = await fetchCreateTeam(createTeamDesc);
-		}
-
-		setLoading(false);
-		if (response.success) {
-			showNotification({
-				title: `New ${type} created`,
-				message: `The ${type}: ${inputValue} has created`,
-				color: 'var(--bg-primary)',
-				icon: <IconCheck />,
-				position: 'top-center',
-			});
-			setInputValue('');
-
-			close();
-		} else if (!response.success) {
-			if (response.data && 'error' in response.data) {
-				setErrorInput(response.data.error);
-			} else if (response.error) {
-				setErrorInput(response.error);
+		try {
+			setLoading(true);
+			if (type === 'event') {
+				const createEventDesc: NewFishEvent = {
+					eventName: value,
+					createdBy: user?.userId,
+				};
+				response = await fetchCreateEvent(createEventDesc);
 			} else {
-				setErrorInput('Something went wrong');
+				const createTeamDesc: createNewTeam = {
+					eventId: eventId,
+					teamName: value,
+					createdBy: user.userId,
+				};
+				response = await fetchCreateTeam(createTeamDesc);
 			}
+
+			if (response.success) {
+				showNotification({
+					title: `New ${type} created`,
+					message: `The ${type}: ${inputValue} has created`,
+					color: 'var(--bg-primary)',
+					icon: <IconCheck />,
+					position: 'top-center',
+				});
+				setInputValue('');
+
+				close();
+			} else if (!response.success) {
+				if (response.data && 'error' in response.data) {
+					setErrorInput(response.data.error);
+				} else if (response.error) {
+					setErrorInput(response.error);
+				} else {
+					setErrorInput('Something went wrong');
+				}
+			}
+		} finally {
+			setLoading(false);
 		}
 	};
 	return (

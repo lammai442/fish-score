@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Flex, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Flex, Stack, Text, Tooltip } from '@mantine/core';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
 import { dateFormatter } from '../../../core/formatters/data';

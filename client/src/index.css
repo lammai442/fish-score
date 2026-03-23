@@ -47,38 +47,13 @@
 	--text-inverse: var(--color-white);
 	--text-muted: var(--color-grey-dark);
 
+	/* Border */
 	--border-default: var(--color-grey);
-	--border-primary: var(--color-blue);
+	--border-primary: var(--color-black);
 	--border-warning: var(--color-orange);
 
+	/* Ranks */
 	--rank-gold: var(--color-gold);
 	--rank-silver: var(--color-silver);
 	--rank-bronze: var(--color-bronze);
-
-	/* --bg-gradient-start: #eff6ff;
-	--bg-gradient-end: #dbeafe;
-	--bg-primary-color: #63ab9f;
-	--bg-primary-light-color: #eff6f5;
-	--bg-black-color: #000000;
-	--bg-grey-color: #ddd;
-	--bg-medium-light-grey-color: #e9ebed;
-	--bg-light-grey-color: #f9fafb;
-	--bg-white-color: #ffffff;
-	--bg-blue-color: #eff6ff;
-	--bg-orange-color: #ff6900;
-	--bg-light-orange-color: #fff7ed;
-
-	--text-white: #ffffff;
-	--text-black: #000000;
-
-	/* Borders */
-	/* --br-grey: #ddd;
-	--br-blue: #2b7fff;
-	--br-orange: #ff6900; */
-
-	/* Outline */
-	/* --bg-gold-color: #f0b100;
-	--bg-silver-color: #99a1af;
-	--bg-bronze-color: #bb4d00;
-	--ol-white-color: #ffffff; */
 }

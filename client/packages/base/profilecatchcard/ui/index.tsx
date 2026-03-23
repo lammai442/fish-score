@@ -10,10 +10,7 @@ import {
 } from '@mantine/core';
 import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { IconCalendarWeekFilled, IconPencil } from '@tabler/icons-react';
-import {
-	dateFormatter,
-	shortDateFormatter,
-} from '../../../core/formatters/data';
+import { shortDateFormatter } from '../../../core/formatters/data';
 import { BaseModal } from '@fishScore/basemodal';
 import { useDisclosure } from '@mantine/hooks';
 import { EditCatch } from '../../editcatch/ui';
@@ -25,7 +22,7 @@ type Props = {
 	variant: 'activityCatch' | 'profileCatch';
 };
 
-export const ProfileCatchCard = ({ fishCatch, userId, variant }: Props) => {
+export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = shortDateFormatter(fishCatch.createdAt);
 	const catchedByUser = fishCatch.catchedBy === userId;

@@ -19,7 +19,7 @@ export const Events = ({ events = [], title }: Props) => {
 			<Title order={3}>{title}</Title>
 			{/* Rendera events */}
 			<Flex wrap={'wrap'} gap={'md'} style={{ cursor: 'pointer' }}>
-				{events.length > 0 ? (
+				{events.length > 0 &&
 					events.map((event, index) => {
 						return (
 							<Flex
@@ -71,10 +71,7 @@ export const Events = ({ events = [], title }: Props) => {
 								</Stack>
 							</Flex>
 						);
-					})
-				) : (
-					<Text>No current events has been created</Text>
-				)}
+					})}
 			</Flex>
 		</>
 	);

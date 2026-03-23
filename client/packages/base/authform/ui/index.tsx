@@ -26,23 +26,26 @@ export const AuthForm = () => {
 	const navigate = useNavigate();
 
 	const handleLogin = async (values: LoginData) => {
-		setLoading(true);
-		const response = await fetchLogin(values as LoginData);
-		console.log('response: ', response);
-		setLoading(false);
-		if (!response.success) {
-			showNotification({
-				title: 'Unable to login',
-				message: response.data.error,
-				color: 'red',
-				icon: <IconX />,
-				position: 'top-center',
-			});
-		} else {
-			const res = await fetchMe();
-			// Sparar inloggade användaren i store
-			setUser(res.data.user);
-			navigate('/');
+		try {
+			setLoading(true);
+			const response = await fetchLogin(values as LoginData);
+
+			if (!response.success) {
+				showNotification({
+					title: 'Unable to login',
+					message: response.data.error,
+					color: 'red',
+					icon: <IconX />,
+					position: 'top-center',
+				});
+			} else {
+				const res = await fetchMe();
+				// Sparar inloggade användaren i store
+				setUser(res.data.user);
+				navigate('/');
+			}
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -138,7 +141,6 @@ export const AuthForm = () => {
 						},
 					}}
 				/>
-
 				{mode === 'register' && (
 					<>
 						<TextInput
@@ -158,14 +160,12 @@ export const AuthForm = () => {
 						/>
 					</>
 				)}
-
 				<PasswordInput
 					label='Lösenord'
 					placeholder='Ditt lösenord'
 					mt='md'
 					{...form.getInputProps('password')}
 				/>
-
 				<Button type='submit' fullWidth mt='xl'>
 					{mode === 'login' ? 'Logga in' : 'Registrera'}
 				</Button>

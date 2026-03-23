@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Flex, Stack, Text, Title } from '@mantine/core';
+import { ActionIcon, Box, Stack, Title } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ type Props = {
 	subTitleStatus?: string | null;
 };
 
-export const PageHeader = ({ title, subTitle, subTitleStatus }: Props) => {
+export const PageHeader = ({ title, subTitle }: Props) => {
 	const navigate = useNavigate();
 
 	return (

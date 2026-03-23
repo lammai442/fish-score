@@ -6,7 +6,6 @@ import {
 	Indicator,
 	ActionIcon,
 	Container,
-	Divider,
 	Tooltip,
 } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +15,7 @@ import { useUserStore } from '@fishScore/useUserStore';
 
 export const Header = () => {
 	const navigate = useNavigate();
-	const [visible, { toggle }] = useDisclosure();
+	const [visible] = useDisclosure();
 	const { user } = useUserStore();
 
 	const userFullName = `${user?.firstName} ${user?.lastName}`;

@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
+// Hämtar hem Me
 export const fetchUserMe = async () => {
 	try {
 		const response = await axios.get(`${apiUrl}/users/me`, {
@@ -20,6 +21,8 @@ export const fetchUserMe = async () => {
 		};
 	}
 };
+
+// Hämtar hem userProfile
 export const fetchUserProfile = async () => {
 	try {
 		const response = await axios.get(`${apiUrl}/users/profile`, {
