@@ -30,8 +30,11 @@
 	--color-silver: #99a1af;
 	--color-bronze: #bb4d00;
 
-	--bg-gradient-start: #eff6ff;
-	--bg-gradient-end: #dbeafe;
+	--bg-gradient-start: var(--color-primary-light);
+	--bg-gradient-end: var(--color-primary);
+
+	/* --bg-gradient-start: #eff6ff;
+	--bg-gradient-end: #dbeafe; */
 
 	--bg-primary: var(--color-primary);
 	--bg-primary-light: var(--color-primary-light);

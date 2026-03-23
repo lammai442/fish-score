@@ -1,16 +1,16 @@
-import { fetchLogout } from '@fishScore/apiauth';
-import { Avatar, Button, Flex, Paper, Stack, Text, Title } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, Flex, Paper, Stack, Text, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconFish, IconMedal, IconScale, IconX } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { fetchLogout } from '@fishScore/apiauth';
 import { fetchUserProfile } from '@fishScore/apiuser';
 import { Loading } from '@fishScore/loading';
-import { User, UserStats } from '@fishScore/usersdata/data';
-import { shortDateFormatter } from '../../../core/formatters/data';
-import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
+import { shortDateFormatter } from '@fishScore/formatters';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
-import { ProfileCatchCard } from '../../profilecatchcard/ui';
+import { ProfileCatchCard } from '@fishScore/profilecatchcard';
+import type { User, UserStats } from '@fishScore/usersdata';
+import type { FishCatch } from '@fishScore/fishcatchdata';
 type Props = {};
 
 export const ProfileOverview = ({}: Props) => {
@@ -66,14 +66,14 @@ export const ProfileOverview = ({}: Props) => {
 
 	const generateUserStats = [
 		{
-			icon: <IconScale size={45} />,
-			value: userStats?.totalCatchWeight,
-			text: 'Total weight (kg)',
-		},
-		{
 			icon: <IconFish size={45} />,
 			value: userStats?.totalCatches,
 			text: 'Total catches',
+		},
+		{
+			icon: <IconScale size={45} />,
+			value: userStats?.totalCatchWeight,
+			text: 'Total weight (kg)',
 		},
 		{
 			icon: <IconMedal size={45} />,

@@ -12,10 +12,12 @@ import { useNavigate } from 'react-router-dom';
 import { IconBell } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useUserStore } from '@fishScore/useUserStore';
-
+import { BaseModal } from '@fishScore/basemodal';
+import { Updates } from '@fishScore/updates';
 export const Header = () => {
 	const navigate = useNavigate();
 	const [visible] = useDisclosure();
+	const [opened, { open, close }] = useDisclosure();
 	const { user } = useUserStore();
 
 	const userFullName = `${user?.firstName} ${user?.lastName}`;
@@ -34,15 +36,20 @@ export const Header = () => {
 							fit='contain'></Image>
 					</Tooltip>
 				</Box>
+				{/* Öppnar upp Updates */}
+				<BaseModal title='Updates' opened={opened} close={close}>
+					<Updates></Updates>
+				</BaseModal>
 				<Flex gap='0.5rem'>
-					<Tooltip label={'Notifications'}>
+					<Tooltip label={'Updates'}>
 						<Indicator
 							size={10}
 							color='red'
 							disabled={!visible}
 							offset={7}
 							style={{ cursor: 'pointer' }}
-							withBorder>
+							withBorder
+							onClick={open}>
 							<ActionIcon variant='transparent' size='lg'>
 								<IconBell size={20} color='black' />
 							</ActionIcon>
