@@ -38,7 +38,7 @@ export const EditCatch = ({
 			<CatchForm
 				variant='editCatch'
 				title='Make change to your catch'
-				submitLabel='Add catch'
+				submitLabel='Edit catch'
 				loadingText='Adding new catch'
 				initialValue={String(initialWeight)}
 				onSubmit={handleEditCatch}

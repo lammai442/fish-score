@@ -70,7 +70,12 @@ def is_event_related_record(record):
     if not pk.startswith("EVENT#"):
         return False
 
-    return sk == "EVENT" or sk.startswith("TEAM#") or sk.startswith("CATCH#")
+    return (
+        sk == "EVENT"
+        or sk.startswith("TEAM#")
+        or sk.startswith("CATCH#")
+        or sk.startswith("MESSAGE#")
+    )
 
 
 def handler(event, context):

@@ -1,4 +1,4 @@
-import type { EventMessage } from '@fishScore/eventsdata';
+import type { EventMessage } from '@fishScore/messagesdata';
 import { Flex, Stack, Text, Title } from '@mantine/core';
 import { timeAgo } from '@fishScore/formatters';
 
@@ -15,7 +15,7 @@ export const EventsMessage = ({ eventMessage, userId }: Props) => {
 		<Flex gap={'sm'}>
 			<Stack gap={'0.1rem'}>
 				<Title order={6}>
-					{eventMessage.createdByName}{' '}
+					{eventMessage.messageUserFullName}{' '}
 					<Text
 						span
 						c={'var(--text-muted)'}
@@ -25,7 +25,7 @@ export const EventsMessage = ({ eventMessage, userId }: Props) => {
 						{formattedDate}
 					</Text>
 				</Title>
-				<Text fs={'italic'} style={{ whiteSpace: 'pre-line' }}>
+				<Text style={{ whiteSpace: 'pre-line' }}>
 					{eventMessage.message}
 				</Text>
 			</Stack>
