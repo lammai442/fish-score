@@ -5,14 +5,16 @@ import { PageHeader } from '@fishScore/pageheader';
 import {
 	ActionIcon,
 	Button,
+	Divider,
 	Flex,
 	Stack,
 	Tabs,
 	Text,
+	Textarea,
 	Title,
 	Tooltip,
 } from '@mantine/core';
-import { useState, useEffect, act } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { BaseModal } from '@fishScore/basemodal';
@@ -20,7 +22,7 @@ import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
-import { IconCheck, IconTrophy, IconUsers, IconX } from '@tabler/icons-react';
+import { IconCheck, IconTrophy, IconUsers } from '@tabler/icons-react';
 import { fetchEventStatus, fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
 import type { Team } from '../../../core/interfaces/teamsdata/data';
@@ -41,6 +43,7 @@ export const EventPage = () => {
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [message, setMessage] = useState<string>('');
 	const { user } = useUserStore();
 
 	// Kontroll om user finns i team
@@ -137,16 +140,27 @@ export const EventPage = () => {
 			modifiedAt: null,
 		},
 		{
-			messageId: 'msg-123abc',
+			messageId: 'msg-1245bc',
 			eventId: 'event-d1759',
 			createdBy: 'user-3d860',
 			createdByName: 'Moa Karlsson',
-			message: 'Tjena mors',
-			createdAt: '2026-03-22T12:00:00Z',
+			message:
+				'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus qui enim ab cumque quasi. Veritatis, nemo? Eum minus doloremque ab tenetur quo? Facere porro obcaecati delectus itaque nihil vitae iste.',
+			createdAt: '2026-03-20T12:00:00Z',
 			modifiedAt: null,
 		},
 		{
-			messageId: 'msg-123abc',
+			messageId: 'msg-12sdd',
+			eventId: 'event-d1759',
+			createdBy: 'user-3d860',
+			createdByName: 'Lars Wingefors',
+			message:
+				'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus qui enim ab cumque quasi. Veritatis, nemo? Eum minus doloremque ab tenetur quo? Facere porro obcaecati delectus itaque nihil vitae iste.',
+			createdAt: '2026-03-20T12:00:00Z',
+			modifiedAt: null,
+		},
+		{
+			messageId: 'msg-ds3abc',
 			eventId: 'event-d1759',
 			createdBy: 'user-3d865',
 			createdByName: 'Moa Karlsson',
@@ -155,6 +169,10 @@ export const EventPage = () => {
 			modifiedAt: null,
 		},
 	];
+
+	const handleSendMsg = async () => {
+		console.log('message: ', message);
+	};
 
 	return (
 		<>
@@ -359,19 +377,69 @@ export const EventPage = () => {
 					{/* Messages tab */}
 					<Tabs.Panel value='messages' pt='md'>
 						<Stack>
-							{eventMessage.length > 0 ? (
-								eventMessage.map((message) => {
-									return (
-										<EventsMessage
-											eventMessage={message}
-											userId={
-												user?.userId
-											}></EventsMessage>
-									);
-								})
-							) : (
-								<Text ta={'center'}>No messages!</Text>
-							)}
+							<Flex gap={'sm'}>
+								<Textarea
+									placeholder='New message'
+									autosize
+									maxRows={4}
+									flex={9}
+									value={message}
+									onChange={(event) =>
+										setMessage(event.currentTarget.value)
+									}
+									styles={{
+										input: {
+											'--input-bd-focus':
+												'var(--color-black)',
+										},
+									}}></Textarea>
+								<Button
+									flex={1}
+									bg={
+										!message.trim()
+											? 'var(--color-grey)'
+											: 'var(--color-black)'
+									}
+									fz={'0.68rem'}
+									disabled={!message.trim()}
+									onClick={handleSendMsg}>
+									Send
+								</Button>
+							</Flex>
+							<Stack
+								gap={'sm'}
+								bd={'1px solid var(--color-grey-dark)'}
+								p={'sm'}
+								bdrs={'lg'}>
+								{eventMessage.length > 0 ? (
+									eventMessage.map((message, index) => {
+										const isLast =
+											index === eventMessage.length - 1;
+										const hasMultiple =
+											eventMessage.length > 1;
+
+										return (
+											<Stack
+												gap={'sm'}
+												key={message.messageId}>
+												<EventsMessage
+													eventMessage={message}
+													userId={
+														user?.userId
+													}></EventsMessage>
+												{hasMultiple && !isLast && (
+													<Divider
+														key={index}
+														size={'sm'}
+													/>
+												)}
+											</Stack>
+										);
+									})
+								) : (
+									<Text ta={'center'}>No messages!</Text>
+								)}
+							</Stack>
 						</Stack>
 					</Tabs.Panel>
 				</Tabs>
