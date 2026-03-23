@@ -7,12 +7,11 @@ const apiUrl: string = import.meta.env.VITE_API_URL;
 export const fetchAddMessage = async (
 	eventId: string | undefined,
 	message: string,
-	userId: string | undefined,
 ) => {
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/${eventId}/messages/add-message`,
-			{ message: message, userId: userId },
+			{ message: message },
 			{
 				withCredentials: true,
 			},
