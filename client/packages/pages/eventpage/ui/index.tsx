@@ -146,7 +146,7 @@ export const EventPage = () => {
 			createdBy: 'user-3d860',
 			createdByName: 'Moa Karlsson',
 			message:
-				'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus qui enim ab cumque quasi. Veritatis, nemo? Eum minus doloremque ab tenetur quo? Facere porro obcaecati delectus itaque nihil vitae iste.',
+				'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus qui enim ab cumque quasi. Veritatis, nemo? \n\n\nEum minus doloremque ab tenetur quo? Facere porro obcaecati delectus itaque nihil vitae iste.',
 			createdAt: '2026-03-20T12:00:00Z',
 			modifiedAt: null,
 		},
@@ -174,19 +174,12 @@ export const EventPage = () => {
 	const handleSendMsg = async () => {
 		try {
 			setLoading(true);
-			showNotification({
-				title: 'Message',
-				message: 'Your new message has been published!',
-				color: 'var(--bg-primary)',
-				icon: <IconCheck />,
-				position: 'top-center',
-			});
+
 			const response = await fetchAddMessage(
 				currentEvent?.eventId,
 				message,
-				user?.userId,
 			);
-
+			console.log('response: ', response);
 			if (response.success) {
 				setMessage('');
 				showNotification({

@@ -25,7 +25,9 @@ export const EventsMessage = ({ eventMessage, userId }: Props) => {
 						{formattedDate}
 					</Text>
 				</Title>
-				<Text fs={'italic'}>{eventMessage.message}</Text>
+				<Text fs={'italic'} style={{ whiteSpace: 'pre-line' }}>
+					{eventMessage.message}
+				</Text>
 			</Stack>
 		</Flex>
 	);
