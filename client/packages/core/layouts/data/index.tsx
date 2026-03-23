@@ -26,7 +26,6 @@ export const AppLayout = () => {
 			const response = await fetchAllEvents();
 			if (response.success && response.data.events.length > 0) {
 				const events: FishEvent[] = response.data.events;
-				console.log('events: ', events);
 
 				setEvents(events);
 			}

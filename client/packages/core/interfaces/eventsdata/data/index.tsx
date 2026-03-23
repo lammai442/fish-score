@@ -15,10 +15,5 @@ export interface FishEvent {
 
 export interface NewFishEvent {
 	eventName: string;
-	createdBy: string;
-}
-export interface CreateEventDesc {
-	eventName: string;
 	createdBy: string | undefined;
-	teams: Team[];
 }

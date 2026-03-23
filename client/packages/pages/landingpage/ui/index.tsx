@@ -1,5 +1,4 @@
 import { Stack, Button } from '@mantine/core';
-
 import { useDisclosure } from '@mantine/hooks';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { BaseModal } from '@fishScore/basemodal';

@@ -1,5 +1,5 @@
 import './index.css';
-import type { EventMessage, FishEvent } from '@fishScore/eventsdata';
+import type { FishEvent } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
 import {
@@ -139,7 +139,6 @@ export const EventPage = () => {
 				currentEvent?.eventId,
 				message,
 			);
-			console.log('response: ', response);
 			if (response.success) {
 				setMessage('');
 				showNotification({

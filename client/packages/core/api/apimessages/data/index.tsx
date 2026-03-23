@@ -3,7 +3,7 @@ import { useAuthStore } from '@fishScore/useAuthStore';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
-// Registrera ny fångst
+// Publicera ett nytt message
 export const fetchAddMessage = async (
 	eventId: string | undefined,
 	message: string,
@@ -17,7 +17,7 @@ export const fetchAddMessage = async (
 			},
 		);
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };

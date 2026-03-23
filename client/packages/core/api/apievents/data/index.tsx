@@ -57,7 +57,7 @@ export const fetchCreateEvent = async (createEventDesc: NewFishEvent) => {
 			},
 		);
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };
@@ -88,7 +88,7 @@ export const fetchCreateTeam = async (createTeamDesc: createNewTeam) => {
 			},
 		);
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };
@@ -119,7 +119,7 @@ export const fetchJoinTeam = async (teamUserData: TeamUserData) => {
 			},
 		);
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };
@@ -153,7 +153,7 @@ export const fetchUpdateEvent = async (
 			},
 		);
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };
@@ -180,7 +180,7 @@ export const fetchEventView = async (eventId: string | undefined) => {
 			withCredentials: true,
 		});
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };
@@ -214,7 +214,7 @@ export const fetchEventStatus = async (
 			},
 		);
 
-		// Open loginModal if response is 401 (No token)
+		// Öppna loginModal om response är 401 (No token)
 		if (response.status === 401) {
 			useAuthStore.getState().openLoginModal();
 			return { success: false, error: response.data.error };

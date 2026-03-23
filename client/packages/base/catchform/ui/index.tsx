@@ -1,13 +1,6 @@
 import { BaseModal } from '@fishScore/basemodal';
 import { Loading } from '@fishScore/loading';
-import {
-	ActionIcon,
-	Button,
-	Flex,
-	Stack,
-	Text,
-	TextInput,
-} from '@mantine/core';
+import { Button, Flex, Stack, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCancel, IconCheck, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';

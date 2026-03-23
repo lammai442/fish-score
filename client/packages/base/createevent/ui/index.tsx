@@ -3,7 +3,7 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useUserStore } from '@fishScore/useUserStore';
-import type { FishEvent } from '@fishScore/eventsdata';
+import type { NewFishEvent } from '@fishScore/eventsdata';
 import { fetchCreateEvent } from '@fishScore/apievents';
 
 type Props = {
@@ -38,7 +38,7 @@ export const CreateEvent = ({ close }: Props) => {
 			return;
 		}
 
-		const createEventDesc: FishEvent = {
+		const createEventDesc: NewFishEvent = {
 			eventName: value,
 			createdBy: user?.userId,
 		};
