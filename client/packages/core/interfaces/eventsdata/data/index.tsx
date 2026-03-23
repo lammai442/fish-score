@@ -8,7 +8,7 @@ export interface FishEvent {
 	createdBy: string | undefined;
 	status: string;
 	teams?: Team[];
-	teamCount: number;
+	teamCount: number | string;
 	activity?: FishCatch[];
 	messages: EventMessage[];
 }

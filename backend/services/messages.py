@@ -31,9 +31,6 @@ def add_message_in_db(event_id, message, user_id):
         if event_item is None:
             return {"success": False, "error": "Event not found"}
 
-        if event_item["status"] == "completed":
-            return {"success": False, "error": "Event is completed"}
-
         message_id = f"message-{str(uuid.uuid4())[:5]}"
         now = datetime.now(timezone.utc).isoformat()
 

@@ -23,6 +23,9 @@ export const LandingPage = () => {
 		getAllEvents();
 	}, []);
 
+	const ongoingEvents = events.filter((e) => e.status === 'ongoing');
+	const completedEvents = events.filter((e) => e.status === 'completed');
+
 	return (
 		<>
 			{/* Modal för att skapa ett nytt event */}
@@ -38,7 +41,16 @@ export const LandingPage = () => {
 					onClick={open}>
 					+ Create Event
 				</Button>
-				<Events events={events}></Events>
+				{ongoingEvents && ongoingEvents.length > 0 && (
+					<Events
+						events={ongoingEvents}
+						title='Ongoing events'></Events>
+				)}
+				{completedEvents && completedEvents.length > 0 && (
+					<Events
+						events={completedEvents}
+						title='Completed events'></Events>
+				)}
 			</Stack>
 		</>
 	);

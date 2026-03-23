@@ -5,9 +5,10 @@ import { capitilizeFirstLetter } from '../../../core/utils/helpfunctions/data';
 
 type Props = {
 	events: FishEvent[];
+	title: string;
 };
 
-export const Events = ({ events = [] }: Props) => {
+export const Events = ({ events = [], title }: Props) => {
 	const navigate = useNavigate();
 	const handleToEvent = (event: FishEvent) => {
 		navigate(`/event/${event.eventId}`);
@@ -15,7 +16,7 @@ export const Events = ({ events = [] }: Props) => {
 
 	return (
 		<>
-			<Title order={3}>Events</Title>
+			<Title order={3}>{title}</Title>
 			{/* Rendera events */}
 			<Flex wrap={'wrap'} gap={'md'} style={{ cursor: 'pointer' }}>
 				{events.length > 0 ? (
