@@ -9,12 +9,7 @@ import {
 	TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-	IconCancel,
-	IconCheck,
-	IconFileX,
-	IconTrash,
-} from '@tabler/icons-react';
+import { IconCancel, IconCheck, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import { fetchDeleteCatch } from '../../../core/api/apicatches/data';
 import { showNotification } from '@mantine/notifications';
