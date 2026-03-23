@@ -13,7 +13,6 @@ import {
 	Textarea,
 	Title,
 	Tooltip,
-	TooltipGroup,
 } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -170,14 +169,19 @@ export const EventPage = () => {
 			{/* Join a team message */}
 			{!loading && currentEvent && !usersTeam && (
 				<Flex
+					gap={'xs'}
 					bdrs={'lg'}
 					p={'md'}
 					bg={'var(--bg-orange-light)'}
 					bd={'1px solid var(--border-warning)'}>
 					<IconUsers size={50} />
-					<Stack>
-						<Title order={4}>Join a team to participate</Title>
-						<Text>
+					<Divider
+						color={'var(--color-black)'}
+						size={'sm'}
+						orientation='vertical'></Divider>
+					<Stack gap={0}>
+						<Title order={5}>Join a team to participate</Title>
+						<Text fz={'sm'}>
 							You need to join or create a team before you can
 							register catches for this event.
 						</Text>
@@ -315,7 +319,7 @@ export const EventPage = () => {
 					{/* Leaderboard tab */}
 					<Tabs.Panel value='leaderboard' pt='md'>
 						<Stack>
-							{currentEvent &&
+							{currentEvent && leaderboard.length > 0 ? (
 								leaderboard.map((team: Team, index) => {
 									return (
 										<Teams
@@ -329,7 +333,12 @@ export const EventPage = () => {
 												currentEvent.createdBy
 											}></Teams>
 									);
-								})}
+								})
+							) : (
+								<Text ta={'center'}>
+									No teams has been created
+								</Text>
+							)}
 						</Stack>
 					</Tabs.Panel>
 					{/* Activity tab */}
