@@ -22,13 +22,17 @@ export const ProfileOverview = ({}: Props) => {
 	const { events } = useWebSocketStore();
 
 	const getUserProfile = async () => {
-		setLoading(true);
-		const response = await fetchUserProfile();
-		setLoading(false);
-		if (response.success) {
-			setUser(response.data.userProfile.user);
-			setUserStats(response.data.userProfile.stats);
-			setUserCatches(response.data.userProfile.catches);
+		try {
+			setLoading(true);
+			const response = await fetchUserProfile();
+
+			if (response.success) {
+				setUser(response.data.userProfile.user);
+				setUserStats(response.data.userProfile.stats);
+				setUserCatches(response.data.userProfile.catches);
+			}
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -62,6 +66,7 @@ export const ProfileOverview = ({}: Props) => {
 	if (!user) {
 		return <Text>No user found</Text>;
 	}
+
 	const usersFullName = `${user.firstName} ${user.lastName}`;
 
 	const generateUserStats = [

@@ -1,4 +1,4 @@
-from backend.services.websocket_connection import remove_connection
+from utils.connection import remove_connection
 
 
 def disconnect(connection_id, event):

@@ -1,4 +1,4 @@
-from backend.services.websocket_connection import send_to_connection
+from utils.connection import send_to_connection
 
 
 def default(connection_id, event):
