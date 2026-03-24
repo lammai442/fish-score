@@ -1,17 +1,28 @@
-from backend.services.websocket_connection import store_connection
-from flask import g
-from middlewares.require_auth import require_auth
+from utils.connection import store_connection
+from utils.tokens import verify_token
 
 
-@require_auth
 def connect(connection_id, event):
     try:
-        user_id = g.user["sub"]
+        print("EVENT:", event)
+        print("QUERY PARAMS:", event.get("queryStringParameters"))
+        # query_params = event.get("queryStringParameters") or {}
+        # token = query_params.get("token")
 
-        if not user_id:
-            print("Connect failed: user_id missing")
-            return {"statusCode": 401}
+        # if not token:
+        #     return {"statusCode": 401}
 
+        # payload = verify_token(token)
+        # if not payload:
+        #     return {"statusCode": 401}
+
+        # user_id = payload["sub"]
+        # # user_id = user.get("sub")
+        # # user_id = g.user["sub"]
+
+        # if not user_id:
+        #     user_id = "Hej"
+        user_id = "hej"
         store_connection(connection_id, user_id)
         print("Connect successful:", connection_id)
         return {"statusCode": 200}

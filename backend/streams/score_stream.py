@@ -1,13 +1,10 @@
-from backend.services.websocket_connection import send_to_connection, remove_connection
+from utils.connection import send_to_connection, remove_connection
 import boto3
 import os
 from boto3.dynamodb.types import TypeDeserializer
 from decimal import Decimal
 from services.events import get_event_view_in_db
 
-# Importing AWS-clients
-
-dynamodb = boto3.client("dynamodb")
 deserializer = TypeDeserializer()
 
 
@@ -21,43 +18,49 @@ def make_json_safe(value):
     return value
 
 
-def extract_event_id_from_record(record):
-    new_image = record["dynamodb"].get("NewImage")
-    old_image = record["dynamodb"].get("OldImage")
+def deserialize_image(image):
+    return {k: deserializer.deserialize(v) for k, v in image.items()}
 
-    image = new_image or old_image
+
+def extract_changed_item(record):
+    event_name = record.get("eventName")
+    dynamodb_data = record.get("dynamodb", {})
+
+    # REMOVE har ingen NewImage, så där används OldImage
+    if event_name == "REMOVE":
+        image = dynamodb_data.get("OldImage")
+    else:
+        image = dynamodb_data.get("NewImage")
+
     if not image:
         return None
 
-    pk = image.get("PK", {}).get("S")
+    return deserialize_image(image)
+
+
+def extract_event_id(item):
+    pk = item.get("PK")
     if not pk or not pk.startswith("EVENT#"):
         return None
 
     return pk.replace("EVENT#", "", 1)
 
 
-def is_event_related_record(record):
-    new_image = record["dynamodb"].get("NewImage")
-    old_image = record["dynamodb"].get("OldImage")
-
-    image = new_image or old_image
-    if not image:
-        return False
-
-    pk = image.get("PK", {}).get("S")
-    sk = image.get("SK", {}).get("S")
+def is_event_related_item(item):
+    pk = item.get("PK")
+    sk = item.get("SK")
 
     if not pk or not sk:
         return False
 
-    if not pk.startswith("EVENT#"):
+    if not str(pk).startswith("EVENT#"):
         return False
 
     return (
         sk == "EVENT"
-        or sk.startswith("TEAM#")
-        or sk.startswith("CATCH#")
-        or sk.startswith("MESSAGE#")
+        or str(sk).startswith("TEAM#")
+        or str(sk).startswith("CATCH#")
+        or str(sk).startswith("MESSAGE#")
     )
 
 
@@ -72,29 +75,47 @@ def handler(event, context):
         ExpressionAttributeValues={":pk": "CONNECTION"},
     )["Items"]
 
-    sent_event_ids = set()
+    # Undvik att skicka exakt samma record flera gånger i samma batch
+    processed_records = set()
 
-    for record in event["Records"]:
-        if not is_event_related_record(record):
+    for record in event.get("Records", []):
+        changed_item = extract_changed_item(record)
+        if not changed_item:
             continue
 
-        event_id = extract_event_id_from_record(record)
+        if not is_event_related_item(changed_item):
+            continue
+
+        event_id = extract_event_id(changed_item)
         if not event_id:
             continue
 
-        # Undvik att skicka samma event flera gånger i samma batch
-        if event_id in sent_event_ids:
+        entity_type = changed_item.get("entityType", "EVENT")
+        action = record.get("eventName", "MODIFY")
+
+        # Försök dedupa bättre än bara eventId
+        dedupe_key = f"{event_id}:{entity_type}:{action}:{changed_item.get('SK', '')}"
+        if dedupe_key in processed_records:
             continue
+        processed_records.add(dedupe_key)
 
-        sent_event_ids.add(event_id)
-
-        # Skapar eventobjekt som skickas till client
+        # Hämta senaste fulla eventvyn efter förändringen
         event_response = get_event_view_in_db(event_id)
         if not event_response["success"]:
+            print(f"Could not fetch full event view for eventId={event_id}")
             continue
+
+        changed_by = (
+            changed_item.get("createdBy") or changed_item.get("updatedBy") or None
+        )
 
         message = {
             "type": "eventUpdate",
+            "entityType": entity_type,
+            "action": action,
+            "eventId": event_id,
+            "changedBy": changed_by,
+            "entity": make_json_safe(changed_item),
             "data": make_json_safe(event_response["event"]),
         }
 
@@ -103,76 +124,8 @@ def handler(event, context):
             try:
                 send_to_connection(connection_id, message)
             except Exception as e:
+                print(f"Failed sending to connection {connection_id}: {e}")
                 if "GoneException" in str(e):
                     remove_connection(connection_id)
 
     return {"statusCode": 200}
-
-
-# def is_event_record(record):
-#     # Send all records for events, teams och catches
-
-#     new_image = record["dynamodb"].get("NewImage")
-#     old_image = record["dynamodb"].get("OldImage")
-
-#     def check_image(image):
-#         if not image:
-#             return False
-#         pk = image.get("PK", {}).get("S")
-#         sk = image.get("SK", {}).get("S")
-#         return pk and pk.startswith("EVENT#") and sk == "EVENT"
-
-
-#     result = check_image(new_image) or check_image(old_image)
-#     print("IS EVENT RECORD:", result)
-#     return result
-
-# def handler(event, context):
-#     print("LAMBDA TRIGGERED")
-#     print("RAW EVENT:", event)
-
-#     # Lambda-entrypoint for stream
-
-#     table_name = os.environ.get("USERS_TABLE", "fishScore")
-#     table = boto3.resource("dynamodb").Table(table_name)
-
-#     # Get all active connections
-#     connections = table.query(
-#         KeyConditionExpression="PK = :pk",
-#         ExpressionAttributeValues={":pk": "CONNECTION"},
-#     )["Items"]
-
-#     print("ACTIVE CONNECTIONS:", connections)
-
-#     # Loop through all DynamDB-streamrecords
-#     for record in event["Records"]:
-#         print("STREAM RECORD:", record)
-#         if not is_event_record(record):
-#             print("SKIPPED RECORD")
-#             continue
-
-#         # Use NewImage if it exist, else OldImage
-#         image = record["dynamodb"].get("NewImage") or record["dynamodb"].get("OldImage")
-
-#         # Convert DynamoDB-format to Python-dict
-#         data = {k: deserializer.deserialize(v) for k, v in image.items()}
-
-#         safe_data = make_json_safe(data)
-
-#         # Create message and send through Websocket
-#         message = {"type": "eventUpdate", "data": safe_data}
-#         print("SENDING MESSAGE:", message)
-
-#         # Loop through all active connections and send message
-#         for conn in connections:
-#             connection_id = conn["SK"].replace("CONNECTION#", "")
-#             try:
-#                 print("SENDING TO CONNECTION:", connection_id)
-#                 send_to_connection(connection_id, message)
-#             except Exception as e:
-#                 # Remove all unactive connections
-#                 print("SEND ERROR:", str(e))
-#                 if "GoneException" in str(e):
-#                     remove_connection(conn["SK"].replace("CONNECTION#", ""))
-
-#     return {"statusCode": 200}

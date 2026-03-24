@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import type { User } from '@fishScore/interfaces';
+import { useUserStore } from '@fishScore/useUserStore';
 
 const webSocketUrl: string = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -12,6 +13,7 @@ export const useWebSocketHook = () => {
 		updateUser,
 		closeConnection,
 	} = useWebSocketStore();
+	const { user } = useUserStore();
 
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null,
@@ -36,7 +38,7 @@ export const useWebSocketHook = () => {
 			// Tha data sent to "orderFromWs" is of the type Order
 			websocket.onmessage = (event) => {
 				try {
-					const message: any = JSON.parse(event.data);
+					const message = JSON.parse(event.data);
 					console.log('WebSocket message received:', message);
 
 					if (message.type === 'userUpdate' && message.user) {
@@ -49,6 +51,11 @@ export const useWebSocketHook = () => {
 						console.log('Ny event-uppdatering:', message.data);
 						const { updateEvent } = useWebSocketStore.getState();
 						updateEvent(message.data);
+					}
+
+					if (message.changedBy === user?.userId) {
+						console.log('Changed by user');
+						return;
 					}
 				} catch (error) {
 					console.error('Error parsing WebSocket message:', error);
@@ -77,7 +84,7 @@ export const useWebSocketHook = () => {
 				clearTimeout(reconnectTimeoutRef.current);
 			}
 		};
-	}, [ws, setWebSocket, setConnectionStatus, updateUser]);
+	}, [ws, setWebSocket, setConnectionStatus, updateUser, user?.userId]);
 
 	useEffect(() => {
 		return () => {

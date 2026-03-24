@@ -11,7 +11,7 @@ apigw_client = boto3.client(
 # Skapar DynamoDB-resource
 dynamodb = boto3.resource("dynamodb")
 
-table_name = os.environ.get("USERS_TABLE", "fishScore")
+table_name = os.environ.get("USERS_TABLE", "fishScore")  # default till fishScore
 table = dynamodb.Table(table_name)
 
 
