@@ -1,12 +1,7 @@
-import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { Text } from '@mantine/core';
 
-type Props = {};
-
-export const Updates = ({}: Props) => {
-	const { events } = useWebSocketStore();
-
-	console.log('events: ', events);
+export const Updates = ({ updates }: any) => {
+	console.log('updates: ', updates);
 
 	return <Text>Updates</Text>;
 };

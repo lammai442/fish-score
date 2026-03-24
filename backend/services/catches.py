@@ -87,7 +87,7 @@ def edit_catch_in_db(event_id, catch_id, user_id, catch_weight):
                 "error": "Catch not found",
             }
 
-        if not catch_item["catchedBy"] == user_id:
+        if not catch_item["createdBy"] == user_id:
             return {"success": False, "error": "User is not same as catched user"}
 
         team_response = table.get_item(
@@ -168,7 +168,7 @@ def delete_catch_in_db(event_id, catch_id, user_id):
         if not catch_item:
             return {"success": False, "error": "Catch not found"}
 
-        if catch_item["catchedBy"] != user_id:
+        if catch_item["createdBy"] != user_id:
             return {"success": False, "error": "Not authorized"}
 
         team_id = catch_item["teamId"]
