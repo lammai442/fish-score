@@ -1,4 +1,5 @@
 from utils.connection import send_to_connection, remove_connection
+from utils.help_functions import filter_item_keys
 import boto3
 import os
 from boto3.dynamodb.types import TypeDeserializer
@@ -109,14 +110,17 @@ def handler(event, context):
             changed_item.get("createdBy") or changed_item.get("updatedBy") or None
         )
 
+        cleaned_entity = filter_item_keys(changed_item)
+
         message = {
             "type": "eventUpdate",
             "entityType": entity_type,
             "action": action,
             "eventId": event_id,
             "changedBy": changed_by,
-            "entity": make_json_safe(changed_item),
+            "entity": make_json_safe(cleaned_entity),
             "data": make_json_safe(event_response["event"]),
+            "subscribers": event_response["event"]["subscribers"],
         }
 
         for conn in connections:

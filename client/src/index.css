@@ -19,7 +19,7 @@
 	--color-orange: #ff6900;
 	--color-orange-light: #fff7ed;
 
-	--color-danger: #dc2626;
+	--color-danger: #b82c2c;
 	--color-danger-light: #fee2e2;
 
 	--color-primary: #63ab9f;
@@ -33,9 +33,6 @@
 	--bg-gradient-start: var(--color-primary-light);
 	--bg-gradient-end: var(--color-primary);
 
-	/* --bg-gradient-start: #eff6ff;
-	--bg-gradient-end: #dbeafe; */
-
 	--bg-primary: var(--color-primary);
 	--bg-primary-light: var(--color-primary-light);
 	--bg-surface: var(--color-white);
@@ -45,9 +42,14 @@
 	--bg-orange: var(--color-orange);
 	--bg-orange-light: var(--color-orange-light);
 
+	/* Button */
+	--btn-primary-bg: var(--color-black);
+	--btn-danger-bg: var(--color-danger);
+
 	/* Text */
 	--text-primary: var(--color-black);
 	--text-inverse: var(--color-white);
+	--text-action: var(--color-white);
 	--text-muted: var(--color-grey-dark);
 
 	/* Border */

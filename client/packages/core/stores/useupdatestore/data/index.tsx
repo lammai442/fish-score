@@ -2,21 +2,25 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type Update = {
-	type: 'catch';
+	updateId: string;
+	type: 'catch' | 'message';
 	eventId: string;
-	entity: any;
+	entity: 'CATCH' | 'MESSAGE';
 	changedBy?: string;
+	read: boolean;
 };
 
 type UpdateStore = {
 	updates: Update[];
 	ownerUserId: string | null;
 	addUpdate: (userId: string | undefined, update: Update) => void;
+	markAllAsRead: () => void;
 	clearUpdates: () => void;
 	resetForUser: (userId: string | null) => void;
 };
 
 export const useUpdateStore = create<UpdateStore>()(
+	// Lagrar i localstorage
 	persist(
 		(set, get) => ({
 			updates: [],
@@ -38,7 +42,13 @@ export const useUpdateStore = create<UpdateStore>()(
 					updates: [update, ...updates].slice(0, 50),
 				});
 			},
-
+			markAllAsRead: () =>
+				set((state) => ({
+					updates: state.updates.map((u) => ({
+						...u,
+						read: true,
+					})),
+				})),
 			clearUpdates: () => set({ updates: [] }),
 
 			resetForUser: (userId) => {

@@ -32,10 +32,6 @@ export const Header = () => {
 		}
 	}, [updates]);
 
-	const handleCloseUpdates = () => {
-		clearUpdates();
-		close();
-	};
 	return (
 		<Container size='lg'>
 			<Flex justify='space-between' align='center' p='16px'>
@@ -50,12 +46,9 @@ export const Header = () => {
 							fit='contain'></Image>
 					</Tooltip>
 				</Box>
-				{/* Öppnar upp Updates */}
-				<BaseModal
-					title='Updates'
-					opened={opened}
-					close={() => handleCloseUpdates()}>
-					<Updates updates={updates}></Updates>
+				{/* Öppnar upp modal med Updates */}
+				<BaseModal title='Updates' opened={opened} close={close}>
+					<Updates updates={updates} close={close}></Updates>
 				</BaseModal>
 				<Flex gap='0.5rem'>
 					<Tooltip label={'Updates'}>

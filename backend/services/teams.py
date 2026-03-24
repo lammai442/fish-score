@@ -57,6 +57,7 @@ def create_new_team_in_db(event_id, team_name, created_by):
             "createdBy": created_by,
             "createdAt": now,
             "entityType": "TEAM",
+            "eventName": event_item["eventName"],
             "members": [],
             "lookupType": f"EVENT#{event_id}#TEAMNAME",
             "lookupValue": team_name.lower(),
