@@ -23,7 +23,7 @@ export const FishCatchCard = ({
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
 
-	const catchedByUser = fishCatch.catchedBy === userId;
+	const catchedByUser = fishCatch.createdBy === userId;
 	let modifiedCatchDate: string | null = null;
 	if (fishCatch.modifiedAt) {
 		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);

@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
-import type { User } from '@fishScore/interfaces';
 import { useUserStore } from '@fishScore/useUserStore';
+import { useUpdateStore } from '@fishScore/useupdatesstore';
+import { User } from '@fishScore/usersdata';
 
 const webSocketUrl: string = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -14,6 +15,7 @@ export const useWebSocketHook = () => {
 		closeConnection,
 	} = useWebSocketStore();
 	const { user } = useUserStore();
+	const { addUpdate } = useUpdateStore();
 
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null,
@@ -32,12 +34,11 @@ export const useWebSocketHook = () => {
 				console.log('Websocket connected: ', date);
 			};
 
-			// Whenever a message is received from the WebSocket, check whether its type is "orderUpdate" and whether "message.order" exists.
-			// If both are true, then update the variable "orderFromWs" with the newly received order.
-			// The data received from WebSocket is of the type WebSocketOrder
-			// Tha data sent to "orderFromWs" is of the type Order
 			websocket.onmessage = (event) => {
 				try {
+					if (!user) {
+						return;
+					}
 					const message = JSON.parse(event.data);
 					console.log('WebSocket message received:', message);
 
@@ -53,10 +54,24 @@ export const useWebSocketHook = () => {
 						updateEvent(message.data);
 					}
 
-					if (message.changedBy === user?.userId) {
-						console.log('Changed by user');
+					// Om det är user som har skapat nya ändringen så körs return och ingen fortsättning till addUpdates
+					if (message.changedBy === user.userId) {
 						return;
 					}
+
+					const isNewCatchUpdate =
+						message.type === 'eventUpdate' &&
+						message.entityType === 'CATCH' &&
+						message.action === 'INSERT';
+
+					if (!isNewCatchUpdate) return;
+
+					addUpdate(user?.userId, {
+						type: 'catch',
+						eventId: message.eventId,
+						entity: message.entity,
+						changedBy: message.changedBy,
+					});
 				} catch (error) {
 					console.error('Error parsing WebSocket message:', error);
 				}

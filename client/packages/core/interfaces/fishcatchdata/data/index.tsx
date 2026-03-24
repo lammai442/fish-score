@@ -1,7 +1,7 @@
 export interface FishCatch {
 	catchId: string;
 	catchWeight: string;
-	catchedBy: string;
+	createdBy: string;
 	catchersFullName: string;
 	createdAt: string;
 	modifiedAt?: string;

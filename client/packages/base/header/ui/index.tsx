@@ -1,3 +1,4 @@
+import './index.css';
 import {
 	Flex,
 	Image,
@@ -14,14 +15,27 @@ import { useDisclosure } from '@mantine/hooks';
 import { useUserStore } from '@fishScore/useUserStore';
 import { BaseModal } from '@fishScore/basemodal';
 import { Updates } from '@fishScore/updates';
+import { useUpdateStore } from '@fishScore/useupdatesstore';
+import { useEffect, useState } from 'react';
 export const Header = () => {
 	const navigate = useNavigate();
-	const [visible] = useDisclosure();
 	const [opened, { open, close }] = useDisclosure();
 	const { user } = useUserStore();
+	const { updates, clearUpdates } = useUpdateStore();
+	const [wiggle, setWiggle] = useState<boolean>(false);
 
 	const userFullName = `${user?.firstName} ${user?.lastName}`;
 
+	useEffect(() => {
+		if (updates.length > 0) {
+			setWiggle(true);
+		}
+	}, [updates]);
+
+	const handleCloseUpdates = () => {
+		clearUpdates();
+		close();
+	};
 	return (
 		<Container size='lg'>
 			<Flex justify='space-between' align='center' p='16px'>
@@ -37,20 +51,29 @@ export const Header = () => {
 					</Tooltip>
 				</Box>
 				{/* Öppnar upp Updates */}
-				<BaseModal title='Updates' opened={opened} close={close}>
-					<Updates></Updates>
+				<BaseModal
+					title='Updates'
+					opened={opened}
+					close={() => handleCloseUpdates()}>
+					<Updates updates={updates}></Updates>
 				</BaseModal>
 				<Flex gap='0.5rem'>
 					<Tooltip label={'Updates'}>
 						<Indicator
 							size={10}
 							color='red'
-							disabled={!visible}
+							disabled={!wiggle}
 							offset={7}
 							style={{ cursor: 'pointer' }}
 							withBorder
-							onClick={open}>
-							<ActionIcon variant='transparent' size='lg'>
+							onClick={() => {
+								setWiggle(false);
+								open();
+							}}>
+							<ActionIcon
+								variant='transparent'
+								size='lg'
+								className={wiggle ? 'notification-wiggle' : ''}>
 								<IconBell size={20} color='black' />
 							</ActionIcon>
 						</Indicator>

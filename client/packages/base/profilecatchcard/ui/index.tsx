@@ -25,7 +25,7 @@ type Props = {
 export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = shortDateFormatter(fishCatch.createdAt);
-	const catchedByUser = fishCatch.catchedBy === userId;
+	const catchedByUser = fishCatch.createdBy === userId;
 	const navigate = useNavigate();
 
 	const handleNavigation = (eventId: string) => {
