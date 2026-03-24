@@ -4,6 +4,7 @@ from .table import get_dynamodb_table
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from services.users import get_user_by_user_id
+from utils.help_functions import filter_item_keys
 
 table = get_dynamodb_table()
 
@@ -37,21 +38,22 @@ def add_message_in_db(event_id, message, user_id):
         message_item = {
             "PK": f"EVENT#{event_id}",
             "SK": f"MESSAGE#{message_id}",
-            "messageId": message_id,
-            "message": message,
-            "createdBy": user_id,
-            "messageUserFullName": user_full_name,
-            "eventName": event_item["eventName"],
             "createdAt": now,
-            "modifiedAt": None,
+            "createdBy": user_id,
             "eventId": event_id,
+            "entityType": "MESSAGE",
+            "eventName": event_item["eventName"],
             "lookupType": f"USER#{user_id}#MESSAGE",
             "lookupValue": message_id,
+            "message": message,
+            "messageId": message_id,
+            "messageUserFullName": user_full_name,
+            "modifiedAt": None,
         }
 
         table.put_item(Item=message_item)
 
-        return {"success": True, "message": message_item}
+        return {"success": True, "message": filter_item_keys(message_item)}
 
     except ClientError as e:
         return {"success": False, "error": str(e)}

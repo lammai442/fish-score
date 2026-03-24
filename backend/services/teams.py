@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from .users import get_user_by_user_id
 from decimal import Decimal
+from utils.help_functions import filter_item_keys
 
 table = get_dynamodb_table()
 
@@ -53,14 +54,15 @@ def create_new_team_in_db(event_id, team_name, created_by):
         db_team_item = {
             "PK": f"EVENT#{event_id}",
             "SK": f"TEAM#{team_id}",
-            "teamId": team_id,
-            "teamName": team_name,
             "createdBy": created_by,
             "createdAt": now,
+            "entityType": "TEAM",
             "members": [],
-            "totalCatchWeight": Decimal("0"),
             "lookupType": f"EVENT#{event_id}#TEAMNAME",
             "lookupValue": team_name.lower(),
+            "teamId": team_id,
+            "teamName": team_name,
+            "totalCatchWeight": Decimal("0"),
         }
 
         table.put_item(Item=db_team_item)
@@ -78,7 +80,7 @@ def create_new_team_in_db(event_id, team_name, created_by):
             },
         )
 
-        return {"success": True, "team": db_team_item}
+        return {"success": True, "team": filter_item_keys(db_team_item)}
 
     except ClientError as e:
         return {"success": False, "error": str(e)}
@@ -161,6 +163,38 @@ def join_team_in_db(event_id, team_id, user_id):
             }
         )
 
+        event_response = table.get_item(
+            Key={
+                "PK": f"EVENT#{event_id}",
+                "SK": "EVENT",
+            }
+        )
+
+        event_item = event_response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Event could not be found"}
+
+        subscribers = event_item.get("subscribers", [])
+
+        already_subscriber = any(subscriber == user_id for subscriber in subscribers)
+
+        if not already_subscriber:
+            subscribers.append(user_id)
+            # Lägger till user i subscribers i event
+
+            table.update_item(
+                Key={
+                    "PK": f"EVENT#{event_id}",
+                    "SK": f"EVENT",
+                },
+                UpdateExpression="SET subscribers = :subscribers",
+                ExpressionAttributeValues={
+                    ":subscribers": subscribers,
+                },
+            )
+
+        # Lägg in user i team
         table.update_item(
             Key={
                 "PK": f"EVENT#{event_id}",

@@ -182,8 +182,8 @@ export const EventPage = () => {
 					<Stack gap={0}>
 						<Title order={5}>Join a team to participate</Title>
 						<Text fz={'sm'}>
-							You need to join or create a team before you can
-							register catches for this event.
+							You need to join a team before you can register
+							catches for this event.
 						</Text>
 					</Stack>
 				</Flex>
@@ -229,7 +229,10 @@ export const EventPage = () => {
 							? 'Event has ended'
 							: 'Only the event admin can create new teams'
 					}
-					disabled={currentEvent?.status !== 'completed'}>
+					disabled={
+						currentEvent?.status !== 'completed' &&
+						eventCreatedByUser
+					}>
 					<Button
 						color='var(--color-black)'
 						size='sm'
@@ -243,26 +246,28 @@ export const EventPage = () => {
 					</Button>
 				</Tooltip>
 				{/* Avsluta tävling */}
-				{eventCreatedByUser && (
-					<Button
-						radius='md'
-						bg={
-							currentEvent?.status === 'ongoing'
-								? 'var(--color-gold)'
-								: 'var(--bg-primary)'
-						}
-						c={
-							currentEvent?.status === 'ongoing'
-								? 'var(--text-primary)'
-								: 'var(--text-inverse)'
-						}
-						onClick={endEventHandlers.open}>
-						<IconTrophy></IconTrophy>{' '}
-						{currentEvent?.status === 'ongoing'
-							? 'End event'
-							: 'Open event'}
-					</Button>
-				)}
+				{eventCreatedByUser &&
+					currentEvent?.teams &&
+					currentEvent?.teams?.length > 0 && (
+						<Button
+							radius='md'
+							bg={
+								currentEvent?.status === 'ongoing'
+									? 'var(--color-gold)'
+									: 'var(--bg-primary)'
+							}
+							c={
+								currentEvent?.status === 'ongoing'
+									? 'var(--text-primary)'
+									: 'var(--text-inverse)'
+							}
+							onClick={endEventHandlers.open}>
+							<IconTrophy></IconTrophy>{' '}
+							{currentEvent?.status === 'ongoing'
+								? 'End event'
+								: 'Open event'}
+						</Button>
+					)}
 			</Flex>
 			<BaseModal
 				title='Add new catch'
@@ -275,8 +280,15 @@ export const EventPage = () => {
 			</BaseModal>
 			{/* Lägg till en ny catch */}
 			<Tooltip
-				label='Event has ended'
-				disabled={currentEvent?.status === 'ongoing'}>
+				label={
+					currentEvent?.status === 'ongoing'
+						? 'Join a team to add catch'
+						: 'Event has ended'
+				}
+				disabled={
+					currentEvent?.status !== 'ongoing' ||
+					usersTeam !== undefined
+				}>
 				<ActionIcon
 					radius={'xl'}
 					size={'50px'}

@@ -1,4 +1,4 @@
-from utils.connection import send_to_connection, remove_connection
+from backend.services.websocket_connection import send_to_connection, remove_connection
 import boto3
 import os
 from boto3.dynamodb.types import TypeDeserializer
@@ -36,23 +36,6 @@ def extract_event_id_from_record(record):
     return pk.replace("EVENT#", "", 1)
 
 
-# def is_event_record(record):
-#     # Send all records for events, teams och catches
-
-#     new_image = record["dynamodb"].get("NewImage")
-#     old_image = record["dynamodb"].get("OldImage")
-
-#     def check_image(image):
-#         if not image:
-#             return False
-#         pk = image.get("PK", {}).get("S")
-#         sk = image.get("SK", {}).get("S")
-#         return pk and pk.startswith("EVENT#") and sk == "EVENT"
-
-
-#     result = check_image(new_image) or check_image(old_image)
-#     print("IS EVENT RECORD:", result)
-#     return result
 def is_event_related_record(record):
     new_image = record["dynamodb"].get("NewImage")
     old_image = record["dynamodb"].get("OldImage")
@@ -125,6 +108,24 @@ def handler(event, context):
 
     return {"statusCode": 200}
 
+
+# def is_event_record(record):
+#     # Send all records for events, teams och catches
+
+#     new_image = record["dynamodb"].get("NewImage")
+#     old_image = record["dynamodb"].get("OldImage")
+
+#     def check_image(image):
+#         if not image:
+#             return False
+#         pk = image.get("PK", {}).get("S")
+#         sk = image.get("SK", {}).get("S")
+#         return pk and pk.startswith("EVENT#") and sk == "EVENT"
+
+
+#     result = check_image(new_image) or check_image(old_image)
+#     print("IS EVENT RECORD:", result)
+#     return result
 
 # def handler(event, context):
 #     print("LAMBDA TRIGGERED")
