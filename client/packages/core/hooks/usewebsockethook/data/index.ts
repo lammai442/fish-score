@@ -21,17 +21,29 @@ export const useWebSocketHook = () => {
 		null,
 	);
 
+	const isConnectingRef = useRef(false);
+
 	useEffect(() => {
 		// Skapa WebSocket om det inte finns någon eller om den är stängd
-		if (!ws || ws.readyState === WebSocket.CLOSED) {
+		if (
+			(!ws || ws.readyState === WebSocket.CLOSED) &&
+			!isConnectingRef.current
+		) {
+			isConnectingRef.current = true;
 			const websocket = new WebSocket(webSocketUrl);
-			const date = new Date().toISOString().slice(0, -5);
-			console.log('Websocket connecting: ', date);
+			console.log(
+				'Websocket connecting: ',
+				new Date().toISOString().slice(0, -5),
+			);
 
 			websocket.onopen = () => {
 				setWebSocket(websocket);
 				setConnectionStatus(true);
-				console.log('Websocket connected: ', date);
+				isConnectingRef.current = false;
+				console.log(
+					'Websocket connected: ',
+					new Date().toISOString().slice(0, -5),
+				);
 			};
 
 			websocket.onmessage = (event) => {
@@ -48,7 +60,6 @@ export const useWebSocketHook = () => {
 
 					// Uppdatera frontend om det är en eventUpdate
 					if (message.type === 'eventUpdate' && message.data) {
-						// Här kan du t.ex. lägga till eventet i en state-array eller uppdatera ett valt event
 						console.log('Ny event-uppdatering:', message.data);
 						const { updateEvent } = useWebSocketStore.getState();
 						updateEvent(message.data);
@@ -59,19 +70,48 @@ export const useWebSocketHook = () => {
 						return;
 					}
 
-					const isNewCatchUpdate =
+					// Om det är en catch
+					const isCatchInsert =
 						message.type === 'eventUpdate' &&
 						message.entityType === 'CATCH' &&
 						message.action === 'INSERT';
 
-					if (!isNewCatchUpdate) return;
+					const isMessageInsert =
+						message.type === 'eventUpdate' &&
+						message.entityType === 'MESSAGE' &&
+						message.action === 'INSERT';
 
-					addUpdate(user?.userId, {
-						type: 'catch',
-						eventId: message.eventId,
-						entity: message.entity,
-						changedBy: message.changedBy,
-					});
+					const isSubscriber =
+						Array.isArray(message.subscribers) &&
+						message.subscribers.includes(user?.userId);
+
+					const isRelevantUpdate =
+						isSubscriber && (isCatchInsert || isMessageInsert);
+
+					if (!isRelevantUpdate) return;
+
+					if (isCatchInsert) {
+						addUpdate(user?.userId, {
+							updateId: message.entity.catchId,
+							type: 'catch',
+							eventId: message.eventId,
+							entity: message.entity,
+							changedBy: message.changedBy,
+							read: false,
+						});
+					}
+
+					// Om det är en Message
+					if (isMessageInsert) {
+						addUpdate(user?.userId, {
+							updateId: message.entity.messageId,
+							type: 'message',
+							eventId: message.eventId,
+							entity: message.entity,
+							changedBy: message.changedBy,
+							read: false,
+						});
+					}
 				} catch (error) {
 					console.error('Error parsing WebSocket message:', error);
 				}
@@ -80,8 +120,21 @@ export const useWebSocketHook = () => {
 			// När WebSocket upptäcker att anslutningen är avbruten så sätts en timeot för att försöka återansluta användaren
 			websocket.onclose = () => {
 				setConnectionStatus(false);
+				isConnectingRef.current = false;
+
+				if (reconnectTimeoutRef.current) {
+					console.log(
+						'Websocket clear reconnecting',
+						new Date().toISOString().slice(0, -5),
+					);
+					clearTimeout(reconnectTimeoutRef.current);
+				}
 
 				reconnectTimeoutRef.current = setTimeout(() => {
+					console.log(
+						'Websocket reconnecting',
+						new Date().toISOString().slice(0, -5),
+					);
 					setWebSocket(null as any);
 				}, 3000);
 			};
@@ -89,6 +142,7 @@ export const useWebSocketHook = () => {
 			// När det blir en error
 			websocket.onerror = (error) => {
 				console.error('WebSocket error:', error);
+				isConnectingRef.current = false;
 				setConnectionStatus(false);
 			};
 		}

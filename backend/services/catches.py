@@ -40,6 +40,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
             "catchWeight": catch_weight_decimal,
             "entityType": "CATCH",
             "eventId": event_id,
+            "eventName": team_item["eventName"],
             "teamId": team_id,
             "teamName": team_item["teamName"],
             "lookupType": f"USER#{user_id}#CATCH",

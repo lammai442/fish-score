@@ -2,7 +2,6 @@ import json
 import os
 import boto3
 
-
 # Skapar klient för att kunna skicka data till WebSocket-klienter
 apigw_client = boto3.client(
     "apigatewaymanagementapi", endpoint_url=os.environ["WEBSOCKET_ENDPOINT"]
@@ -11,7 +10,7 @@ apigw_client = boto3.client(
 # Skapar DynamoDB-resource
 dynamodb = boto3.resource("dynamodb")
 
-table_name = os.environ.get("USERS_TABLE", "fishScore")  # default till fishScore
+table_name = os.environ.get("USERS_TABLE", "fishScore")
 table = dynamodb.Table(table_name)
 
 
@@ -25,7 +24,7 @@ def send_to_connection(connection_id, data):
 
 
 # Sparar connectionId i DynamoDB
-def store_connection(connection_id, user_id=None):
+def store_connection(connection_id, user_id):
 
     # Grundobjekt för anslutningen
     item = {
