@@ -150,25 +150,16 @@ def create_new_event_in_db(event_name, created_by):
             "status": "ongoing",
             "createdBy": created_by,
             "createdAt": now,
+            "entityType": "EVENT",
             "lookupType": "EVENT#NAME",
             "lookupValue": event_name.lower(),
             "teamCount": 0,
+            "subscribers": [],
         }
 
         table.put_item(Item=db_item)
 
-        # Returnera gärna i samma shape som frontend redan förväntar sig
-        return {
-            "success": True,
-            "event": {
-                "id": event_id,
-                "eventName": event_name,
-                "status": "ongoing",
-                "createdBy": created_by,
-                "createdAt": now,
-                "teamCount": 0,
-            },
-        }
+        return {"success": True, "event": filter_item_keys(db_item)}
 
     except ClientError as e:
         return {"success": False, "error": str(e)}
