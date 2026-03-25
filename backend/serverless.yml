@@ -1,6 +1,5 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: ${file(./config.yml):aws.org, 'default-org'}
-# "service" is the name of this project. This will also be added to your AWS resource names.
+# "service" är namnet på detta projekt
 service: fishScore
 
 plugins:
@@ -8,19 +7,19 @@ plugins:
   - serverless-prune-plugin
   - serverless-python-requirements
 
-# Connection to Flask
+# Anslutning till Flask
 custom:
   wsgi:
     app: app.app
   prune:
     automatic: true
-    number: 5  # keep the 5 latest versions
+    number: 5  # spara endast 5 senaste versioner
 
 
 provider:
   name: aws
   runtime: python3.12
-  stage: api    # Stage blir /api
+  stage: api    
   region: eu-north-1 
   iam:
     role: ${file(./config.yml):aws.role}
@@ -43,15 +42,11 @@ functions:
       - http:
           path: /
           method: ANY
+          cors: true
       - http:
           path: /{proxy+}
           method: ANY
-  # createUser:
-  #   handler: functions/auth/PostRegisterUser/handler.handler
-  #   events:
-  #     - http:
-  #         path: /auth/register
-  #         method: POST
+          cors: true
   WebsocketHandler:
     handler: websocket/handler.handler
     events:
@@ -82,7 +77,7 @@ resources:
 
     UsersTable:
       Type: AWS::DynamoDB::Table
-      DeletionPolicy: Retain   # Keep the same table when deploying
+      DeletionPolicy: Retain   # Använd samma tabell vid deploy
       Properties:
         TableName: fishScore
         BillingMode: PAY_PER_REQUEST
