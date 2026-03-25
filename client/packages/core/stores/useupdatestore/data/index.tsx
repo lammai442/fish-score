@@ -29,6 +29,23 @@ export const useUpdateStore = create<UpdateStore>()(
 					return;
 				}
 
+				// Kontroll om nya uppdate redan finns i localstorage
+				const existingItem = updates.find(
+					(item) => item.updateId === update.updateId,
+				);
+
+				if (existingItem) {
+					const filteredUpdates = updates.filter(
+						(item) => item.updateId !== update.updateId,
+					);
+
+					set({
+						ownerUserId: userId,
+						updates: [update, ...filteredUpdates].slice(0, 50),
+					});
+					return;
+				}
+
 				set({
 					ownerUserId: userId,
 					updates: [update, ...updates].slice(0, 50),

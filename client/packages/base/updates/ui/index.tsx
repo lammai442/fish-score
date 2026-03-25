@@ -20,9 +20,10 @@ import { useNavigate } from 'react-router-dom';
 type Props = {
 	updates: Update[];
 	close: () => void;
+	setWiggle: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export const Updates = ({ updates, close }: Props) => {
+export const Updates = ({ updates, close, setWiggle }: Props) => {
 	const navigate = useNavigate();
 	const { clearUpdates, markAllAsRead } = useUpdateStore();
 
@@ -32,14 +33,19 @@ export const Updates = ({ updates, close }: Props) => {
 		close();
 	};
 
+	const handleClearAllUpdates = () => {
+		setWiggle(false);
+		clearUpdates();
+	};
+
 	return (
 		<Stack>
 			{updates.length > 0 ? (
 				<>
 					<Stack style={{ maxHeight: '500px', overflowY: 'auto' }}>
-						{updates.map((update: any, index: number) => (
+						{updates.map((update, index) => (
 							<Flex
-								key={update.id ?? index}
+								key={update.updateId ?? index}
 								gap='sm'
 								bd='1px solid var(--border-default)'
 								bg={
@@ -49,22 +55,43 @@ export const Updates = ({ updates, close }: Props) => {
 								}
 								bdrs='md'
 								p='sm'>
-								{/* Catch */}
+								{/* Ikon */}
 								{update.type === 'catch' && (
-									<>
-										<ThemeIcon
-											size='lg'
-											radius='xl'
-											color='dark'>
-											<IconFish size={18} />
-										</ThemeIcon>
+									<ThemeIcon
+										size='lg'
+										radius='xl'
+										color={
+											update.action === 'INSERT' ||
+											update.action === 'MODIFY'
+												? 'var(--color-black)'
+												: 'var(--color-danger)'
+										}>
+										<IconFish size={18} />
+									</ThemeIcon>
+								)}
 
-										<Stack flex={1} gap='0.5rem'>
-											<Stack gap='0.2rem'>
+								{update.type === 'message' && (
+									<ThemeIcon
+										size='lg'
+										radius='xl'
+										style={{
+											backgroundColor:
+												'var(--color-grey)',
+											color: 'var(--text-black)',
+										}}>
+										<IconMessage size={18} />
+									</ThemeIcon>
+								)}
+
+								<Stack flex={1} gap='0.5rem'>
+									{/* Catch */}
+									{update.type === 'catch' && (
+										<>
+											<Stack gap='0'>
 												<Title order={5}>
 													<Text span>Event: </Text>
 													{
-														update.entity.teamName
+														update.entity.eventName
 													}{' '}
 													<Text span>
 														(
@@ -72,28 +99,69 @@ export const Updates = ({ updates, close }: Props) => {
 														)
 													</Text>
 												</Title>
-												<Text>
-													Catched by:{' '}
+
+												<Text
+													fs='italic'
+													c='var(--text-muted)'>
 													{
 														update.entity
 															.catchersFullName
-													}
+													}{' '}
+													{(update.action ===
+														'MODIFY' ||
+														update.action ===
+															'REMOVE') && (
+														<Text
+															span
+															fs={'normal'}
+															c={
+																'var(--text-primary)'
+															}>
+															has made a change
+														</Text>
+													)}
 												</Text>
 
 												<Flex
 													gap='0.2rem'
-													align={'center'}>
-													<IconCalendarWeekFilled
-														size={'1.3rem'}
-													/>
+													align='center'>
+													<IconCalendarWeekFilled size='1.3rem' />
 													<Text
 														c='var(--text-muted)'
-														fz={'sm'}>
+														fz='sm'>
 														{dateFormatter(
 															update.entity
 																.createdAt,
 														)}
 													</Text>
+
+													{(update.action ===
+														'MODIFY' ||
+														update.action ===
+															'REMOVE') && (
+														<Text
+															p='0.1rem 0.3rem'
+															bdrs='sm'
+															bg={
+																update.action ===
+																'MODIFY'
+																	? 'var(--bg-muted)'
+																	: 'var(--color-danger)'
+															}
+															c={
+																update.action ===
+																'MODIFY'
+																	? 'var(--text-primary)'
+																	: 'var(--text-inverse)'
+															}
+															span
+															fz='sm'>
+															{update.action ===
+															'MODIFY'
+																? 'Edited'
+																: 'Removed'}
+														</Text>
+													)}
 												</Flex>
 											</Stack>
 
@@ -104,58 +172,33 @@ export const Updates = ({ updates, close }: Props) => {
 												bdrs='sm'>
 												{update.entity.catchWeight} kg
 											</Badge>
-
-											<Button
-												c='var(--text-inverse)'
-												bg='var(--color-black)'
-												onClick={() => {
-													handleNavigation(
-														update.eventId,
-													);
-												}}>
-												Go to event
-											</Button>
-										</Stack>
-									</>
-								)}
-								{/* Message */}
-								{update.type === 'message' && (
-									<>
-										<ThemeIcon
-											size='lg'
-											radius='xl'
-											color='var(--color-black)'>
-											<IconMessage size={18} />
-										</ThemeIcon>
-
-										<Stack flex={1} gap='0.5rem'>
-											<Stack gap='0.2rem'>
+										</>
+									)}
+									{/* Messages */}
+									{update.type === 'message' && (
+										<Stack gap='xs'>
+											<Stack gap='0'>
 												<Title order={5}>
 													<Text span>Event: </Text>
 													{update.entity.eventName}
 												</Title>
+
 												<Text
-													c={'var(--text-muted)'}
-													fs={'italic'}>
+													c='var(--text-muted)'
+													fs='italic'>
 													{
 														update.entity
 															.messageUserFullName
 													}
-													:
-												</Text>
-												<Text>
-													{update.entity.message}
 												</Text>
 
 												<Flex
 													gap='0.2rem'
-													align={'center'}>
-													<IconCalendarWeekFilled
-														size={'1.3rem'}
-													/>
+													align='center'>
+													<IconCalendarWeekFilled size='1.3rem' />
 													<Text
 														c='var(--text-muted)'
-														fz={'sm'}>
+														fz='sm'>
 														{dateFormatter(
 															update.entity
 																.createdAt,
@@ -164,25 +207,27 @@ export const Updates = ({ updates, close }: Props) => {
 												</Flex>
 											</Stack>
 
-											<Button
-												c='var(--text-inverse)'
-												bg='var(--color-black)'
-												onClick={() => {
-													handleNavigation(
-														update.eventId,
-													);
-												}}>
-												Go to event
-											</Button>
+											<Text>{update.entity.message}</Text>
 										</Stack>
-									</>
-								)}
+									)}
+
+									<Button
+										c='var(--text-inverse)'
+										bg='var(--color-black)'
+										onClick={() =>
+											handleNavigation(update.eventId)
+										}>
+										Go to event
+									</Button>
+								</Stack>
 							</Flex>
 						))}
 					</Stack>
 
-					<Button bg='var(--btn-danger-bg)' onClick={clearUpdates}>
-						Delete all updates
+					<Button
+						bg='var(--btn-secondary-bg)'
+						onClick={handleClearAllUpdates}>
+						Clear all updates
 					</Button>
 				</>
 			) : (

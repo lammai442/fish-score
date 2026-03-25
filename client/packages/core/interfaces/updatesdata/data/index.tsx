@@ -1,8 +1,24 @@
-export type Update = {
+import type { EventMessage } from '@fishScore/messagesdata';
+import type { FishCatch } from '../../fishcatchdata/data';
+
+type CatchUpdate = {
 	updateId: string;
-	type: 'catch' | 'message';
+	type: 'catch';
 	eventId: string;
-	entity: 'CATCH' | 'MESSAGE';
-	changedBy?: string;
+	entity: FishCatch;
+	changedBy: string;
 	read: boolean;
+	action: 'INSERT' | 'MODIFY' | 'REMOVE';
 };
+
+type MessageUpdate = {
+	updateId: string;
+	type: 'message';
+	eventId: string;
+	entity: EventMessage;
+	changedBy: string;
+	read: boolean;
+	action: 'INSERT' | 'MODIFY' | 'REMOVE';
+};
+
+export type Update = CatchUpdate | MessageUpdate;
