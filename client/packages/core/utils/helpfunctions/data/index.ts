@@ -1,4 +1,4 @@
-import { Team } from '@fishScore/teamsdata';
+import type { Team } from '@fishScore/teamsdata';
 
 export const calculateMembers = (teams: Team[]): number => {
 	const totalMembers = teams.reduce(

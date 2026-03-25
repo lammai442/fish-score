@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { useUserStore } from '@fishScore/useUserStore';
 import { useUpdateStore } from '@fishScore/useupdatestore';
-import { User } from '@fishScore/usersdata';
+import type { User } from '@fishScore/usersdata';
 
 const webSocketUrl: string = import.meta.env.VITE_WEBSOCKET_URL;
 

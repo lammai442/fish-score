@@ -444,9 +444,8 @@ export const EventPage = () => {
 													gap={'sm'}
 													key={message.messageId}>
 													<EventsMessage
-														eventMessage={message}
-														userId={
-															user?.userId
+														eventMessage={
+															message
 														}></EventsMessage>
 													{hasMultiple && !isLast && (
 														<Divider

@@ -9,7 +9,7 @@ import { useAuthStore } from '@fishScore/useAuthStore';
 import { BaseModal } from '@fishScore/basemodal';
 import { useUserStore } from '@fishScore/useUserStore';
 import { fetchMe } from '@fishScore/apiauth';
-import { FishEvent } from '@fishScore/eventsdata';
+import type { FishEvent } from '@fishScore/eventsdata';
 
 export const AuthLayout = () => {
 	return <Outlet />;

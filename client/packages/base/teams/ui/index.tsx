@@ -1,13 +1,10 @@
-import { fetchJoinTeam } from '@fishScore/apievents';
-import { Button, Flex, Stack, Text, Title } from '@mantine/core';
-import { IconCancel, IconCheck, IconTrophy, IconX } from '@tabler/icons-react';
-import type {
-	Team,
-	TeamUserData,
-} from '../../../core/interfaces/teamsdata/data';
-import { useState } from 'react';
-import { Loading } from '@fishScore/loading';
 import { showNotification } from '@mantine/notifications';
+import { Button, Flex, Stack, Text, Title } from '@mantine/core';
+import { fetchJoinTeam } from '@fishScore/apievents';
+import { IconCheck, IconTrophy, IconX } from '@tabler/icons-react';
+import { Loading } from '@fishScore/loading';
+import { useState } from 'react';
+import type { Team, TeamUserData } from '@fishScore/teamsdata';
 type Props = {
 	team: Team;
 	userId: string | undefined;

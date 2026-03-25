@@ -4,11 +4,9 @@ import { timeAgo } from '@fishScore/formatters';
 
 type Props = {
 	eventMessage: EventMessage;
-	userId: string | undefined;
 };
 
-export const EventsMessage = ({ eventMessage, userId }: Props) => {
-	const messageByUser = eventMessage.createdBy === userId;
+export const EventsMessage = ({ eventMessage }: Props) => {
 	const formattedDate = timeAgo(eventMessage.createdAt);
 
 	return (

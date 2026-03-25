@@ -20,7 +20,7 @@ export const Events = ({ events = [], title }: Props) => {
 			{/* Rendera events */}
 			<Flex wrap={'wrap'} gap={'md'} style={{ cursor: 'pointer' }}>
 				{events.length > 0 &&
-					events.map((event, index) => {
+					events.map((event) => {
 						return (
 							<Flex
 								direction='column'
@@ -29,7 +29,7 @@ export const Events = ({ events = [], title }: Props) => {
 								bd={'1px solid var(--border-default)'}
 								p={'1rem'}
 								bdrs={'10px'}
-								key={event.eventName}
+								key={event.eventId}
 								onClick={() => handleToEvent(event)}>
 								<Flex
 									justify={'space-between'}
