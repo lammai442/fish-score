@@ -20,8 +20,11 @@ export const useWebSocketHook = () => {
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null,
 	);
-
+	// Förhindrar att flera WebSocket-anslutningar samtidigt.
 	const isConnectingRef = useRef(false);
+
+	// Stoppar reconnect vid en manuell stängning av connectionen
+	const shouldReconnectRef = useRef(true);
 
 	useEffect(() => {
 		// Skapa WebSocket om det inte finns någon eller om den är stängd
@@ -48,9 +51,6 @@ export const useWebSocketHook = () => {
 
 			websocket.onmessage = (event) => {
 				try {
-					if (!user) {
-						return;
-					}
 					const message = JSON.parse(event.data);
 					console.log('WebSocket message received:', message);
 
@@ -65,8 +65,14 @@ export const useWebSocketHook = () => {
 						updateEvent(message.data);
 					}
 
+					const currentUser = useUserStore.getState().user;
+
+					if (!currentUser) {
+						return;
+					}
+
 					// Om det är user som har skapat nya ändringen så körs return och ingen fortsättning till addUpdates
-					if (message.changedBy === user.userId) {
+					if (message.changedBy === currentUser.userId) {
 						return;
 					}
 
@@ -83,7 +89,7 @@ export const useWebSocketHook = () => {
 
 					const isSubscriber =
 						Array.isArray(message.subscribers) &&
-						message.subscribers.includes(user?.userId);
+						message.subscribers.includes(currentUser.userId);
 
 					const isRelevantUpdate =
 						isSubscriber && (isCatchInsert || isMessageInsert);
@@ -91,7 +97,7 @@ export const useWebSocketHook = () => {
 					if (!isRelevantUpdate) return;
 
 					if (isCatchInsert) {
-						addUpdate(user?.userId, {
+						addUpdate(currentUser.userId, {
 							updateId: message.entity.catchId,
 							type: 'catch',
 							eventId: message.eventId,
@@ -103,7 +109,7 @@ export const useWebSocketHook = () => {
 
 					// Om det är en Message
 					if (isMessageInsert) {
-						addUpdate(user?.userId, {
+						addUpdate(currentUser.userId, {
 							updateId: message.entity.messageId,
 							type: 'message',
 							eventId: message.eventId,
@@ -121,6 +127,11 @@ export const useWebSocketHook = () => {
 			websocket.onclose = () => {
 				setConnectionStatus(false);
 				isConnectingRef.current = false;
+				setWebSocket(null as any);
+
+				if (!shouldReconnectRef.current) {
+					return;
+				}
 
 				if (reconnectTimeoutRef.current) {
 					console.log(
@@ -156,7 +167,9 @@ export const useWebSocketHook = () => {
 	}, [ws, setWebSocket, setConnectionStatus, updateUser, user?.userId]);
 
 	useEffect(() => {
+		shouldReconnectRef.current = true;
 		return () => {
+			shouldReconnectRef.current = false;
 			closeConnection();
 		};
 	}, [closeConnection]);
