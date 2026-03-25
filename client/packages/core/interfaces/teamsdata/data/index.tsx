@@ -1,4 +1,4 @@
-import { FishCatch } from '../../fishcatchdata/data';
+import type { FishCatch } from '@fishScore/fishcatchdata';
 
 export interface Team {
 	teamId?: string;

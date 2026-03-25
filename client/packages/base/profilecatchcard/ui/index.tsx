@@ -8,13 +8,13 @@ import {
 	Title,
 	Tooltip,
 } from '@mantine/core';
-import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { IconCalendarWeekFilled, IconPencil } from '@tabler/icons-react';
-import { shortDateFormatter } from '../../../core/formatters/data';
+import { shortDateFormatter } from '@fishScore/formatters';
 import { BaseModal } from '@fishScore/basemodal';
 import { useDisclosure } from '@mantine/hooks';
-import { EditCatch } from '../../editcatch/ui';
+import { EditCatch } from '@fishScore/editcatch';
 import { useNavigate } from 'react-router-dom';
+import type { FishCatch } from '@fishScore/fishcatchdata';
 
 type Props = {
 	fishCatch: FishCatch;

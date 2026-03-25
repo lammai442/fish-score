@@ -1,11 +1,4 @@
-import {
-	ActionIcon,
-	Box,
-	Center,
-	Container,
-	Stack,
-	Title,
-} from '@mantine/core';
+import { ActionIcon, Box, Container, Stack, Title } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 

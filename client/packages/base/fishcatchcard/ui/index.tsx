@@ -1,11 +1,11 @@
 import { ActionIcon, Flex, Stack, Text, Tooltip } from '@mantine/core';
-import { FishCatch } from '../../../core/interfaces/fishcatchdata/data';
 import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
-import { dateFormatter } from '../../../core/formatters/data';
+import { dateFormatter } from '@fishScore/formatters';
 import { BaseModal } from '@fishScore/basemodal';
 import { useDisclosure } from '@mantine/hooks';
-import { EditCatch } from '../../editcatch/ui';
-import { capitilizeFirstLetter } from '../../../core/utils/helpfunctions/data';
+import { EditCatch } from '@fishScore/editcatch';
+import { capitilizeFirstLetter } from '@fishScore/helpfunctions/';
+import type { FishCatch } from '@fishScore/fishcatchdata';
 
 type Props = {
 	fishCatch: FishCatch;
@@ -24,10 +24,7 @@ export const FishCatchCard = ({
 	const catchDate = dateFormatter(fishCatch.createdAt);
 
 	const catchedByUser = fishCatch.createdBy === userId;
-	let modifiedCatchDate: string | null = null;
-	if (fishCatch.modifiedAt) {
-		modifiedCatchDate = dateFormatter(fishCatch.modifiedAt);
-	}
+
 	const canEditCatch =
 		catchedByUser &&
 		(eventStatus === 'ongoing' || fishCatch.eventStatus === 'ongoing');

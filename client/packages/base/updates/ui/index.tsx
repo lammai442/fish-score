@@ -1,5 +1,5 @@
 import { dateFormatter } from '@fishScore/formatters';
-import { Update } from '@fishScore/updatesdata';
+import type { Update } from '@fishScore/updatesdata';
 import { useUpdateStore } from '@fishScore/useupdatestore';
 import {
 	Badge,
