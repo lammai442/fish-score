@@ -3,7 +3,6 @@ import type { FishEvent } from '@fishScore/eventsdata';
 import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
 import {
-	ActionIcon,
 	Button,
 	Divider,
 	Flex,
@@ -39,7 +38,6 @@ export const EventPage = () => {
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
-	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const [endEventOpened, endEventHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
@@ -48,10 +46,11 @@ export const EventPage = () => {
 	const { user } = useUserStore();
 
 	// Kontroll om user finns i team
-	const usersTeam = currentEvent?.teams?.find((team) =>
+	const usersTeam: Team | undefined = currentEvent?.teams?.find((team) =>
 		team.members.some((member) => member.userId === user?.userId),
 	);
 	const eventCreatedByUser = currentEvent?.createdBy === user?.userId;
+
 	const loadEvent = async () => {
 		if (!eventId) return;
 		setLoading(true);
@@ -269,44 +268,11 @@ export const EventPage = () => {
 						</Button>
 					)}
 			</Flex>
-			<BaseModal
-				title='Add new catch'
-				opened={addCatchOpened}
-				close={addCatchHandlers.close}>
-				<AddCatch
-					close={addCatchHandlers.close}
-					eventId={eventId}
-					teamId={usersTeam?.teamId}></AddCatch>
-			</BaseModal>
-			{/* Lägg till en ny catch */}
-			<Tooltip
-				label={
-					currentEvent?.status === 'ongoing'
-						? 'Join a team to add catch'
-						: 'Event has ended'
-				}
-				disabled={
-					currentEvent?.status !== 'ongoing' ||
-					usersTeam !== undefined
-				}>
-				<ActionIcon
-					radius={'xl'}
-					size={'50px'}
-					fz={'xl'}
-					pos={'fixed'}
-					right={'1.5rem'}
-					bottom={'1.5rem'}
-					color='var(--color-black)'
-					disabled={
-						currentEvent?.status !== 'ongoing' || !usersTeam
-							? true
-							: false
-					}
-					style={{ zIndex: 1000 }}
-					onClick={addCatchHandlers.open}>
-					+
-				</ActionIcon>
-			</Tooltip>
+
+			{/* Lägg till Catch */}
+			<AddCatch
+				currentEvent={currentEvent}
+				usersTeam={usersTeam}></AddCatch>
 
 			{/* Leaderboard/Activity tab  */}
 			{!loading && currentEvent && (

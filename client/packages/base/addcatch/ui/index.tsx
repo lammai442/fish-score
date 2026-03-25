@@ -3,21 +3,33 @@ import { fetchAddCatch } from '@fishScore/apicatches';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';
+import { useDisclosure } from '@mantine/hooks';
+import { BaseModal } from '@fishScore/basemodal';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import type { FishEvent } from '@fishScore/eventsdata';
+import type { Team } from '@fishScore/teamsdata';
+import { useRef } from 'react';
 
 type Props = {
-	close: () => void;
-	eventId: string | undefined;
-	teamId: string | undefined;
+	currentEvent: FishEvent | null;
+	usersTeam: Team | undefined;
 };
 
-export const AddCatch = ({ close, eventId, teamId }: Props) => {
+export const AddCatch = ({ currentEvent, usersTeam }: Props) => {
+	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const { user } = useUserStore();
+
+	const draggedRef = useRef(false);
 
 	const handleAddCatch = async (weight: number) => {
 		if (!user?.userId) {
 			throw new Error('You must be logged in to add a catch');
 		}
-		const response = await fetchAddCatch(eventId, weight, teamId);
+		const response = await fetchAddCatch(
+			currentEvent?.eventId,
+			weight,
+			usersTeam?.teamId,
+		);
 
 		if (response.success) {
 			showNotification({
@@ -28,7 +40,7 @@ export const AddCatch = ({ close, eventId, teamId }: Props) => {
 				position: 'top-center',
 			});
 
-			close();
+			addCatchHandlers.close();
 		} else {
 			showNotification({
 				title: 'Could not add catch',
@@ -41,10 +53,46 @@ export const AddCatch = ({ close, eventId, teamId }: Props) => {
 		}
 	};
 	return (
-		<CatchForm
-			title='Add a new fish catch'
-			submitLabel='Add catch'
-			loadingText='Adding new catch'
-			onSubmit={handleAddCatch}></CatchForm>
+		<>
+			<BaseModal
+				title='Add new catch'
+				opened={addCatchOpened}
+				close={addCatchHandlers.close}>
+				<CatchForm
+					title='Add a new fish catch'
+					submitLabel='Add catch'
+					loadingText='Adding new catch'
+					onSubmit={handleAddCatch}></CatchForm>
+			</BaseModal>
+			{/* Lägg till en ny catch */}
+			<Tooltip
+				label={
+					currentEvent?.status === 'ongoing'
+						? 'Join a team to add catch'
+						: 'Event has ended'
+				}
+				disabled={
+					currentEvent?.status !== 'ongoing' ||
+					usersTeam !== undefined
+				}>
+				<ActionIcon
+					radius={'xl'}
+					size={'50px'}
+					fz={'xl'}
+					pos={'fixed'}
+					right={'1.5rem'}
+					bottom={'1.5rem'}
+					color='var(--color-black)'
+					disabled={
+						currentEvent?.status !== 'ongoing' || !usersTeam
+							? true
+							: false
+					}
+					style={{ zIndex: 1000 }}
+					onClick={addCatchHandlers.open}>
+					+
+				</ActionIcon>
+			</Tooltip>
+		</>
 	);
 };
