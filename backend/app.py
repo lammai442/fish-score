@@ -12,10 +12,26 @@ from routes.message_routes import message_bp
 app = Flask(__name__)
 
 
+# CORS(
+#     app,
+#     supports_credentials=True,
+#     origins=[
+#         "http://localhost:5173",
+#         "http://fischscore.s3-website.eu-north-1.amazonaws.com ",
+#     ],
+# )
+
 CORS(
     app,
+    resources={
+        r"/*": {
+            "origins": [
+                "http://fischscore.s3-website.eu-north-1.amazonaws.com",
+                "http://localhost:5173",
+            ]
+        }
+    },
     supports_credentials=True,
-    origins=["http://localhost:5173", "https://din-vercel-app.vercel.app"],
 )
 
 # Kopplar in auth routes
