@@ -79,7 +79,10 @@ export const Header = () => {
 								variant='transparent'
 								size='lg'
 								className={wiggle ? 'notification-wiggle' : ''}>
-								<IconBell size={20} color='black' />
+								<IconBell
+									size={20}
+									color='var(--color-black)'
+								/>
 							</ActionIcon>
 						</Indicator>
 					</Tooltip>

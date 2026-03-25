@@ -74,7 +74,7 @@ export const AppLayout = () => {
 	}
 
 	return (
-		<AppShell>
+		<AppShell header={{ height: 102 }}>
 			{/* Modal för att session är utgången */}
 			<BaseModal
 				title='Your session has expired'
@@ -85,9 +85,11 @@ export const AppLayout = () => {
 					<Button color='var(--color-black)'>To login</Button>
 				</Stack>
 			</BaseModal>
-			<Header></Header>
+			<AppShell.Header>
+				<Header></Header>
+			</AppShell.Header>
 			<AppShell.Main>
-				<Container size='lg'>
+				<Container size='lg' pb={'3rem'}>
 					<Outlet />
 				</Container>
 			</AppShell.Main>
