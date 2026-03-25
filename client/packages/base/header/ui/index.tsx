@@ -57,7 +57,10 @@ export const Header = () => {
 					title='Updates'
 					opened={opened}
 					close={handleCloseUpdates}>
-					<Updates updates={updates} close={close}></Updates>
+					<Updates
+						updates={updates}
+						close={close}
+						setWiggle={setWiggle}></Updates>
 				</BaseModal>
 				<Flex gap='0.5rem'>
 					<Tooltip label={'Updates'}>

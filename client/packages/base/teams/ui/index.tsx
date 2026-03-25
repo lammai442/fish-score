@@ -1,12 +1,13 @@
 import { fetchJoinTeam } from '@fishScore/apievents';
 import { Button, Flex, Stack, Text, Title } from '@mantine/core';
-import { IconTrophy } from '@tabler/icons-react';
+import { IconCancel, IconCheck, IconTrophy, IconX } from '@tabler/icons-react';
 import type {
 	Team,
 	TeamUserData,
 } from '../../../core/interfaces/teamsdata/data';
 import { useState } from 'react';
 import { Loading } from '@fishScore/loading';
+import { showNotification } from '@mantine/notifications';
 type Props = {
 	team: Team;
 	userId: string | undefined;
@@ -52,6 +53,23 @@ export const Teams = ({
 		try {
 			setLoading(true);
 			const response = await fetchJoinTeam(teamUserData);
+			if (response.success) {
+				showNotification({
+					title: 'Joined team',
+					message: "You have joined a team! Let's catch some fish!",
+					color: 'var(--color-primary)',
+					icon: <IconCheck />,
+					position: 'top-center',
+				});
+			} else {
+				showNotification({
+					title: 'Could not join team',
+					message: 'Something went wrong, could not join team',
+					color: 'var(--color-danger)',
+					icon: <IconX />,
+					position: 'top-center',
+				});
+			}
 		} finally {
 			setLoading(false);
 		}

@@ -59,7 +59,9 @@ export const AuthForm = () => {
 			message: response.success
 				? 'Successfully created user'
 				: response.data.error,
-			color: response.success ? 'green' : 'red',
+			color: response.success
+				? 'var(--color-primary)'
+				: 'var(--color-danger)',
 			icon: response.success ? <IconCheck /> : <IconX />,
 			position: 'top-center' as const,
 		};

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { useUserStore } from '@fishScore/useUserStore';
-import { useUpdateStore } from '@fishScore/useupdatesstore';
+import { useUpdateStore } from '@fishScore/useupdatestore';
 import { User } from '@fishScore/usersdata';
 
 const webSocketUrl: string = import.meta.env.VITE_WEBSOCKET_URL;
@@ -77,10 +77,16 @@ export const useWebSocketHook = () => {
 					}
 
 					// Om det är en catch
-					const isCatchInsert =
+					const isCatchInsertOrModify =
 						message.type === 'eventUpdate' &&
 						message.entityType === 'CATCH' &&
-						message.action === 'INSERT';
+						(message.action === 'INSERT' ||
+							message.action === 'MODIFY' ||
+							message.action === 'REMOVE');
+
+					// const isCatchRemove =
+					// 	message.type === 'eventUpdate' &&
+					// 	message.entityType === 'REMOVE';
 
 					const isMessageInsert =
 						message.type === 'eventUpdate' &&
@@ -92,11 +98,12 @@ export const useWebSocketHook = () => {
 						message.subscribers.includes(currentUser.userId);
 
 					const isRelevantUpdate =
-						isSubscriber && (isCatchInsert || isMessageInsert);
+						isSubscriber &&
+						(isCatchInsertOrModify || isMessageInsert);
 
 					if (!isRelevantUpdate) return;
 
-					if (isCatchInsert) {
+					if (isCatchInsertOrModify) {
 						addUpdate(currentUser.userId, {
 							updateId: message.entity.catchId,
 							type: 'catch',
@@ -104,8 +111,12 @@ export const useWebSocketHook = () => {
 							entity: message.entity,
 							changedBy: message.changedBy,
 							read: false,
+							action: message.action,
 						});
 					}
+
+					// if (isCatchRemove) {
+					// }
 
 					// Om det är en Message
 					if (isMessageInsert) {
@@ -116,6 +127,7 @@ export const useWebSocketHook = () => {
 							entity: message.entity,
 							changedBy: message.changedBy,
 							read: false,
+							action: message.action,
 						});
 					}
 				} catch (error) {

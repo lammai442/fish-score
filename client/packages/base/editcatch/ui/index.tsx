@@ -1,5 +1,5 @@
 import { showNotification } from '@mantine/notifications';
-import { IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';
 import { fetchEditCatch } from '../../../core/api/apicatches/data';
 
@@ -23,12 +23,21 @@ export const EditCatch = ({
 			showNotification({
 				title: 'Catch updated',
 				message: 'The catch has been updated',
-				color: 'green',
+				color: 'var(--color-primary)',
 				icon: <IconCheck />,
 				position: 'top-center',
 			});
 
 			close();
+		} else {
+			showNotification({
+				title: 'Could not update catch',
+				message:
+					'Something went wrong to update catch, try again later',
+				color: 'var(--color-danger)',
+				icon: <IconX />,
+				position: 'top-center',
+			});
 		}
 	};
 

@@ -330,7 +330,12 @@ export const EventPage = () => {
 					</Tabs.List>
 					{/* Leaderboard tab */}
 					<Tabs.Panel value='leaderboard' pt='md'>
-						<Stack>
+						<Stack
+							style={{
+								maxHeight: '550px',
+								overflow: 'auto',
+								scrollbarWidth: 'thin',
+							}}>
 							{currentEvent && leaderboard.length > 0 ? (
 								leaderboard.map((team: Team, index) => {
 									return (
@@ -355,7 +360,12 @@ export const EventPage = () => {
 					</Tabs.Panel>
 					{/* Activity tab */}
 					<Tabs.Panel value='activity' pt='md'>
-						<Stack>
+						<Stack
+							style={{
+								maxHeight: '550px',
+								overflow: 'auto',
+								scrollbarWidth: 'thin',
+							}}>
 							{activity.length > 0 ? (
 								activity.map((fishCatch) => {
 									return (
@@ -413,7 +423,12 @@ export const EventPage = () => {
 									gap={'sm'}
 									bd={'1px solid var(--color-grey-dark)'}
 									p={'sm'}
-									bdrs={'lg'}>
+									bdrs={'lg'}
+									style={{
+										maxHeight: '550px',
+										overflow: 'auto',
+										scrollbarWidth: 'thin',
+									}}>
 									{currentEvent.messages.map(
 										(message, index) => {
 											const isLast =

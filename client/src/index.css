@@ -20,6 +20,7 @@
 	--color-orange-light: #fff7ed;
 
 	--color-danger: #b82c2c;
+	--color-danger-medium: #d76060;
 	--color-danger-light: #fee2e2;
 
 	--color-primary: #63ab9f;
@@ -44,6 +45,7 @@
 
 	/* Button */
 	--btn-primary-bg: var(--color-black);
+	--btn-secondary-bg: var(--color-primary);
 	--btn-danger-bg: var(--color-danger);
 
 	/* Text */
