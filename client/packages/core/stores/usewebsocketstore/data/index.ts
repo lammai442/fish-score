@@ -60,7 +60,6 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 		const { ws } = get();
 		if (ws) {
 			ws.close();
-			set({ ws: null, isConnected: false });
 		}
 	},
 

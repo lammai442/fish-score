@@ -1,14 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-type Update = {
-	updateId: string;
-	type: 'catch' | 'message';
-	eventId: string;
-	entity: 'CATCH' | 'MESSAGE';
-	changedBy?: string;
-	read: boolean;
-};
+import type { Update } from '@fishScore/updatesdata';
 
 type UpdateStore = {
 	updates: Update[];
@@ -20,7 +12,7 @@ type UpdateStore = {
 };
 
 export const useUpdateStore = create<UpdateStore>()(
-	// Lagrar i localstorage
+	// Persist lagrar i localstorage
 	persist(
 		(set, get) => ({
 			updates: [],

@@ -15,22 +15,28 @@ import { useDisclosure } from '@mantine/hooks';
 import { useUserStore } from '@fishScore/useUserStore';
 import { BaseModal } from '@fishScore/basemodal';
 import { Updates } from '@fishScore/updates';
-import { useUpdateStore } from '@fishScore/useupdatesstore';
+import { useUpdateStore } from '@fishScore/useupdatestore';
 import { useEffect, useState } from 'react';
 export const Header = () => {
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure();
 	const { user } = useUserStore();
-	const { updates, clearUpdates } = useUpdateStore();
+	const { updates, markAllAsRead } = useUpdateStore();
 	const [wiggle, setWiggle] = useState<boolean>(false);
 
 	const userFullName = `${user?.firstName} ${user?.lastName}`;
 
 	useEffect(() => {
-		if (updates.length > 0) {
+		if (updates.length > 0 && updates.some((u) => u.read === false)) {
 			setWiggle(true);
 		}
 	}, [updates]);
+
+	const handleCloseUpdates = () => {
+		setWiggle(false);
+		markAllAsRead();
+		close();
+	};
 
 	return (
 		<Container size='lg'>
@@ -47,7 +53,10 @@ export const Header = () => {
 					</Tooltip>
 				</Box>
 				{/* Öppnar upp modal med Updates */}
-				<BaseModal title='Updates' opened={opened} close={close}>
+				<BaseModal
+					title='Updates'
+					opened={opened}
+					close={handleCloseUpdates}>
 					<Updates updates={updates} close={close}></Updates>
 				</BaseModal>
 				<Flex gap='0.5rem'>

@@ -1,5 +1,6 @@
-import { shortDateFormatter } from '@fishScore/formatters';
-import { useUpdateStore } from '@fishScore/useupdatesstore';
+import { dateFormatter } from '@fishScore/formatters';
+import { Update } from '@fishScore/updatesdata';
+import { useUpdateStore } from '@fishScore/useupdatestore';
 import {
 	Badge,
 	Button,
@@ -16,20 +17,21 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
-export const Updates = ({ updates, close }: any) => {
+type Props = {
+	updates: Update[];
+	close: () => void;
+};
+
+export const Updates = ({ updates, close }: Props) => {
 	const navigate = useNavigate();
 	const { clearUpdates, markAllAsRead } = useUpdateStore();
 
 	const handleNavigation = (event_id: string) => {
-		console.log('event_id: ', event_id);
 		markAllAsRead();
 		navigate(`/event/${event_id}`);
 		close();
 	};
 
-	const handleDeleteUpdates = () => {
-		clearUpdates();
-	};
 	return (
 		<Stack>
 			{updates.length > 0 ? (
@@ -40,8 +42,14 @@ export const Updates = ({ updates, close }: any) => {
 								key={update.id ?? index}
 								gap='sm'
 								bd='1px solid var(--border-default)'
+								bg={
+									update.read
+										? 'var(--bg-surface)'
+										: 'var(--color-primary-medium)'
+								}
 								bdrs='md'
 								p='sm'>
+								{/* Catch */}
 								{update.type === 'catch' && (
 									<>
 										<ThemeIcon
@@ -53,16 +61,17 @@ export const Updates = ({ updates, close }: any) => {
 
 										<Stack flex={1} gap='0.5rem'>
 											<Stack gap='0.2rem'>
-												<Title order={4}>
-													Event:{' '}
-													{update.entity.teamName}
+												<Title order={5}>
+													<Text span>Event: </Text>
+													{
+														update.entity.teamName
+													}{' '}
+													<Text span>
+														(
+														{update.entity.teamName}
+														)
+													</Text>
 												</Title>
-
-												<Text>
-													Team:{' '}
-													{update.entity.teamName}
-												</Text>
-
 												<Text>
 													Catched by:{' '}
 													{
@@ -80,7 +89,7 @@ export const Updates = ({ updates, close }: any) => {
 													<Text
 														c='var(--text-muted)'
 														fz={'sm'}>
-														{shortDateFormatter(
+														{dateFormatter(
 															update.entity
 																.createdAt,
 														)}
@@ -109,6 +118,7 @@ export const Updates = ({ updates, close }: any) => {
 										</Stack>
 									</>
 								)}
+								{/* Message */}
 								{update.type === 'message' && (
 									<>
 										<ThemeIcon
@@ -120,12 +130,20 @@ export const Updates = ({ updates, close }: any) => {
 
 										<Stack flex={1} gap='0.5rem'>
 											<Stack gap='0.2rem'>
-												<Title order={4}>
-													Event:{' '}
-													{update.entity.teamName}
+												<Title order={5}>
+													<Text span>Event: </Text>
+													{update.entity.eventName}
 												</Title>
+												<Text
+													c={'var(--text-muted)'}
+													fs={'italic'}>
+													{
+														update.entity
+															.messageUserFullName
+													}
+													:
+												</Text>
 												<Text>
-													Message:{' '}
 													{update.entity.message}
 												</Text>
 
@@ -138,7 +156,7 @@ export const Updates = ({ updates, close }: any) => {
 													<Text
 														c='var(--text-muted)'
 														fz={'sm'}>
-														{shortDateFormatter(
+														{dateFormatter(
 															update.entity
 																.createdAt,
 														)}
@@ -163,9 +181,7 @@ export const Updates = ({ updates, close }: any) => {
 						))}
 					</Stack>
 
-					<Button
-						bg='var(--btn-danger-bg)'
-						onClick={handleDeleteUpdates}>
+					<Button bg='var(--btn-danger-bg)' onClick={clearUpdates}>
 						Delete all updates
 					</Button>
 				</>
