@@ -1,5 +1,13 @@
 import { Outlet } from 'react-router-dom';
-import { AppShell, Button, Container, Stack, Text } from '@mantine/core';
+import {
+	AppShell,
+	Button,
+	Center,
+	Container,
+	Loader,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { Header } from '@fishScore/header';
 import { useWebSocketHook } from '@fishScore/usewebsockethook';
 import { useEffect } from 'react';
@@ -17,8 +25,9 @@ export const AuthLayout = () => {
 
 export const AppLayout = () => {
 	const { setEvents } = useWebSocketStore();
-	const { showLoginModal, closeLoginModal } = useAuthStore();
-	const { setUser } = useUserStore();
+	const { showLoginModal, closeLoginModal, authStatus, setAuthStatus } =
+		useAuthStore();
+	const { setUser, clearUser } = useUserStore();
 
 	useEffect(() => {
 		// Hämtar alla events och lägger den i Websocketsstore
@@ -36,16 +45,37 @@ export const AppLayout = () => {
 			const response = await fetchMe();
 			if (response.success) {
 				setUser(response.data.user);
+				setAuthStatus('authenticated');
+				return;
 			}
+
+			clearUser();
+			setAuthStatus('unauthenticated');
 		};
 		initAuth();
 		getAllEvents();
-	}, []);
+	}, [clearUser, setAuthStatus, setEvents, setUser]);
 
 	useWebSocketHook();
 
+	if (authStatus === 'checking') {
+		return (
+			<Center mih='100vh'>
+				<Stack align='center' gap='sm'>
+					<Loader color='var(--color-primary)' />
+					<Text>Checking login session...</Text>
+				</Stack>
+			</Center>
+		);
+	}
+
+	if (authStatus === 'unauthenticated') {
+		return <Outlet />;
+	}
+
 	return (
 		<AppShell>
+			{/* Modal för att session är utgången */}
 			<BaseModal
 				title='Your session has expired'
 				opened={showLoginModal}

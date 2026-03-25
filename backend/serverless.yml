@@ -42,11 +42,27 @@ functions:
       - http:
           path: /
           method: ANY
-          cors: true
+          cors:
+            origins:
+              - http://fischscore.s3-website.eu-north-1.amazonaws.com
+              - http://localhost:5173
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
       - http:
           path: /{proxy+}
           method: ANY
-          cors: true
+          cors:
+            origins:
+              - http://fischscore.s3-website.eu-north-1.amazonaws.com
+              - http://localhost:5173
+            headers:
+              - Content-Type
+              - Authorization
+              - X-Requested-With
+            allowCredentials: true
   WebsocketHandler:
     handler: websocket/handler.handler
     events:
