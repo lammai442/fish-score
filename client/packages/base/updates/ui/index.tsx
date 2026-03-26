@@ -14,6 +14,7 @@ import {
 	IconCalendarWeekFilled,
 	IconFish,
 	IconMessage,
+	IconTrophy,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -55,7 +56,6 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 								}
 								bdrs='md'
 								p='sm'>
-								{/* Ikon */}
 								{update.type === 'catch' && (
 									<ThemeIcon
 										size='lg'
@@ -80,6 +80,18 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 											color: 'var(--text-black)',
 										}}>
 										<IconMessage size={18} />
+									</ThemeIcon>
+								)}
+
+								{update.type === 'event' && (
+									<ThemeIcon
+										size='lg'
+										radius='xl'
+										style={{
+											backgroundColor: 'var(--rank-gold)',
+											color: 'var(--text-primary)',
+										}}>
+										<IconTrophy size={18} />
 									</ThemeIcon>
 								)}
 
@@ -205,6 +217,42 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 														)}
 													</Text>
 												</Flex>
+											</Stack>
+
+											<Text>{update.entity.message}</Text>
+										</Stack>
+									)}
+									{/* Event */}
+									{update.type === 'event' && (
+										<Stack gap='xs'>
+											<Stack gap='0'>
+												<Title order={5}>
+													<Text span>Event: </Text>
+													{update.entity.eventName}
+												</Title>
+
+												{update.entity.modifiedAt && (
+													<Flex
+														gap='0.2rem'
+														align='center'>
+														<IconCalendarWeekFilled size='1.3rem' />
+														<Text
+															c='var(--text-muted)'
+															fz='sm'>
+															{dateFormatter(
+																update.entity
+																	.modifiedAt,
+															)}
+														</Text>
+													</Flex>
+												)}
+
+												<Text c='var(--text-primary)'>
+													{update.entity.status ===
+													'completed'
+														? 'Event has ended, check out the winners!'
+														: 'Fish on! The event has been reopened.'}
+												</Text>
 											</Stack>
 
 											<Text>{update.entity.message}</Text>

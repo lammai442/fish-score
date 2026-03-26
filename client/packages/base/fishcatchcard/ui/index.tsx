@@ -46,7 +46,7 @@ export const FishCatchCard = ({
 						: '1px solid var(--border-default)'
 				}
 				bdrs={'15px'}
-				p={'20px'}
+				p={'md'}
 				bg={
 					catchedByUser
 						? 'var(--bg-primary-light)'
@@ -114,7 +114,12 @@ export const FishCatchCard = ({
 								{capitilizeFirstLetter(fishCatch.eventStatus)}
 							</Text>
 						)}
-						<Text>Caught {fishCatch.catchWeight} kg</Text>
+						<Text>
+							Caught{' '}
+							<Text span fw={600}>
+								{fishCatch.catchWeight} kg
+							</Text>
+						</Text>
 						{/* Datum */}
 						<Flex gap={'.2rem'}>
 							<IconClockHour5></IconClockHour5>

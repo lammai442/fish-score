@@ -62,6 +62,7 @@ def is_event_related_item(item):
         or str(sk).startswith("TEAM#")
         or str(sk).startswith("CATCH#")
         or str(sk).startswith("MESSAGE#")
+        or str(sk).startswith("EVENT")
     )
 
 

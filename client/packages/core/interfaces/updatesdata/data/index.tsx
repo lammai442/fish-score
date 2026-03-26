@@ -20,5 +20,14 @@ type MessageUpdate = {
 	read: boolean;
 	action: 'INSERT' | 'MODIFY' | 'REMOVE';
 };
+type EventUpdate = {
+	updateId: string;
+	type: 'event';
+	eventId: string;
+	entity: EventMessage;
+	changedBy: string;
+	read: boolean;
+	action: 'INSERT' | 'MODIFY' | 'REMOVE';
+};
 
-export type Update = CatchUpdate | MessageUpdate;
+export type Update = CatchUpdate | MessageUpdate | EventUpdate;

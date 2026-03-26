@@ -7,4 +7,5 @@ export interface EventMessage {
 	messageId: string;
 	messageUserFullName: string;
 	modifiedAt: string | null;
+	status?: string;
 }
