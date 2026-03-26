@@ -30,20 +30,16 @@ export const Teams = ({
 	);
 
 	let trophyColor = '';
-	let trophyTextColor = '';
 
 	switch (rankNr) {
 		case 1:
 			trophyColor = 'var(--rank-gold)';
-			trophyTextColor = 'var(--text-primary)';
 			break;
 		case 2:
 			trophyColor = 'var(--rank-silver)';
-			trophyTextColor = 'var(--text-primary)';
 			break;
 		case 3:
 			trophyColor = 'var(--rank-bronze)';
-			trophyTextColor = 'var(--text-inverse)';
 			break;
 	}
 

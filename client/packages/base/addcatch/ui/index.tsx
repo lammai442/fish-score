@@ -8,7 +8,6 @@ import { BaseModal } from '@fishScore/basemodal';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import type { FishEvent } from '@fishScore/eventsdata';
 import type { Team } from '@fishScore/teamsdata';
-import { useRef } from 'react';
 
 type Props = {
 	currentEvent: FishEvent | null;
@@ -18,8 +17,6 @@ type Props = {
 export const AddCatch = ({ currentEvent, usersTeam }: Props) => {
 	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const { user } = useUserStore();
-
-	const draggedRef = useRef(false);
 
 	const handleAddCatch = async (weight: number) => {
 		if (!user?.userId) {

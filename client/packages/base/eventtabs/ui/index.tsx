@@ -7,12 +7,12 @@ import {
 	Text,
 	Textarea,
 } from '@mantine/core';
-import { FishEvent } from '@fishScore/eventsdata';
+import type { FishEvent } from '@fishScore/eventsdata';
 import type { Team } from '@fishScore/teamsdata';
 import { useState } from 'react';
 import { Teams } from '../../teams/ui';
-import { User } from '@fishScore/usersdata';
-import { FishCatch } from '@fishScore/fishcatchdata';
+import type { User } from '@fishScore/usersdata';
+import type { FishCatch } from '@fishScore/fishcatchdata';
 import { FishCatchCard } from '@fishScore/fishcatchcard';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
