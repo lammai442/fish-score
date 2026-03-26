@@ -14,12 +14,14 @@
 		"tscerror": "tsc --project tsconfig.app.json --noEmit"
 	},
 	"dependencies": {
+		"@lottiefiles/dotlottie-react": "^0.18.7",
 		"@mantine/core": "^8.3.10",
 		"@mantine/form": "^8.3.10",
 		"@mantine/hooks": "^8.3.10",
 		"@mantine/notifications": "^8.3.10",
 		"@tabler/icons-react": "^3.36.1",
 		"axios": "^1.13.2",
+		"lottie-react": "^2.4.1",
 		"postcss-preset-mantine": "^1.18.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",

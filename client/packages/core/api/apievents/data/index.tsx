@@ -201,7 +201,7 @@ export const fetchEventView = async (eventId: string | undefined) => {
 };
 
 // Edit event status
-export const fetchEventStatus = async (
+export const fetchEditEventStatus = async (
 	eventId: string | undefined,
 	eventStatus: string | undefined,
 ) => {

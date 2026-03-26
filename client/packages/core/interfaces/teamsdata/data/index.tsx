@@ -20,3 +20,8 @@ export interface TeamUserData {
 	eventId?: string;
 	teamId?: string;
 }
+
+export interface LeaderboardTeam {
+	totalCatchWeight: number;
+	teams: Team[];
+}

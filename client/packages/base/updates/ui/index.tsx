@@ -16,6 +16,7 @@ import {
 	IconMessage,
 	IconTrophy,
 } from '@tabler/icons-react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 type Props = {
