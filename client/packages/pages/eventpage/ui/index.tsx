@@ -1,6 +1,9 @@
 import './index.css';
 import type { FishEvent } from '@fishScore/eventsdata';
-import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
+import {
+	capitilizeFirstLetter,
+	generateLeaderboard,
+} from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
 import {
 	Button,
@@ -18,14 +21,14 @@ import { BaseModal } from '@fishScore/basemodal';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { useUserStore } from '@fishScore/useUserStore';
-import { IconCheck, IconTrophy, IconUsers } from '@tabler/icons-react';
-import { fetchEventStatus, fetchEventView } from '@fishScore/apievents';
+import { fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
-import type { Team } from '@fishScore/teamsdata';
+import type { LeaderboardTeam, Team } from '@fishScore/teamsdata';
 import type { FishCatch } from '@fishScore/fishcatchdata';
 import { AddCatch } from '@fishScore/addcatch';
-import { showNotification } from '@mantine/notifications';
 import { EventTabs } from '@fishScore/eventtabs';
+import { ResultEvent } from '../../../base/resultevent/ui';
+import { IconTrophy, IconUsers } from '@tabler/icons-react';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -33,9 +36,8 @@ export const EventPage = () => {
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
-	const [resultEvent, resultEventHandlers] = useDisclosure(false);
 	const [endEventOpened, endEventHandlers] = useDisclosure(false);
-	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
+	const [leaderboard, setLeaderboard] = useState<LeaderboardTeam[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const { user } = useUserStore();
@@ -67,8 +69,9 @@ export const EventPage = () => {
 				(a: Team, b: Team) => b.totalCatchWeight - a.totalCatchWeight,
 			);
 
-			setLeaderboard(sortedLeaderboard);
 			setActivity(event.activity);
+			const leaderboard = generateLeaderboard(sortedLeaderboard);
+			setLeaderboard(leaderboard);
 		} finally {
 			setLoading(false);
 		}
@@ -86,47 +89,11 @@ export const EventPage = () => {
 		loadEvent();
 	}, [events, eventId]);
 
-	const handleEndEvent = async () => {
-		try {
-			setLoading(true);
-
-			let newEventStatus: string = '';
-
-			if (currentEvent?.status === 'ongoing') {
-				newEventStatus = 'completed';
-			} else {
-				newEventStatus = 'ongoing';
-			}
-
-			const response = await fetchEventStatus(
-				currentEvent?.eventId,
-				newEventStatus,
-			);
-			if (response.success) {
-				endEventHandlers.close();
-
-				showNotification({
-					title:
-						response.data.eventStatus === 'completed'
-							? 'Event ended'
-							: "It's not over",
-					message:
-						response.data.eventStatus === 'completed'
-							? "It's official, the event has ended!"
-							: 'Event re opened, game on!',
-					color: 'var(--bg-primary)',
-					icon: <IconCheck />,
-					position: 'top-center',
-				});
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
-
 	return (
 		<>
 			<Loading visible={loading} text='Loading event'></Loading>
+
+			{/* Pageheader */}
 			{!loading && currentEvent && (
 				<Stack>
 					<PageHeader
@@ -163,48 +130,18 @@ export const EventPage = () => {
 					</Flex>
 				)}
 
-			{/* Rendera teams */}
-			<BaseModal
-				title='Create team'
-				opened={createTeamOpened}
-				close={createTeamHandlers.close}>
-				<CreateItemModal
-					close={createTeamHandlers.close}
-					type='team'></CreateItemModal>
-			</BaseModal>
-			{/* Avsluta tävlingsmodal */}
-			<BaseModal
-				title={
-					currentEvent?.status === 'ongoing'
-						? 'End event'
-						: 'Open event'
-				}
-				opened={endEventOpened}
-				close={endEventHandlers.close}>
-				<Stack>
-					<Text>
-						{currentEvent?.status === 'ongoing'
-							? 'Do you want to end this event?'
-							: 'Do you want to open this event?'}
-					</Text>
-					<Button
-						bg={'var(--color-black)'}
-						c={'var(--text-inverse)'}
-						onClick={handleEndEvent}>
-						Yes
-					</Button>
-				</Stack>
-			</BaseModal>
-			<BaseModal
-				title='Event has ended'
-				opened={resultEvent}
-				close={resultEventHandlers.close}>
-				{/* <CreateItemModal
-					close={resultEventHandlers.close}
-					type='team'></CreateItemModal> */}
-			</BaseModal>
+			{/* Admin actions*/}
 			<Flex m='1rem 0' gap={'sm'}>
-				{/* Skapa nytt team button genom öppna modal */}
+				{/* Skapa nytt lag */}
+				<BaseModal
+					title='Create team'
+					opened={createTeamOpened}
+					close={createTeamHandlers.close}>
+					<CreateItemModal
+						close={createTeamHandlers.close}
+						type='team'></CreateItemModal>
+				</BaseModal>
+
 				<Tooltip
 					label={
 						currentEvent?.status === 'completed'
@@ -227,7 +164,19 @@ export const EventPage = () => {
 						+ Create team
 					</Button>
 				</Tooltip>
-				{/* Avsluta tävling */}
+
+				{/* Avsluta tävling - Endast för admin */}
+				{endEventOpened && (
+					<ResultEvent
+						eventStatus={currentEvent?.status}
+						endEventOpened={endEventOpened}
+						endEventHandlers={endEventHandlers}
+						setLoading={setLoading}
+						eventId={currentEvent?.eventId}
+						leaderboard={leaderboard}
+						setLeaderboard={setLeaderboard}></ResultEvent>
+				)}
+
 				{eventCreatedByUser &&
 					currentEvent?.teams &&
 					currentEvent?.teams?.length > 0 && (

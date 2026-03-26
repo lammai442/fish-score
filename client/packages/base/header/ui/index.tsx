@@ -28,7 +28,21 @@ export const Header = () => {
 
 	useEffect(() => {
 		if (updates.length > 0 && updates.some((u) => u.read === false)) {
+			const unread = updates.filter((u) => !u.read).length;
+
+			let text = `FishScore | (${unread}) Updates - `;
+			let index = 0;
+			const interval = setInterval(() => {
+				document.title =
+					text.substring(index) + text.substring(0, index);
+
+				index = (index + 1) % text.length;
+			}, 500);
+
 			setWiggle(true);
+			return () => clearInterval(interval);
+		} else {
+			document.title = 'FishScore';
 		}
 	}, [updates]);
 

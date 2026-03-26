@@ -8,7 +8,7 @@ import {
 	Textarea,
 } from '@mantine/core';
 import type { FishEvent } from '@fishScore/eventsdata';
-import type { Team } from '@fishScore/teamsdata';
+import type { LeaderboardTeam, Team } from '@fishScore/teamsdata';
 import { useState } from 'react';
 import { Teams } from '../../teams/ui';
 import type { User } from '@fishScore/usersdata';
@@ -92,7 +92,25 @@ export const EventTabs = ({
 						scrollbarWidth: 'thin',
 					}}>
 					{currentEvent && leaderboard.length > 0 ? (
-						leaderboard.map((team: Team, index) => {
+						leaderboard.map((item: any, index) =>
+							item.teams.map((team: Team) => (
+								<Teams
+									eventStatus={currentEvent.status}
+									key={team.teamId}
+									team={team}
+									userId={user?.userId}
+									rankNr={index + 1}
+									userIsInAnyTeam={!!usersTeam}
+									eventId={currentEvent.eventId}
+									createdBy={currentEvent.createdBy}
+								/>
+							)),
+						)
+					) : (
+						<Text ta={'center'}>No teams has been created</Text>
+					)}
+					{/* {currentEvent && leaderboard.length > 0 ? (
+						leaderboard.map((item: LeaderboardTeam, index) => {
 							return (
 								<Teams
 									eventStatus={currentEvent.status}
@@ -106,8 +124,8 @@ export const EventTabs = ({
 							);
 						})
 					) : (
-						<Text ta={'center'}>No teams has been created</Text>
-					)}
+						
+					)} */}
 				</Stack>
 			</Tabs.Panel>
 			{/* Activity tab */}

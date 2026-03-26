@@ -4,9 +4,11 @@ import {
 	Button,
 	Center,
 	Container,
+	Image,
 	Loader,
 	Stack,
 	Text,
+	Title,
 } from '@mantine/core';
 import { Header } from '@fishScore/header';
 import { useWebSocketHook } from '@fishScore/usewebsockethook';
@@ -62,8 +64,12 @@ export const AppLayout = () => {
 		return (
 			<Center mih='100vh'>
 				<Stack align='center' gap='sm'>
-					<Loader color='var(--color-primary)' />
-					<Text>Checking login session...</Text>
+					<Image
+						w={'250px'}
+						fit='contain'
+						src={'/transparent-logo.png'}></Image>
+					<Loader size={'xl'} color='var(--color-primary)' />
+					<Title order={4}>Checking login session...</Title>
 				</Stack>
 			</Center>
 		);
