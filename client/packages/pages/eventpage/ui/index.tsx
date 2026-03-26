@@ -7,9 +7,7 @@ import {
 	Divider,
 	Flex,
 	Stack,
-	Tabs,
 	Text,
-	Textarea,
 	Title,
 	Tooltip,
 } from '@mantine/core';
@@ -19,19 +17,15 @@ import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { BaseModal } from '@fishScore/basemodal';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
-import { Teams } from '../../../base/teams/ui';
 import { useUserStore } from '@fishScore/useUserStore';
 import { IconCheck, IconTrophy, IconUsers } from '@tabler/icons-react';
 import { fetchEventStatus, fetchEventView } from '@fishScore/apievents';
 import { Loading } from '@fishScore/loading';
-import type { Team } from '../../../core/interfaces/teamsdata/data';
+import type { Team } from '@fishScore/teamsdata';
 import type { FishCatch } from '@fishScore/fishcatchdata';
-import { FishCatchCard } from '@fishScore/fishcatchcard';
 import { AddCatch } from '@fishScore/addcatch';
 import { showNotification } from '@mantine/notifications';
-import { EventsMessage } from '@fishScore/eventsmessage';
-import { EventTabs } from '../../../base/eventtabs/ui';
-// import { fetchAddMessage } from '../../../core/api/apimessages/data';
+import { EventTabs } from '@fishScore/eventtabs';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -39,11 +33,11 @@ export const EventPage = () => {
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
+	const [resultEvent, resultEventHandlers] = useDisclosure(false);
 	const [endEventOpened, endEventHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<Team[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
-	// const [message, setMessage] = useState<string>('');
 	const { user } = useUserStore();
 
 	// Kontroll om user finns i team
@@ -130,29 +124,6 @@ export const EventPage = () => {
 		}
 	};
 
-	// const handleSendMsg = async () => {
-	// 	try {
-	// 		setLoading(true);
-
-	// 		const response = await fetchAddMessage(
-	// 			currentEvent?.eventId,
-	// 			message,
-	// 		);
-	// 		if (response.success) {
-	// 			setMessage('');
-	// 			showNotification({
-	// 				title: 'Message',
-	// 				message: 'Your new message has been published!',
-	// 				color: 'var(--bg-primary)',
-	// 				icon: <IconCheck />,
-	// 				position: 'top-center',
-	// 			});
-	// 		}
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
-
 	return (
 		<>
 			<Loading visible={loading} text='Loading event'></Loading>
@@ -167,27 +138,30 @@ export const EventPage = () => {
 			)}
 
 			{/* Join a team message */}
-			{!loading && currentEvent && !usersTeam && (
-				<Flex
-					gap={'xs'}
-					bdrs={'lg'}
-					p={'md'}
-					bg={'var(--bg-orange-light)'}
-					bd={'1px solid var(--border-warning)'}>
-					<IconUsers size={50} />
-					<Divider
-						color={'var(--color-black)'}
-						size={'sm'}
-						orientation='vertical'></Divider>
-					<Stack gap={0}>
-						<Title order={5}>Join a team to participate</Title>
-						<Text fz={'sm'}>
-							You need to join a team before you can register
-							catches for this event.
-						</Text>
-					</Stack>
-				</Flex>
-			)}
+			{!loading &&
+				currentEvent &&
+				currentEvent.status === 'ongoing' &&
+				!usersTeam && (
+					<Flex
+						gap={'xs'}
+						bdrs={'lg'}
+						p={'md'}
+						bg={'var(--bg-orange-light)'}
+						bd={'1px solid var(--border-warning)'}>
+						<IconUsers size={50} />
+						<Divider
+							color={'var(--color-black)'}
+							size={'sm'}
+							orientation='vertical'></Divider>
+						<Stack gap={0}>
+							<Title order={5}>Join a team to participate</Title>
+							<Text fz={'sm'}>
+								You need to join a team before you can register
+								catches for this event.
+							</Text>
+						</Stack>
+					</Flex>
+				)}
 
 			{/* Rendera teams */}
 			<BaseModal
@@ -220,6 +194,14 @@ export const EventPage = () => {
 						Yes
 					</Button>
 				</Stack>
+			</BaseModal>
+			<BaseModal
+				title='Event has ended'
+				opened={resultEvent}
+				close={resultEventHandlers.close}>
+				{/* <CreateItemModal
+					close={resultEventHandlers.close}
+					type='team'></CreateItemModal> */}
 			</BaseModal>
 			<Flex m='1rem 0' gap={'sm'}>
 				{/* Skapa nytt team button genom öppna modal */}
@@ -275,7 +257,7 @@ export const EventPage = () => {
 				currentEvent={currentEvent}
 				usersTeam={usersTeam}></AddCatch>
 
-			{/* Leaderboard/Activity tab  */}
+			{/* Leaderboard/Activity/Messages tab  */}
 			{!loading && currentEvent && (
 				<EventTabs
 					mode={mode}
@@ -286,158 +268,6 @@ export const EventPage = () => {
 					usersTeam={usersTeam}
 					activity={activity}
 					setLoading={setLoading}></EventTabs>
-				// <Tabs
-				// 	variant='pills'
-				// 	value={mode}
-				// 	onChange={setMode}
-				// 	classNames={{
-				// 		tab: 'scoreboard__tab',
-				// 		list: 'scoreboard__list',
-				// 	}}>
-				// 	<Tabs.List
-				// 		grow
-				// 		justify='center'
-				// 		p={'0.2rem'}
-				// 		bg={'var(--bg-muted)'}
-				// 		bdrs={15}>
-				// 		<Tabs.Tab value='leaderboard'>Leaderboard</Tabs.Tab>
-				// 		<Tabs.Tab value='activity'>Activity</Tabs.Tab>
-				// 		<Tabs.Tab value='messages'>Messages</Tabs.Tab>
-				// 	</Tabs.List>
-				// 	{/* Leaderboard tab */}
-				// 	<Tabs.Panel value='leaderboard' pt='md'>
-				// 		<Stack
-				// 			style={{
-				// 				maxHeight: '550px',
-				// 				overflow: 'auto',
-				// 				scrollbarWidth: 'thin',
-				// 			}}>
-				// 			{currentEvent && leaderboard.length > 0 ? (
-				// 				leaderboard.map((team: Team, index) => {
-				// 					return (
-				// 						<Teams
-				// 							key={team.teamId}
-				// 							team={team}
-				// 							userId={user?.userId}
-				// 							rankNr={index + 1}
-				// 							userIsInAnyTeam={!!usersTeam}
-				// 							eventId={eventId}
-				// 							createdBy={
-				// 								currentEvent.createdBy
-				// 							}></Teams>
-				// 					);
-				// 				})
-				// 			) : (
-				// 				<Text ta={'center'}>
-				// 					No teams has been created
-				// 				</Text>
-				// 			)}
-				// 		</Stack>
-				// 	</Tabs.Panel>
-				// 	{/* Activity tab */}
-				// 	<Tabs.Panel value='activity' pt='md'>
-				// 		<Stack
-				// 			style={{
-				// 				maxHeight: '550px',
-				// 				overflow: 'auto',
-				// 				scrollbarWidth: 'thin',
-				// 			}}>
-				// 			{activity.length > 0 ? (
-				// 				activity.map((fishCatch) => {
-				// 					return (
-				// 						<FishCatchCard
-				// 							key={fishCatch.catchId}
-				// 							fishCatch={fishCatch}
-				// 							eventStatus={currentEvent.status}
-				// 							userId={user?.userId}
-				// 							variant='activityCatch'></FishCatchCard>
-				// 					);
-				// 				})
-				// 			) : (
-				// 				<Text ta={'center'}>
-				// 					No fish has been caught! Who will be the
-				// 					first one?
-				// 				</Text>
-				// 			)}
-				// 		</Stack>
-				// 	</Tabs.Panel>
-				// 	{/* Messages tab */}
-				// 	<Tabs.Panel value='messages' pt='md'>
-				// 		<Stack>
-				// 			<Flex gap={'sm'}>
-				// 				<Textarea
-				// 					placeholder='New message'
-				// 					autosize
-				// 					maxRows={4}
-				// 					flex={9}
-				// 					value={message}
-				// 					onChange={(event) =>
-				// 						setMessage(event.currentTarget.value)
-				// 					}
-				// 					styles={{
-				// 						input: {
-				// 							'--input-bd-focus':
-				// 								'var(--color-black)',
-				// 						},
-				// 					}}></Textarea>
-				// 				<Button
-				// 					flex={1}
-				// 					bg={
-				// 						!message.trim()
-				// 							? 'var(--color-grey)'
-				// 							: 'var(--color-black)'
-				// 					}
-				// 					fz={'0.68rem'}
-				// 					disabled={!message.trim()}
-				// 					onClick={handleSendMsg}>
-				// 					Send
-				// 				</Button>
-				// 			</Flex>
-
-				// 			{currentEvent.messages.length > 0 && (
-				// 				<Stack
-				// 					gap={'sm'}
-				// 					bd={'1px solid var(--color-grey-dark)'}
-				// 					p={'sm'}
-				// 					bdrs={'lg'}
-				// 					style={{
-				// 						maxHeight: '550px',
-				// 						overflow: 'auto',
-				// 						scrollbarWidth: 'thin',
-				// 					}}>
-				// 					{currentEvent.messages.map(
-				// 						(message, index) => {
-				// 							const isLast =
-				// 								index ===
-				// 								currentEvent.messages.length -
-				// 									1;
-				// 							const hasMultiple =
-				// 								currentEvent.messages.length >
-				// 								1;
-
-				// 							return (
-				// 								<Stack
-				// 									gap={'sm'}
-				// 									key={message.messageId}>
-				// 									<EventsMessage
-				// 										eventMessage={
-				// 											message
-				// 										}></EventsMessage>
-				// 									{hasMultiple && !isLast && (
-				// 										<Divider
-				// 											key={index}
-				// 											size={'sm'}
-				// 										/>
-				// 									)}
-				// 								</Stack>
-				// 							);
-				// 						},
-				// 					)}
-				// 				</Stack>
-				// 			)}
-				// 		</Stack>
-				// 	</Tabs.Panel>
-				// </Tabs>
 			)}
 		</>
 	);

@@ -95,6 +95,7 @@ export const EventTabs = ({
 						leaderboard.map((team: Team, index) => {
 							return (
 								<Teams
+									eventStatus={currentEvent.status}
 									key={team.teamId}
 									team={team}
 									userId={user?.userId}
@@ -130,7 +131,9 @@ export const EventTabs = ({
 						})
 					) : (
 						<Text ta={'center'}>
-							No fish has been caught! Who will be the first one?
+							{currentEvent?.status === 'ongoing'
+								? 'No fish has been caught! Who will be the first one?'
+								: 'Event has ended and no fish has been caught'}
 						</Text>
 					)}
 				</Stack>

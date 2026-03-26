@@ -1,5 +1,5 @@
 import { showNotification } from '@mantine/notifications';
-import { Button, Flex, Stack, Text, Title } from '@mantine/core';
+import { Button, Flex, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { fetchJoinTeam } from '@fishScore/apievents';
 import { IconCheck, IconTrophy, IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
@@ -12,6 +12,7 @@ type Props = {
 	eventId: string | undefined;
 	userIsInAnyTeam: boolean | undefined;
 	createdBy: string | undefined;
+	eventStatus: string;
 };
 
 export const Teams = ({
@@ -21,6 +22,7 @@ export const Teams = ({
 	eventId,
 	userIsInAnyTeam,
 	createdBy,
+	eventStatus,
 }: Props) => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const userExistInTeam = team.members.some(
@@ -28,16 +30,20 @@ export const Teams = ({
 	);
 
 	let trophyColor = '';
+	let trophyTextColor = '';
 
 	switch (rankNr) {
 		case 1:
 			trophyColor = 'var(--rank-gold)';
+			trophyTextColor = 'var(--text-primary)';
 			break;
 		case 2:
 			trophyColor = 'var(--rank-silver)';
+			trophyTextColor = 'var(--text-primary)';
 			break;
 		case 3:
 			trophyColor = 'var(--rank-bronze)';
+			trophyTextColor = 'var(--text-inverse)';
 			break;
 	}
 
@@ -81,70 +87,80 @@ export const Teams = ({
 				key={team.createdAt}
 				bdrs={'15px'}
 				bd={
-					rankNr <= 3
+					eventStatus === 'completed' && rankNr <= 3
 						? `2px solid ${trophyColor}`
-						: '1px solid var(--border-default)'
+						: '1px solid var(--border-primary)'
 				}
 				style={{
 					borderLeft:
-						rankNr <= 3
+						eventStatus === 'completed' && rankNr <= 3
 							? `6px solid ${trophyColor}`
 							: '1px solid var(--border-default)',
 				}}
-				p={'20px'}>
-				<Flex justify={'space-between'} align={'center'}>
-					<Flex gap={'0.5rem'}>
-						<Text
-							span
-							fw={700}
-							bg={
-								rankNr <= 3
-									? `${trophyColor}`
-									: 'var(--bg-muted)'
-							}
-							w={30}
-							h={30}
-							style={{
-								display: 'inline-flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								borderRadius: '50%',
-								flexShrink: 0,
-							}}>
-							{rankNr}
-						</Text>
-						<Flex gap={'0.5rem'} wrap={'wrap'}>
-							<Title order={3}>{team.teamName}</Title>
-							{userExistInTeam && (
-								<Text
-									bg={'var(--bg-muted)'}
-									p={'0.4rem'}
-									fz={'sm'}
-									bdrs={'0.5rem'}>
-									Your team
-								</Text>
-							)}
+				p={'md'}
+				gap={'xs'}>
+				<Stack gap={0}>
+					<Flex justify={'space-between'} align={'center'}>
+						<Flex gap={'0.5rem'}>
+							{/* Ranknummer */}
+							<ThemeIcon
+								fw={700}
+								bg={
+									rankNr <= 3
+										? `${trophyColor}`
+										: 'var(--color-black)'
+								}
+								c={'var(--text-inverse)'}
+								bdrs={'xl'}
+								size={30}>
+								{rankNr}
+							</ThemeIcon>
+							<Flex gap={'0.5rem'} wrap={'wrap'}>
+								<Title order={3}>{team.teamName}</Title>
+								{userExistInTeam && (
+									<Text
+										bg={'var(--bg-muted)'}
+										p={'0.4rem'}
+										fz={'sm'}
+										bdrs={'0.5rem'}>
+										Your team
+									</Text>
+								)}
+							</Flex>
 						</Flex>
+						{eventStatus === 'completed' && rankNr <= 3 && (
+							<IconTrophy color={trophyColor}></IconTrophy>
+						)}
 					</Flex>
-					{rankNr <= 3 && (
-						<IconTrophy color={trophyColor}></IconTrophy>
-					)}
-				</Flex>
-				<Text>
-					Members:{' '}
-					{team.members
-						.map((member) => {
-							if (member.userId === createdBy) {
-								return member.name + ' (Admin)';
-							} else {
-								return member.name;
-							}
-						})
-						.join(', ')}
-				</Text>
-				<Text fz={'xl'}>Total catch: {team.totalCatchWeight} kg</Text>
 
-				{!userIsInAnyTeam && (
+					{team.members.length > 0 ? (
+						<Text>
+							Members:{' '}
+							<Text span fs={'italic'}>
+								{team.members
+									.map((member) => {
+										if (member.userId === createdBy) {
+											return member.name + ' (Admin)';
+										} else {
+											return member.name;
+										}
+									})
+									.join(', ')}
+							</Text>
+						</Text>
+					) : (
+						<Text>No members</Text>
+					)}
+				</Stack>
+
+				<Text fz={'xl'}>
+					Total catch:{' '}
+					<Text span fw={700} fz={'xl'}>
+						{team.totalCatchWeight} kg
+					</Text>
+				</Text>
+
+				{!userIsInAnyTeam && eventStatus === 'ongoing' && (
 					<Button bg={'var(--color-black)'} onClick={handleJoinTeam}>
 						Join team
 					</Button>

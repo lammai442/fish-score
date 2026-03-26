@@ -66,7 +66,6 @@ export const useWebSocketHook = () => {
 					}
 
 					const currentUser = useUserStore.getState().user;
-
 					if (!currentUser) {
 						return;
 					}
@@ -75,23 +74,26 @@ export const useWebSocketHook = () => {
 					if (message.changedBy === currentUser.userId) {
 						return;
 					}
-
 					// Om det är en catch
-					const isCatchInsertOrModify =
+					const isCatchInsertModifyOrDelete =
 						message.type === 'eventUpdate' &&
 						message.entityType === 'CATCH' &&
 						(message.action === 'INSERT' ||
 							message.action === 'MODIFY' ||
 							message.action === 'REMOVE');
 
-					// const isCatchRemove =
-					// 	message.type === 'eventUpdate' &&
-					// 	message.entityType === 'REMOVE';
-
+					// Om det är ett meddelande
 					const isMessageInsert =
 						message.type === 'eventUpdate' &&
 						message.entityType === 'MESSAGE' &&
 						message.action === 'INSERT';
+
+					// Om det är ett event
+					const isEventModifyOrRemove =
+						message.type === 'eventUpdate' &&
+						message.entityType === 'EVENT' &&
+						(message.action === 'MODIFY' ||
+							message.action === 'REMOVE');
 
 					const isSubscriber =
 						Array.isArray(message.subscribers) &&
@@ -99,37 +101,38 @@ export const useWebSocketHook = () => {
 
 					const isRelevantUpdate =
 						isSubscriber &&
-						(isCatchInsertOrModify || isMessageInsert);
+						(isCatchInsertModifyOrDelete ||
+							isMessageInsert ||
+							isEventModifyOrRemove);
 
+					// Om något av villkoren är falska så körs ingen addUpdate
 					if (!isRelevantUpdate) return;
 
-					if (isCatchInsertOrModify) {
-						addUpdate(currentUser.userId, {
-							updateId: message.entity.catchId,
-							type: 'catch',
-							eventId: message.eventId,
-							entity: message.entity,
-							changedBy: message.changedBy,
-							read: false,
-							action: message.action,
-						});
+					let updateId: string | null = null;
+					let type: 'catch' | 'message' | 'event' | null = null;
+
+					if (isCatchInsertModifyOrDelete) {
+						updateId = message.entity.catchId;
+						type = 'catch';
+					} else if (isMessageInsert) {
+						updateId = message.entity.messageId;
+						type = 'message';
+					} else if (isEventModifyOrRemove) {
+						updateId = message.entity.eventId;
+						type = 'event';
 					}
 
-					// if (isCatchRemove) {
-					// }
+					if (!updateId || !type) return;
 
-					// Om det är en Message
-					if (isMessageInsert) {
-						addUpdate(currentUser.userId, {
-							updateId: message.entity.messageId,
-							type: 'message',
-							eventId: message.eventId,
-							entity: message.entity,
-							changedBy: message.changedBy,
-							read: false,
-							action: message.action,
-						});
-					}
+					addUpdate(currentUser.userId, {
+						updateId,
+						type,
+						eventId: message.eventId,
+						entity: message.entity,
+						changedBy: message.changedBy,
+						read: false,
+						action: message.action,
+					});
 				} catch (error) {
 					console.error('Error parsing WebSocket message:', error);
 				}
