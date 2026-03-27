@@ -29,6 +29,7 @@ import { AddCatch } from '@fishScore/addcatch';
 import { EventTabs } from '@fishScore/eventtabs';
 import { ResultEvent } from '../../../base/resultevent/ui';
 import { IconTrophy, IconUsers } from '@tabler/icons-react';
+import { useLocalStorage } from '@mantine/hooks';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -40,6 +41,14 @@ export const EventPage = () => {
 	const [leaderboard, setLeaderboard] = useState<LeaderboardTeam[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
+	const [loadingText, setLoadingText] = useState<string>('Loading event');
+	const [showWinnersOpened, showWinnersHandlers] = useDisclosure(false);
+	const [shownWinners, setShownWinners] = useLocalStorage<string[]>({
+		key: 'winner-popup-events',
+		defaultValue: [],
+	});
+	const [winner, setWinner] = useState<LeaderboardTeam[] | null>(null);
+
 	const { user } = useUserStore();
 
 	// Kontroll om user finns i team
@@ -51,7 +60,7 @@ export const EventPage = () => {
 	const loadEvent = async () => {
 		if (!eventId) return;
 		setLoading(true);
-
+		setLoadingText('Loading event');
 		try {
 			const response = await fetchEventView(eventId);
 
@@ -78,20 +87,28 @@ export const EventPage = () => {
 	};
 
 	useEffect(() => {
-		loadEvent();
-	}, [eventId]);
-
-	useEffect(() => {
-		const updatedEventSummary = events.find((e) => e.eventId === eventId);
-
-		if (!updatedEventSummary) return;
+		if (!eventId) {
+			return;
+		}
 
 		loadEvent();
 	}, [events, eventId]);
 
+	useEffect(() => {
+		if (!winner || !currentEvent?.eventId) return;
+
+		const eventId = currentEvent.eventId;
+
+		if (shownWinners.includes(eventId)) return;
+
+		showWinnersHandlers.open();
+
+		setShownWinners((prev) => [...prev, eventId]);
+	}, [winner, eventId, shownWinners]);
+
 	return (
 		<>
-			<Loading visible={loading} text='Loading event'></Loading>
+			<Loading visible={loading} text={loadingText}></Loading>
 
 			{/* Pageheader */}
 			{!loading && currentEvent && (
@@ -165,7 +182,7 @@ export const EventPage = () => {
 					</Button>
 				</Tooltip>
 
-				{/* Avsluta tävling - Endast för admin */}
+				{/* Avsluta tävling*/}
 				{endEventOpened && (
 					<ResultEvent
 						eventStatus={currentEvent?.status}
@@ -173,8 +190,7 @@ export const EventPage = () => {
 						endEventHandlers={endEventHandlers}
 						setLoading={setLoading}
 						eventId={currentEvent?.eventId}
-						leaderboard={leaderboard}
-						setLeaderboard={setLeaderboard}></ResultEvent>
+						leaderboard={leaderboard}></ResultEvent>
 				)}
 
 				{eventCreatedByUser &&

@@ -24,6 +24,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 	const { user } = useUserStore();
 	const { eventId } = useParams();
 	const [loading, setLoading] = useState<boolean>(false);
+	const [loadingText, setLoadingText] = useState<string>('');
 
 	const handleCreateItem = async () => {
 		const emojiRegex = /[\p{Extended_Pictographic}]/u;
@@ -60,12 +61,14 @@ export const CreateItemModal = ({ close, type }: Props) => {
 		try {
 			setLoading(true);
 			if (type === 'event') {
+				setLoadingText('Trying to create a new event');
 				const createEventDesc: NewFishEvent = {
 					eventName: value,
 					createdBy: user?.userId,
 				};
 				response = await fetchCreateEvent(createEventDesc);
 			} else {
+				setLoadingText('Trying to create a new team');
 				const createTeamDesc: createNewTeam = {
 					eventId: eventId,
 					teamName: value,
@@ -100,7 +103,7 @@ export const CreateItemModal = ({ close, type }: Props) => {
 	};
 	return (
 		<>
-			<Loading visible={loading} text='Creating new event'></Loading>
+			<Loading visible={loading} text={loadingText}></Loading>
 			<Stack>
 				<Text>
 					{type === 'event'

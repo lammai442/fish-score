@@ -1,5 +1,6 @@
-import { Outlet } from 'react-router-dom';
-import { AppShell, Button, Container, Stack, Text } from '@mantine/core';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Outlet, useLocation, useOutlet } from 'react-router-dom';
+import { AppShell, Box, Button, Container, Stack, Text } from '@mantine/core';
 import { Header } from '@fishScore/header';
 import { useWebSocketHook } from '@fishScore/usewebsockethook';
 import { useEffect } from 'react';
@@ -17,6 +18,8 @@ export const AuthLayout = () => {
 };
 
 export const AppLayout = () => {
+	const location = useLocation();
+	const outlet = useOutlet();
 	const { setEvents } = useWebSocketStore();
 	const { showLoginModal, closeLoginModal, authStatus, setAuthStatus } =
 		useAuthStore();
@@ -76,7 +79,20 @@ export const AppLayout = () => {
 			</AppShell.Header>
 			<AppShell.Main>
 				<Container size='lg' pb={'3rem'}>
-					<Outlet />
+					<Box style={{ position: 'relative', overflowX: 'hidden' }}>
+						{/* Sidoanimering*/}
+						<AnimatePresence initial={false} mode='wait'>
+							<motion.div
+								key={location.pathname}
+								initial={{ x: '100%', opacity: 0 }}
+								animate={{ x: 0, opacity: 1 }}
+								exit={{ x: '-100%', opacity: 0 }}
+								transition={{ duration: 0.3 }}
+								style={{ width: '100%' }}>
+								{outlet}
+							</motion.div>
+						</AnimatePresence>
+					</Box>
 				</Container>
 			</AppShell.Main>
 		</AppShell>
