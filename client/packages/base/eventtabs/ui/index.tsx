@@ -86,7 +86,7 @@ export const EventTabs = ({
 			{/* Leaderboard tab */}
 			<Tabs.Panel value='leaderboard' pt='md'>
 				<Stack
-					mah={{ base: 550, md: 'none' }}
+					mah={{ base: 500, sm: 'none' }}
 					style={{
 						overflow: 'auto',
 						scrollbarWidth: 'thin',
