@@ -1,15 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import {
-	AppShell,
-	Button,
-	Center,
-	Container,
-	Image,
-	Loader,
-	Stack,
-	Text,
-	Title,
-} from '@mantine/core';
+import { AppShell, Button, Container, Stack, Text } from '@mantine/core';
 import { Header } from '@fishScore/header';
 import { useWebSocketHook } from '@fishScore/usewebsockethook';
 import { useEffect } from 'react';
@@ -20,6 +10,7 @@ import { BaseModal } from '@fishScore/basemodal';
 import { useUserStore } from '@fishScore/useUserStore';
 import { fetchMe } from '@fishScore/apiauth';
 import type { FishEvent } from '@fishScore/eventsdata';
+import { Loading } from '@fishScore/loading';
 
 export const AuthLayout = () => {
 	return <Outlet />;
@@ -61,18 +52,7 @@ export const AppLayout = () => {
 	useWebSocketHook();
 
 	if (authStatus === 'checking') {
-		return (
-			<Center mih='100vh'>
-				<Stack align='center' gap='sm'>
-					<Image
-						w={'250px'}
-						fit='contain'
-						src={'/transparent-logo.png'}></Image>
-					<Loader size={'xl'} color='var(--color-primary)' />
-					<Title order={4}>Checking login session...</Title>
-				</Stack>
-			</Center>
-		);
+		return <Loading visible={true} text='Checking session'></Loading>;
 	}
 
 	if (authStatus === 'unauthenticated') {

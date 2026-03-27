@@ -1,4 +1,4 @@
-import { Flex, Loader, LoadingOverlay, Text } from '@mantine/core';
+import { Image, Loader, LoadingOverlay, Stack, Title } from '@mantine/core';
 
 type Props = {
 	visible: boolean;
@@ -12,10 +12,14 @@ export const Loading = ({ visible, text }: Props) => {
 			zIndex={1000}
 			loaderProps={{
 				children: (
-					<Flex direction='column' align='center' justify='center'>
+					<Stack align='center' gap={'sm'}>
+						<Image
+							w={'150px'}
+							fit='contain'
+							src={'/transparent-logo.png'}></Image>
 						<Loader color={'var(--color-primary)'} />
-						<Text mt='sm'>{text}</Text>
-					</Flex>
+						<Title order={4}>{text}</Title>
+					</Stack>
 				),
 			}}
 			overlayProps={{ radius: 'sm', blur: 2 }}
