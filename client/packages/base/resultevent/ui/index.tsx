@@ -1,12 +1,10 @@
 import { fetchEditEventStatus } from '@fishScore/apievents';
 import { BaseModal } from '@fishScore/basemodal';
-import { Button, Flex, Stack, Text, Title, Transition } from '@mantine/core';
-import { useDisclosure, UseDisclosureHandlers } from '@mantine/hooks';
+import { Button, Stack, Text } from '@mantine/core';
+import { UseDisclosureHandlers } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { LeaderboardTeam, Team } from '@fishScore/teamsdata';
-import { useState } from 'react';
+import { LeaderboardTeam } from '@fishScore/teamsdata';
 
 type Props = {
 	eventStatus: string | undefined;
@@ -16,6 +14,8 @@ type Props = {
 	eventId: string | undefined;
 	leaderboard: LeaderboardTeam[];
 	showWinnersHandlers: { open: () => void; close: () => void };
+	setWinner: (value: LeaderboardTeam | null) => void;
+	setShownWinners: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export const ResultEvent = ({
@@ -26,10 +26,9 @@ export const ResultEvent = ({
 	eventId,
 	leaderboard,
 	showWinnersHandlers,
+	setWinner,
+	setShownWinners,
 }: Props) => {
-	const [winnersOpened, winnersHandlers] = useDisclosure(false);
-	const [winner, setWinner] = useState<LeaderboardTeam | null>(null);
-
 	const handleEndEvent = async () => {
 		try {
 			setLoading(true);
@@ -60,14 +59,19 @@ export const ResultEvent = ({
 					icon: <IconCheck />,
 					position: 'top-center',
 				});
+				endEventHandlers.close();
 
 				if (newEventStatus === 'completed') {
-					console.log('leaderboard: ', leaderboard);
 					setWinner(leaderboard[0]);
-					winnersHandlers.open();
-					console.log('winnersOpened: ', winnersOpened);
+					showWinnersHandlers.open();
+					if (eventId) {
+						setShownWinners((prev) => [...prev, eventId]);
+					}
 				} else if (newEventStatus === 'ongoing') {
-					endEventHandlers.close();
+					setWinner(null);
+					setShownWinners((prev) =>
+						prev.filter((id) => id !== eventId),
+					);
 				}
 			}
 		} finally {
@@ -94,58 +98,6 @@ export const ResultEvent = ({
 					</Button>
 				</Stack>
 			</BaseModal>
-			{winnersOpened && (
-				<BaseModal
-					title='Results'
-					opened={winnersOpened}
-					close={() => {
-						winnersHandlers.close();
-						endEventHandlers.close();
-					}}>
-					<Stack align='center'>
-						<DotLottieReact
-							src='https://lottie.host/495c2d7d-37f5-49ae-944f-ff4b36af3e1a/YcXgLWKtTo.lottie'
-							loop
-							autoplay
-							speed={0.75}
-							style={{ width: 200, height: 200 }}
-						/>
-						{winner && (
-							<Stack ta={'center'}>
-								<Title>
-									{winner.teams.length > 1
-										? 'WINNERS'
-										: 'WINNER'}
-								</Title>
-								<Flex>
-									<Text>Winning total weight: </Text>
-									<Text span>
-										{winner.totalCatchWeight} kg
-									</Text>
-								</Flex>
-								{winner.teams.length > 1 && (
-									<Title order={5}>Shared winners</Title>
-								)}
-								<Flex>
-									<Text>
-										{winner.teams.length > 1
-											? 'Teams: '
-											: 'Team: '}
-									</Text>
-									{winner.teams.map((team: Team) => (
-										<Text
-											key={team.teamName}
-											className='fade-in'
-											span>
-											{team.teamName}{' '}
-										</Text>
-									))}
-								</Flex>
-							</Stack>
-						)}
-					</Stack>
-				</BaseModal>
-			)}
 		</>
 	);
 };

@@ -30,6 +30,7 @@ import { EventTabs } from '@fishScore/eventtabs';
 import { ResultEvent } from '../../../base/resultevent/ui';
 import { IconTrophy, IconUsers } from '@tabler/icons-react';
 import { useLocalStorage } from '@mantine/hooks';
+import { EventWinner } from '../../../base/eventwinner/ui';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -42,12 +43,12 @@ export const EventPage = () => {
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingText, setLoadingText] = useState<string>('Loading event');
-	const [showWinnersOpened, showWinnersHandlers] = useDisclosure(false);
+	const [shownWinnersOpened, showWinnersHandlers] = useDisclosure(false);
 	const [shownWinners, setShownWinners] = useLocalStorage<string[]>({
 		key: 'winner-popup-events',
 		defaultValue: [],
 	});
-	const [winner, setWinner] = useState<LeaderboardTeam[] | null>(null);
+	const [winner, setWinner] = useState<LeaderboardTeam | null>(null);
 
 	const { user } = useUserStore();
 
@@ -81,6 +82,16 @@ export const EventPage = () => {
 			setActivity(event.activity);
 			const leaderboard = generateLeaderboard(sortedLeaderboard);
 			setLeaderboard(leaderboard);
+
+			if (event.status === 'ongoing') {
+				if (shownWinnersOpened) {
+					showWinnersHandlers.close();
+				}
+				setShownWinners((prev) => prev.filter((id) => id !== eventId));
+				setWinner(null);
+			} else if (event.status === 'completed') {
+				setWinner(leaderboard[0]);
+			}
 		} finally {
 			setLoading(false);
 		}
@@ -190,7 +201,10 @@ export const EventPage = () => {
 						endEventHandlers={endEventHandlers}
 						setLoading={setLoading}
 						eventId={currentEvent?.eventId}
-						leaderboard={leaderboard}></ResultEvent>
+						leaderboard={leaderboard}
+						setWinner={setWinner}
+						showWinnersHandlers={showWinnersHandlers}
+						setShownWinners={setShownWinners}></ResultEvent>
 				)}
 
 				{eventCreatedByUser &&
@@ -216,6 +230,13 @@ export const EventPage = () => {
 						</Button>
 					)}
 			</Flex>
+			{/* Popup vid end event */}
+			{shownWinnersOpened && (
+				<EventWinner
+					shownWinnersOpened={shownWinnersOpened}
+					showWinnersHandlers={showWinnersHandlers}
+					winner={winner}></EventWinner>
+			)}
 
 			{/* Lägg till Catch */}
 			<AddCatch
