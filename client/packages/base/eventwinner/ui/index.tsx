@@ -1,6 +1,6 @@
 import { BaseModal } from '@fishScore/basemodal';
 import { LeaderboardTeam, Team } from '@fishScore/teamsdata';
-import { Flex, Stack, Text, Title } from '@mantine/core';
+import { Badge, Flex, Stack, Text, Title } from '@mantine/core';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 type Props = {
@@ -23,37 +23,47 @@ export const EventWinner = ({
 			}}>
 			<Stack align='center'>
 				<DotLottieReact
-					src='https://lottie.host/495c2d7d-37f5-49ae-944f-ff4b36af3e1a/YcXgLWKtTo.lottie'
+					src='https://lottie.host/f5bebc8e-de72-4f3b-8d17-519c5b90e7bc/g5SeNxnMJN.lottie'
 					loop
 					autoplay
 					speed={0.75}
 					style={{ width: 200, height: 200 }}
 				/>
 				{winner && (
-					<Stack ta={'center'}>
-						<Title>
-							{winner.teams.length > 1 ? 'WINNERS' : 'WINNER'}
+					<Stack align={'center'}>
+						<Title order={1}>
+							{winner.teams.length > 1
+								? 'WINNING TEAMS'
+								: 'WINNER TEAM'}
 						</Title>
-						<Flex>
-							<Text>Winning total weight: </Text>
-							<Text span>{winner.totalCatchWeight} kg</Text>
-						</Flex>
-						{winner.teams.length > 1 && (
-							<Title order={5}>Shared winners</Title>
-						)}
-						<Flex>
-							<Text>
-								{winner.teams.length > 1 ? 'Teams: ' : 'Team: '}
-							</Text>
+						<Flex gap={'sm'}>
 							{winner.teams.map((team: Team) => (
 								<Text
+									bdrs={'sm'}
+									w={'fit-content'}
 									key={team.teamName}
+									p={'xs'}
+									bg={'var(--rank-gold)'}
+									c={'var(--text-primary)'}
+									fw={600}
 									className='fade-in'
 									span>
 									{team.teamName}{' '}
 								</Text>
 							))}
 						</Flex>
+
+						<Stack align='center'>
+							<Title order={4}>Winning total weight: </Title>
+							<Badge
+								p={'0.8rem'}
+								bg={'var(--bg-primary)'}
+								c={'var(--text-inverse)'}
+								size='xl'
+								bdrs={'sm'}>
+								{winner.totalCatchWeight} kg
+							</Badge>
+						</Stack>
 					</Stack>
 				)}
 			</Stack>

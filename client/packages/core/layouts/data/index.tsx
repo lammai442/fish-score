@@ -79,7 +79,9 @@ export const AppLayout = () => {
 			</AppShell.Header>
 			<AppShell.Main>
 				<Container size='lg' pb={'3rem'}>
-					<Box style={{ position: 'relative', overflowX: 'hidden' }}>
+					<Box
+					// style={{ position: 'relative', overflowX: 'hidden' }}
+					>
 						{/* Sidoanimering*/}
 						<AnimatePresence initial={false} mode='wait'>
 							<motion.div
