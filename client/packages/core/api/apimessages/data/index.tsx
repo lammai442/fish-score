@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
+import { useUserStore } from '@fishScore/useUserStore';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
@@ -16,23 +17,24 @@ export const fetchAddMessage = async (
 				withCredentials: true,
 			},
 		);
-
-		// Öppna loginModal om response är 401 (No token)
-		if (response.status === 401) {
-			useAuthStore.getState().openLoginModal();
-			return { success: false, error: response.data.error };
-		}
-
 		return {
 			success: true,
 			data: response.data,
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };

@@ -114,8 +114,8 @@ export const EventTabs = ({
 			{/* Activity tab */}
 			<Tabs.Panel value='activity' pt='md'>
 				<Stack
+					mah={{ base: 500, sm: 'none' }}
 					style={{
-						maxHeight: '550px',
 						overflow: 'auto',
 						scrollbarWidth: 'thin',
 					}}>
@@ -177,8 +177,8 @@ export const EventTabs = ({
 							bd={'1px solid var(--color-grey-dark)'}
 							p={'sm'}
 							bdrs={'lg'}
+							mah={{ base: 450, sm: 'none' }}
 							style={{
-								maxHeight: '550px',
 								overflow: 'auto',
 								scrollbarWidth: 'thin',
 							}}>

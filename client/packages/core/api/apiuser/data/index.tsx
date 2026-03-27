@@ -1,3 +1,5 @@
+import { useAuthStore } from '@fishScore/useAuthStore';
+import { useUserStore } from '@fishScore/useUserStore';
 import axios from 'axios';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
@@ -14,10 +16,18 @@ export const fetchUserMe = async () => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -34,10 +44,18 @@ export const fetchUserProfile = async () => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Outlet, useLocation, useOutlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useOutlet } from 'react-router-dom';
 import { AppShell, Box, Button, Container, Stack, Text } from '@mantine/core';
 import { Header } from '@fishScore/header';
 import { useWebSocketHook } from '@fishScore/usewebsockethook';
@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { fetchAllEvents } from '@fishScore/apievents';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { useAuthStore } from '@fishScore/useAuthStore';
-import { BaseModal } from '@fishScore/basemodal';
 import { useUserStore } from '@fishScore/useUserStore';
 import { fetchMe } from '@fishScore/apiauth';
 import type { FishEvent } from '@fishScore/eventsdata';
@@ -21,8 +20,7 @@ export const AppLayout = () => {
 	const location = useLocation();
 	const outlet = useOutlet();
 	const { setEvents } = useWebSocketStore();
-	const { showLoginModal, closeLoginModal, authStatus, setAuthStatus } =
-		useAuthStore();
+	const { authStatus, setAuthStatus } = useAuthStore();
 	const { setUser, clearUser } = useUserStore();
 
 	useEffect(() => {
@@ -44,7 +42,6 @@ export const AppLayout = () => {
 				setAuthStatus('authenticated');
 				return;
 			}
-
 			clearUser();
 			setAuthStatus('unauthenticated');
 		};
@@ -59,21 +56,25 @@ export const AppLayout = () => {
 	}
 
 	if (authStatus === 'unauthenticated') {
-		return <Outlet />;
+		// openLoginModal();
 	}
 
 	return (
 		<AppShell header={{ height: 102 }}>
 			{/* Modal för att session är utgången */}
-			<BaseModal
+			{/* <BaseModal
 				title='Your session has expired'
 				opened={showLoginModal}
 				close={closeLoginModal}>
 				<Stack>
 					<Text>You must log in</Text>
-					<Button color='var(--color-black)'>To login</Button>
+					<Button
+						color='var(--color-black)'
+						onClick={() => navigate('/auth')}>
+						To login
+					</Button>
 				</Stack>
-			</BaseModal>
+			</BaseModal> */}
 			<AppShell.Header>
 				<Header></Header>
 			</AppShell.Header>
