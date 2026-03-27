@@ -8,6 +8,7 @@ from utils.hash_bcrypt import verify_password
 from utils.tokens import generate_token
 from middlewares.require_auth import require_auth
 from utils.help_functions import filter_user
+from utils.tokens import verify_token
 
 # Skapa blueprint instans
 auth_bp = Blueprint("auth", __name__)
@@ -54,21 +55,66 @@ def login_user():
     if not verify_pws:
         return jsonify({"success": False, "error": "Password does not match"}), 400
 
-    token = generate_token({"sub": user["PK"][5:], "email": user["email"]})
+    access_token = generate_token({"sub": user["PK"][5:], "email": user["email"]})
+    refresh_token = generate_token({"sub": user["PK"][5:], "email": user["email"]})
 
     response = make_response(
-        jsonify({"success": True, "message": "Login successfully", "token": token}), 200
+        jsonify({"success": True, "message": "Login successfully"}),
+        200,
     )
 
     # Sätter cookie
     response.set_cookie(
         "access_token",
-        token,
+        access_token,
         httponly=True,
         secure=True,
         samesite="None",
         path="/",
-        max_age=60 * 600,
+        max_age=60 * 60 * 3,
+    )
+
+    response.set_cookie(
+        "refresh_token",
+        refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="None",
+        path="/",
+        max_age=60 * 60 * 24 * 7,
+    )
+
+    return response
+
+
+@auth_bp.route("/auth/refresh", methods=["POST"])
+def refresh():
+
+    refresh_token = request.cookies.get("refresh_token")
+
+    if not refresh_token:
+        return jsonify({"success": False, "message": "Missing refresh token"}), 401
+
+    payload = verify_token(refresh_token)
+
+    if not payload:
+        return jsonify({"success": False, "message": "Invalid refresh token"}), 401
+
+    user_id = payload["sub"]
+    email = payload.get("email")
+
+    new_access_token = generate_token({"sub": user_id, "email": email})
+
+    response = jsonify({"success": True})
+
+    response.set_cookie(
+        "access_token",
+        new_access_token,
+        httponly=True,
+        secure=True,
+        samesite="None",
+        path="/",
+        max_age=60 * 60 * 3,
     )
 
     return response

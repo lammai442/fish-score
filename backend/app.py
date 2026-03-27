@@ -11,16 +11,6 @@ from routes.message_routes import message_bp
 
 app = Flask(__name__)
 
-
-# CORS(
-#     app,
-#     supports_credentials=True,
-#     origins=[
-#         "http://localhost:5173",
-#         "http://fischscore.s3-website.eu-north-1.amazonaws.com ",
-#     ],
-# )
-
 CORS(
     app,
     resources={
@@ -41,6 +31,22 @@ app.register_blueprint(event_bp)
 app.register_blueprint(team_bp)
 app.register_blueprint(catch_bp)
 app.register_blueprint(message_bp)
+
+
+CSP = (
+    "default-src 'self'; "
+    "img-src 'self' https: data:; "
+    "script-src 'self'; "
+    "style-src 'self' 'unsafe-inline'; "
+    "connect-src 'self' https: wss:; "
+    "font-src 'self' https: data:; "
+)
+
+
+@app.after_request
+def add_security_headers(response):
+    response.headers["Content-Security-Policy"] = CSP
+    return response
 
 
 @app.errorhandler(404)

@@ -2,6 +2,7 @@ import type { NewFishEvent } from '@fishScore/eventsdata';
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
 import type { createNewTeam, TeamUserData } from '@fishScore/teamsdata';
+import { useUserStore } from '@fishScore/useUserStore';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
@@ -18,10 +19,17 @@ export const fetchAllEvents = async () => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -38,10 +46,17 @@ export const fetchEvent = async (id: string) => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -69,10 +84,17 @@ export const fetchCreateEvent = async (createEventDesc: NewFishEvent) => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -100,10 +122,17 @@ export const fetchCreateTeam = async (createTeamDesc: createNewTeam) => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -131,10 +160,17 @@ export const fetchJoinTeam = async (teamUserData: TeamUserData) => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -165,10 +201,17 @@ export const fetchUpdateEvent = async (
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -192,10 +235,17 @@ export const fetchEventView = async (eventId: string | undefined) => {
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
@@ -213,23 +263,24 @@ export const fetchEditEventStatus = async (
 				withCredentials: true,
 			},
 		);
-
-		// Öppna loginModal om response är 401 (No token)
-		if (response.status === 401) {
-			useAuthStore.getState().openLoginModal();
-			return { success: false, error: response.data.error };
-		}
-
 		return {
 			success: true,
 			data: response.data,
 			status: response.status,
 		};
 	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
 		return {
 			success: false,
 			data: error.response?.data || { message: error.message },
-			status: error.response?.status || 500,
+			status,
 		};
 	}
 };
