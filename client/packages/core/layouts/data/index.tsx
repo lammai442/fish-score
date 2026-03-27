@@ -86,8 +86,7 @@ export const AppLayout = () => {
 								key={location.pathname}
 								initial={{ x: '100%', opacity: 0 }}
 								animate={{ x: 0, opacity: 1 }}
-								exit={{ x: '-100%', opacity: 0 }}
-								transition={{ duration: 0.3 }}
+								transition={{ duration: 0.4 }}
 								style={{ width: '100%' }}>
 								{outlet}
 							</motion.div>
