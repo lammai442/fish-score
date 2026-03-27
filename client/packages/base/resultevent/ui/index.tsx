@@ -1,6 +1,6 @@
 import { fetchEditEventStatus } from '@fishScore/apievents';
 import { BaseModal } from '@fishScore/basemodal';
-import { Button, Flex, Stack, Text } from '@mantine/core';
+import { Button, Flex, Stack, Text, Title, Transition } from '@mantine/core';
 import { useDisclosure, UseDisclosureHandlers } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
@@ -15,6 +15,7 @@ type Props = {
 	setLoading: (value: boolean) => void;
 	eventId: string | undefined;
 	leaderboard: LeaderboardTeam[];
+	showWinnersHandlers: { open: () => void; close: () => void };
 };
 
 export const ResultEvent = ({
@@ -24,6 +25,7 @@ export const ResultEvent = ({
 	setLoading,
 	eventId,
 	leaderboard,
+	showWinnersHandlers,
 }: Props) => {
 	const [winnersOpened, winnersHandlers] = useDisclosure(false);
 	const [winner, setWinner] = useState<LeaderboardTeam | null>(null);
@@ -97,7 +99,7 @@ export const ResultEvent = ({
 					title='Results'
 					opened={winnersOpened}
 					close={() => {
-						winnersHandlers.close;
+						winnersHandlers.close();
 						endEventHandlers.close();
 					}}>
 					<Stack align='center'>
@@ -108,14 +110,37 @@ export const ResultEvent = ({
 							speed={0.75}
 							style={{ width: 200, height: 200 }}
 						/>
-						{winner && leaderboard[0] && (
-							<Stack>
-								<Flex>{winner.totalCatchWeight} kg</Flex>
-								{winner.teams.map((team: any) => (
-									<Text key={team.teamName}>
-										{team.teamName}
+						{winner && (
+							<Stack ta={'center'}>
+								<Title>
+									{winner.teams.length > 1
+										? 'WINNERS'
+										: 'WINNER'}
+								</Title>
+								<Flex>
+									<Text>Winning total weight: </Text>
+									<Text span>
+										{winner.totalCatchWeight} kg
 									</Text>
-								))}
+								</Flex>
+								{winner.teams.length > 1 && (
+									<Title order={5}>Shared winners</Title>
+								)}
+								<Flex>
+									<Text>
+										{winner.teams.length > 1
+											? 'Teams: '
+											: 'Team: '}
+									</Text>
+									{winner.teams.map((team: Team) => (
+										<Text
+											key={team.teamName}
+											className='fade-in'
+											span>
+											{team.teamName}{' '}
+										</Text>
+									))}
+								</Flex>
 							</Stack>
 						)}
 					</Stack>

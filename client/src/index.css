@@ -64,3 +64,18 @@
 	--rank-silver: var(--color-silver);
 	--rank-bronze: var(--color-bronze);
 }
+
+.fade-in {
+	animation: fadeIn 1.5s ease-in;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}

@@ -21,7 +21,7 @@ import { EventsMessage } from '@fishScore/eventsmessage';
 
 type Props = {
 	currentEvent: FishEvent | undefined;
-	leaderboard: Team[];
+	leaderboard: LeaderboardTeam[];
 	user: User | null;
 	usersTeam: Team | undefined;
 	activity: FishCatch[];
@@ -86,8 +86,8 @@ export const EventTabs = ({
 			{/* Leaderboard tab */}
 			<Tabs.Panel value='leaderboard' pt='md'>
 				<Stack
+					mah={{ base: 550, md: 'none' }}
 					style={{
-						maxHeight: '550px',
 						overflow: 'auto',
 						scrollbarWidth: 'thin',
 					}}>
@@ -109,23 +109,6 @@ export const EventTabs = ({
 					) : (
 						<Text ta={'center'}>No teams has been created</Text>
 					)}
-					{/* {currentEvent && leaderboard.length > 0 ? (
-						leaderboard.map((item: LeaderboardTeam, index) => {
-							return (
-								<Teams
-									eventStatus={currentEvent.status}
-									key={team.teamId}
-									team={team}
-									userId={user?.userId}
-									rankNr={index + 1}
-									userIsInAnyTeam={!!usersTeam}
-									eventId={currentEvent.eventId}
-									createdBy={currentEvent.createdBy}></Teams>
-							);
-						})
-					) : (
-						
-					)} */}
 				</Stack>
 			</Tabs.Panel>
 			{/* Activity tab */}
