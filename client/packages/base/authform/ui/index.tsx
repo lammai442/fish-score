@@ -168,7 +168,11 @@ export const AuthForm = () => {
 						mt='md'
 						{...form.getInputProps('password')}
 					/>
-					<Button type='submit' fullWidth mt='xl'>
+					<Button
+						type='submit'
+						fullWidth
+						mt='xl'
+						bg={'var(--color-black)'}>
 						{mode === 'login' ? 'Logga in' : 'Registrera'}
 					</Button>
 				</form>

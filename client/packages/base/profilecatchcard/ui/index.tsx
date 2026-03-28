@@ -9,7 +9,7 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { IconCalendarWeekFilled, IconPencil } from '@tabler/icons-react';
-import { dateFormatter, shortDateFormatter } from '@fishScore/formatters';
+import { dateFormatter } from '@fishScore/formatters';
 import { BaseModal } from '@fishScore/basemodal';
 import { useDisclosure } from '@mantine/hooks';
 import { EditCatch } from '@fishScore/editcatch';

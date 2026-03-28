@@ -223,3 +223,88 @@ def end_event_in_db(event_id, event_status, user_id):
             return {"success": False, "error": "Event not found"}
 
         return {"success": False, "error": str(e)}
+
+
+def subscribe_to_event_in_db(event_id, user_id):
+
+    try:
+        event_response = table.get_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
+
+        event_item = event_response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Could not find event item"}
+
+        user_is_subscriber = user_id in event_item.get("subscribers", [])
+
+        if user_is_subscriber:
+            return {
+                "success": False,
+                "error": "User is already a subscriber to this event",
+            }
+
+        event_item["subscribers"].append(user_id)
+
+        table.update_item(
+            Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"},
+            UpdateExpression="SET #subscribers = :subscribers",
+            ExpressionAttributeValues={
+                ":subscribers": event_item["subscribers"],
+            },
+            ExpressionAttributeNames={"#subscribers": "subscribers"},
+            ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
+        )
+
+        return {
+            "success": True,
+            "message": "Successfully added user as subscriber to event",
+        }
+
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            return {"success": False, "error": "Event not found"}
+
+        return {"success": False, "error": str(e)}
+
+
+def unsubscribe_from_event_in_db(event_id, user_id):
+
+    try:
+        event_response = table.get_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
+
+        event_item = event_response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Could not find event item"}
+
+        user_is_subscriber = user_id in event_item.get("subscribers", [])
+
+        if not user_is_subscriber:
+            return {
+                "success": False,
+                "error": "Could not find user as a subscriber to the event",
+            }
+
+        subscribers = event_item.get("subscribers", [])
+        filtered_subscribers = [sub for sub in subscribers if sub != user_id]
+
+        table.update_item(
+            Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"},
+            UpdateExpression="SET #subscribers = :subscribers",
+            ExpressionAttributeValues={
+                ":subscribers": filtered_subscribers,
+            },
+            ExpressionAttributeNames={"#subscribers": "subscribers"},
+            ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
+        )
+
+        return {
+            "success": True,
+            "message": "Successfully removed user as subscriber to event",
+        }
+
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+            return {"success": False, "error": "Event not found"}
+
+        return {"success": False, "error": str(e)}

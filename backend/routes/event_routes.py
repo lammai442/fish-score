@@ -2,9 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from middlewares.require_auth import require_auth
 from schemas.event_schema import (
     EventSchema,
-    TeamSchema,
     UpdateEventSchema,
-    CatchSchema,
     UpdateEventStatusSchema,
 )
 from middlewares.validate_schema import validate_schema
@@ -14,6 +12,8 @@ from services.events import (
     get_all_events_in_db,
     update_event_in_db,
     end_event_in_db,
+    subscribe_to_event_in_db,
+    unsubscribe_from_event_in_db,
 )
 
 # Skapa blueprint instans
@@ -97,5 +97,40 @@ def end_event(event_id):
 
     if response["success"]:
         return jsonify({"success": True, "eventStatus": response["eventStatus"]}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Lägg till subscription till event
+@event_bp.route("/events/<string:event_id>/subscriptions", methods=["POST"])
+@require_auth
+def subscribe_to_event(event_id):
+
+    user_id = g.user["sub"]
+
+    if not user_id:
+        return jsonify({"success": False, "message": "Could not find user"}), 401
+
+    response = subscribe_to_event_in_db(event_id, user_id)
+
+    if response["success"]:
+        return jsonify({"success": True, "message": response["message"]}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Ta bort subscription till event
+@event_bp.route("/events/<string:event_id>/subscriptions", methods=["DELETE"])
+@require_auth
+def unsubscribe_from_event(event_id):
+
+    user_id = g.user["sub"]
+    if not user_id:
+        return jsonify({"success": False, "message": "Could not find user"}), 404
+
+    response = unsubscribe_from_event_in_db(event_id, user_id)
+
+    if response["success"]:
+        return jsonify({"success": True, "message": response["message"]}), 200
     else:
         return jsonify(response), 409

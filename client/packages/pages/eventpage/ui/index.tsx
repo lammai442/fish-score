@@ -31,6 +31,7 @@ import { ResultEvent } from '../../../base/resultevent/ui';
 import { IconTrophy, IconUsers } from '@tabler/icons-react';
 import { useLocalStorage } from '@mantine/hooks';
 import { EventWinner } from '../../../base/eventwinner/ui';
+import { SubscribeBtn } from '@fishScore/subscribebtn';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
@@ -158,78 +159,84 @@ export const EventPage = () => {
 					</Flex>
 				)}
 
-			{/* Admin actions*/}
-			<Flex m='1rem 0' gap={'sm'}>
-				{/* Skapa nytt lag */}
-				<BaseModal
-					title='Create team'
-					opened={createTeamOpened}
-					close={createTeamHandlers.close}>
-					<CreateItemModal
-						close={createTeamHandlers.close}
-						type='team'></CreateItemModal>
-				</BaseModal>
+			<Flex align={'center'} justify={'space-between'}>
+				{/* Admin actions*/}
+				<Flex m='1rem 0' gap={'sm'}>
+					{/* Skapa nytt lag */}
+					<BaseModal
+						title='Create team'
+						opened={createTeamOpened}
+						close={createTeamHandlers.close}>
+						<CreateItemModal
+							close={createTeamHandlers.close}
+							type='team'></CreateItemModal>
+					</BaseModal>
 
-				<Tooltip
-					label={
-						currentEvent?.status === 'completed'
-							? 'Event has ended'
-							: 'Only the event admin can create new teams'
-					}
-					disabled={
-						currentEvent?.status !== 'completed' &&
-						eventCreatedByUser
-					}>
-					<Button
-						color='var(--color-black)'
-						size='sm'
-						radius='md'
-						disabled={
-							!eventCreatedByUser ||
+					<Tooltip
+						label={
 							currentEvent?.status === 'completed'
+								? 'Event has ended'
+								: 'Only the event admin can create new teams'
 						}
-						onClick={createTeamHandlers.open}>
-						+ Create team
-					</Button>
-				</Tooltip>
-
-				{/* Avsluta tävling*/}
-				{endEventOpened && (
-					<ResultEvent
-						eventStatus={currentEvent?.status}
-						endEventOpened={endEventOpened}
-						endEventHandlers={endEventHandlers}
-						setLoading={setLoading}
-						eventId={currentEvent?.eventId}
-						leaderboard={leaderboard}
-						setWinner={setWinner}
-						showWinnersHandlers={showWinnersHandlers}
-						setShownWinners={setShownWinners}></ResultEvent>
-				)}
-
-				{eventCreatedByUser &&
-					currentEvent?.teams &&
-					currentEvent?.teams?.length > 0 && (
+						disabled={
+							currentEvent?.status !== 'completed' &&
+							eventCreatedByUser
+						}>
 						<Button
+							color='var(--color-black)'
+							size='sm'
 							radius='md'
-							bg={
-								currentEvent?.status === 'ongoing'
-									? 'var(--color-gold)'
-									: 'var(--bg-primary)'
+							disabled={
+								!eventCreatedByUser ||
+								currentEvent?.status === 'completed'
 							}
-							c={
-								currentEvent?.status === 'ongoing'
-									? 'var(--text-primary)'
-									: 'var(--text-inverse)'
-							}
-							onClick={endEventHandlers.open}>
-							<IconTrophy></IconTrophy>{' '}
-							{currentEvent?.status === 'ongoing'
-								? 'End event'
-								: 'Open event'}
+							onClick={createTeamHandlers.open}>
+							+ Create team
 						</Button>
+					</Tooltip>
+
+					{/* Avsluta tävling*/}
+					{endEventOpened && (
+						<ResultEvent
+							eventStatus={currentEvent?.status}
+							endEventOpened={endEventOpened}
+							endEventHandlers={endEventHandlers}
+							setLoading={setLoading}
+							eventId={currentEvent?.eventId}
+							leaderboard={leaderboard}
+							setWinner={setWinner}
+							showWinnersHandlers={showWinnersHandlers}
+							setShownWinners={setShownWinners}></ResultEvent>
 					)}
+
+					{eventCreatedByUser &&
+						currentEvent?.teams &&
+						currentEvent?.teams?.length > 0 && (
+							<Button
+								radius='md'
+								bg={
+									currentEvent?.status === 'ongoing'
+										? 'var(--color-gold)'
+										: 'var(--bg-primary)'
+								}
+								c={
+									currentEvent?.status === 'ongoing'
+										? 'var(--text-primary)'
+										: 'var(--text-inverse)'
+								}
+								onClick={endEventHandlers.open}>
+								<IconTrophy></IconTrophy>{' '}
+								{currentEvent?.status === 'ongoing'
+									? 'End event'
+									: 'Open event'}
+							</Button>
+						)}
+				</Flex>
+				<SubscribeBtn
+					userId={user?.userId}
+					currentEvent={currentEvent}></SubscribeBtn>
 			</Flex>
+
 			{/* Popup vid end event */}
 			{shownWinnersOpened && (
 				<EventWinner

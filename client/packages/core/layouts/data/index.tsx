@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Outlet, useLocation, useNavigate, useOutlet } from 'react-router-dom';
-import { AppShell, Box, Button, Container, Stack, Text } from '@mantine/core';
+import { AppShell, Box, Container } from '@mantine/core';
 import { Header } from '@fishScore/header';
 import { useWebSocketHook } from '@fishScore/usewebsockethook';
 import { useEffect } from 'react';
@@ -22,8 +22,23 @@ export const AppLayout = () => {
 	const { setEvents } = useWebSocketStore();
 	const { authStatus, setAuthStatus } = useAuthStore();
 	const { setUser, clearUser } = useUserStore();
+	const navigate = useNavigate();
 
 	useEffect(() => {
+		// Hämtar inloggad användare om det finns giltig token
+		const initAuth = async () => {
+			const response = await fetchMe();
+			if (response.success) {
+				setUser(response.data.user);
+				setAuthStatus('authenticated');
+				return;
+			} else {
+				clearUser();
+				setAuthStatus('unauthenticated');
+				navigate('/auth');
+			}
+		};
+
 		// Hämtar alla events och lägger den i Websocketsstore
 		const getAllEvents = async () => {
 			const response = await fetchAllEvents();
@@ -34,20 +49,9 @@ export const AppLayout = () => {
 			}
 		};
 
-		// Hämtar inloggad användare om det finns giltig token
-		const initAuth = async () => {
-			const response = await fetchMe();
-			if (response.success) {
-				setUser(response.data.user);
-				setAuthStatus('authenticated');
-				return;
-			}
-			clearUser();
-			setAuthStatus('unauthenticated');
-		};
 		initAuth();
 		getAllEvents();
-	}, [clearUser, setAuthStatus, setEvents, setUser]);
+	}, []);
 
 	useWebSocketHook();
 
@@ -55,34 +59,14 @@ export const AppLayout = () => {
 		return <Loading visible={true} text='Checking session'></Loading>;
 	}
 
-	if (authStatus === 'unauthenticated') {
-		// openLoginModal();
-	}
-
 	return (
 		<AppShell header={{ height: 102 }}>
-			{/* Modal för att session är utgången */}
-			{/* <BaseModal
-				title='Your session has expired'
-				opened={showLoginModal}
-				close={closeLoginModal}>
-				<Stack>
-					<Text>You must log in</Text>
-					<Button
-						color='var(--color-black)'
-						onClick={() => navigate('/auth')}>
-						To login
-					</Button>
-				</Stack>
-			</BaseModal> */}
 			<AppShell.Header>
 				<Header></Header>
 			</AppShell.Header>
 			<AppShell.Main>
 				<Container size='lg' pb={'3rem'}>
-					<Box
-					// style={{ position: 'relative', overflowX: 'hidden' }}
-					>
+					<Box style={{ position: 'relative', overflowX: 'hidden' }}>
 						{/* Sidoanimering*/}
 						<AnimatePresence initial={false} mode='wait'>
 							<motion.div
