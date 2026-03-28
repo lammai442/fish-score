@@ -16,7 +16,6 @@ export const ProtectedRoute = () => {
 
 	const handleRetryLogin = async () => {
 		const response = await refreshAccessToken();
-		console.log('response: ', response);
 		if (response.success) {
 			const meResponse = await fetchMe();
 
@@ -34,7 +33,7 @@ export const ProtectedRoute = () => {
 				});
 				return;
 			}
-		} else if (!response.success) {
+		} else {
 			showNotification({
 				title: "Couldn't log in",
 				message: "We couldn't log you in. Please try and login again.",

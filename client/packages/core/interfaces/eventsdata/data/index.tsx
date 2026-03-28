@@ -11,6 +11,7 @@ export interface FishEvent {
 	teamCount: number | string;
 	activity?: FishCatch[];
 	messages: EventMessage[];
+	subscribers: string[];
 }
 
 export interface NewFishEvent {

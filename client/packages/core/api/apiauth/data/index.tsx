@@ -99,6 +99,7 @@ export const fetchMe = async () => {
 
 		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
 		if (status === 401) {
+			// Provar nytt anrop för att se ifall det finns en refreshToken som är längre tid
 			const refreshResponse = await refreshAccessToken();
 			if (refreshResponse.success) {
 				const retryMeResponse: any = await axios.get(
@@ -109,8 +110,6 @@ export const fetchMe = async () => {
 				);
 
 				if (retryMeResponse.success) {
-					console.log('RetryResponse success');
-
 					return {
 						success: true,
 						data: retryMeResponse.data,

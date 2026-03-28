@@ -284,3 +284,65 @@ export const fetchEditEventStatus = async (
 		};
 	}
 };
+
+// Subscribe to event
+export const fetchSubscribeToEvent = async (eventId: string | undefined) => {
+	try {
+		const response = await axios.post(
+			`${apiUrl}/events/${eventId}/subscriptions`,
+			{},
+			{
+				withCredentials: true,
+			},
+		);
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status,
+		};
+	}
+};
+// Unsubscribe to event
+export const fetchUnsubscribeToEvent = async (eventId: string | undefined) => {
+	try {
+		const response = await axios.delete(
+			`${apiUrl}/events/${eventId}/subscriptions`,
+			{
+				withCredentials: true,
+			},
+		);
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status,
+		};
+	}
+};

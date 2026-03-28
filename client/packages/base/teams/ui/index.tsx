@@ -5,7 +5,6 @@ import { IconCheck, IconTrophy, IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
 import type { Team, TeamUserData } from '@fishScore/teamsdata';
-import { BaseModal } from '@fishScore/basemodal';
 type Props = {
 	team: Team;
 	userId: string | undefined;

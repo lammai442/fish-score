@@ -1,5 +1,5 @@
 import { BaseModal } from '@fishScore/basemodal';
-import { LeaderboardTeam, Team } from '@fishScore/teamsdata';
+import type { LeaderboardTeam, Team } from '@fishScore/teamsdata';
 import { Badge, Flex, Stack, Text, Title } from '@mantine/core';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 

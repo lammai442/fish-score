@@ -1,20 +1,20 @@
 import { fetchEditEventStatus } from '@fishScore/apievents';
 import { BaseModal } from '@fishScore/basemodal';
 import { Button, Stack, Text } from '@mantine/core';
-import { UseDisclosureHandlers } from '@mantine/hooks';
+import type { UseDisclosureHandlers } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
-import { LeaderboardTeam } from '@fishScore/teamsdata';
+import type { LeaderboardTeam } from '@fishScore/teamsdata';
 
 type Props = {
 	eventStatus: string | undefined;
 	endEventOpened: boolean;
 	endEventHandlers: UseDisclosureHandlers;
-	setLoading: (value: boolean) => void;
+	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	eventId: string | undefined;
 	leaderboard: LeaderboardTeam[];
-	showWinnersHandlers: { open: () => void; close: () => void };
-	setWinner: (value: LeaderboardTeam | null) => void;
+	showWinnersHandlers: UseDisclosureHandlers;
+	setWinner: React.Dispatch<React.SetStateAction<LeaderboardTeam | null>>;
 	setShownWinners: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
