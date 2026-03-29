@@ -66,19 +66,19 @@ export const AppLayout = () => {
 			</AppShell.Header>
 			<AppShell.Main>
 				<Container size='lg' pb={'3rem'}>
-					<Box style={{ position: 'relative', overflowX: 'hidden' }}>
-						{/* Sidoanimering*/}
-						<AnimatePresence initial={false} mode='wait'>
-							<motion.div
-								key={location.pathname}
-								initial={{ x: '100%', opacity: 0 }}
-								animate={{ x: 0, opacity: 1 }}
-								transition={{ duration: 0.4 }}
-								style={{ width: '100%' }}>
-								{outlet}
-							</motion.div>
-						</AnimatePresence>
-					</Box>
+					{/* <Box> */}
+					{/* Sidoanimering*/}
+					<AnimatePresence initial={false} mode='wait'>
+						<motion.div
+							key={location.pathname}
+							initial={{ x: '100%', opacity: 0 }}
+							animate={{ x: 0, opacity: 1 }}
+							transition={{ duration: 0.4 }}
+							style={{ width: '100%' }}>
+							{outlet}
+						</motion.div>
+					</AnimatePresence>
+					{/* </Box> */}
 				</Container>
 			</AppShell.Main>
 		</AppShell>
