@@ -189,7 +189,7 @@ def get_event_by_event_name(event_name):
     return {"success": False, "error": "Event not found"}
 
 
-def end_event_in_db(event_id, event_status, user_id):
+def edit_event_status_in_db(event_id, event_status, user_id):
 
     try:
         event_response = table.get_item(Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"})
@@ -199,20 +199,23 @@ def end_event_in_db(event_id, event_status, user_id):
         if not event_item:
             return {"success": False, "error": "Could not find event item"}
 
-        if not event_item["createdBy"] == user_id:
+        if event_item.get("createdBy") != user_id:
             return {"success": False, "error": "Not authorized"}
 
-        event_item["status"] = event_status
         now = datetime.now(timezone.utc).isoformat()
 
         table.update_item(
             Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"},
-            UpdateExpression="SET #status = :event_status, modifiedAt = :modifiedAt",
+            UpdateExpression="SET #status = :event_status, modifiedAt = :modifiedAt, #update_kind = :update_kind",
             ExpressionAttributeValues={
                 ":event_status": event_status,
                 ":modifiedAt": now,
+                ":update_kind": "eventStatus",
             },
-            ExpressionAttributeNames={"#status": "status"},
+            ExpressionAttributeNames={
+                "#status": "status",
+                "#update_kind": "update_kind",
+            },
             ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
         )
 
@@ -247,11 +250,15 @@ def subscribe_to_event_in_db(event_id, user_id):
 
         table.update_item(
             Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"},
-            UpdateExpression="SET #subscribers = :subscribers",
+            UpdateExpression="SET #subscribers = :subscribers, #update_kind = :update_kind",
             ExpressionAttributeValues={
                 ":subscribers": event_item["subscribers"],
+                ":update_kind": "subscribers",
             },
-            ExpressionAttributeNames={"#subscribers": "subscribers"},
+            ExpressionAttributeNames={
+                "#subscribers": "subscribers",
+                "#update_kind": "update_kind",
+            },
             ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
         )
 
@@ -290,11 +297,15 @@ def unsubscribe_from_event_in_db(event_id, user_id):
 
         table.update_item(
             Key={"PK": f"EVENT#{event_id}", "SK": "EVENT"},
-            UpdateExpression="SET #subscribers = :subscribers",
+            UpdateExpression="SET #subscribers = :subscribers, #update_kind = :update_kind",
             ExpressionAttributeValues={
                 ":subscribers": filtered_subscribers,
+                ":update_kind": "subscribers",
             },
-            ExpressionAttributeNames={"#subscribers": "subscribers"},
+            ExpressionAttributeNames={
+                "#subscribers": "subscribers",
+                "#update_kind": "update_kind",
+            },
             ConditionExpression="attribute_exists(PK) AND attribute_exists(SK)",
         )
 

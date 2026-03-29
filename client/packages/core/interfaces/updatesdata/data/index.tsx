@@ -28,6 +28,7 @@ type EventUpdate = {
 	changedBy: string;
 	read: boolean;
 	action: 'INSERT' | 'MODIFY' | 'REMOVE';
+	updateKind: string | null;
 };
 
 export type Update = CatchUpdate | MessageUpdate | EventUpdate;

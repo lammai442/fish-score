@@ -70,6 +70,10 @@ export const useWebSocketHook = () => {
 						return;
 					}
 
+					if (message.update_kind === 'subscribers') {
+						return;
+					}
+
 					// Om det är user som har skapat nya ändringen så körs return och ingen fortsättning till addUpdates
 					if (message.changedBy === currentUser.userId) {
 						return;
@@ -89,11 +93,16 @@ export const useWebSocketHook = () => {
 						message.action === 'INSERT';
 
 					// Om det är ett event
-					const isEventModifyOrRemove =
+					const isEventStatusModify =
 						message.type === 'eventUpdate' &&
 						message.entityType === 'EVENT' &&
-						(message.action === 'MODIFY' ||
-							message.action === 'REMOVE');
+						message.action === 'MODIFY' &&
+						message.updateKind === 'eventStatus';
+
+					const isEventRemove =
+						message.type === 'eventUpdate' &&
+						message.entityType === 'EVENT' &&
+						message.action === 'REMOVE';
 
 					const isSubscriber =
 						Array.isArray(message.subscribers) &&
@@ -103,7 +112,8 @@ export const useWebSocketHook = () => {
 						isSubscriber &&
 						(isCatchInsertModifyOrDelete ||
 							isMessageInsert ||
-							isEventModifyOrRemove);
+							isEventStatusModify ||
+							isEventRemove);
 
 					// Om något av villkoren är falska så körs ingen addUpdate
 					if (!isRelevantUpdate) return;
@@ -117,7 +127,7 @@ export const useWebSocketHook = () => {
 					} else if (isMessageInsert) {
 						updateId = message.entity.messageId;
 						type = 'message';
-					} else if (isEventModifyOrRemove) {
+					} else if (isEventStatusModify || isEventRemove) {
 						updateId = message.entity.eventId;
 						type = 'event';
 					}
@@ -132,6 +142,7 @@ export const useWebSocketHook = () => {
 						changedBy: message.changedBy,
 						read: false,
 						action: message.action,
+						updateKind: message.updateKind ?? null,
 					});
 				} catch (error) {
 					console.error('Error parsing WebSocket message:', error);

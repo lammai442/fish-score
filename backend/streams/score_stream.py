@@ -111,6 +111,7 @@ def handler(event, context):
             changed_item.get("createdBy") or changed_item.get("updatedBy") or None
         )
 
+        update_kind = changed_item.get("update_kind")
         cleaned_entity = filter_item_keys(changed_item)
 
         message = {
@@ -122,6 +123,7 @@ def handler(event, context):
             "entity": make_json_safe(cleaned_entity),
             "data": make_json_safe(event_response["event"]),
             "subscribers": event_response["event"]["subscribers"],
+            "updateKind": update_kind,
         }
 
         for conn in connections:

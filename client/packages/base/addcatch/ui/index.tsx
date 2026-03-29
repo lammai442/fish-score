@@ -5,7 +5,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';
 import { useDisclosure } from '@mantine/hooks';
 import { BaseModal } from '@fishScore/basemodal';
-import { ActionIcon, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Tooltip } from '@mantine/core';
 import type { FishEvent } from '@fishScore/eventsdata';
 import type { Team } from '@fishScore/teamsdata';
 
@@ -64,13 +64,13 @@ export const AddCatch = ({ currentEvent, usersTeam }: Props) => {
 			{/* Lägg till en ny catch */}
 			<Tooltip
 				label={
-					currentEvent?.status === 'ongoing'
+					currentEvent?.status === 'ongoing' && !usersTeam
 						? 'Join a team to add catch'
-						: 'Event has ended'
-				}
-				disabled={
-					currentEvent?.status !== 'ongoing' ||
-					usersTeam !== undefined
+						: currentEvent?.status === 'ongoing'
+							? 'Add a catch'
+							: currentEvent?.status === 'completed'
+								? 'Event has ended'
+								: ''
 				}>
 				<ActionIcon
 					radius={'xl'}
