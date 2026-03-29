@@ -1,11 +1,14 @@
 import { dateFormatter } from '@fishScore/formatters';
+import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 import type { Update } from '@fishScore/updatesdata';
 import { useUpdateStore } from '@fishScore/useupdatestore';
 import { useUserStore } from '@fishScore/useUserStore';
 import {
 	Badge,
 	Button,
+	Divider,
 	Flex,
+	Image,
 	Stack,
 	Text,
 	ThemeIcon,
@@ -177,13 +180,43 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 													)}
 												</Flex>
 											</Stack>
-											<Badge
-												p='0.8rem'
-												bg='var(--bg-primary)'
-												c='var(--text-inverse)'
-												bdrs='sm'>
-												{update.entity.catchWeight} kg
-											</Badge>
+											<Flex align={'center'} gap={'sm'}>
+												<Stack
+													align='center'
+													gap={'0.2rem'}>
+													<Text fw={700}>
+														{capitilizeFirstLetter(
+															update.entity
+																.fishType,
+														)}
+													</Text>
+													<Badge
+														p={'0.8rem'}
+														bg={'var(--bg-primary)'}
+														c={
+															'var(--text-inverse)'
+														}
+														bdrs={'sm'}
+														size='lg'>
+														{
+															update.entity
+																.catchWeight
+														}{' '}
+														kg
+													</Badge>
+												</Stack>
+												<Divider
+													orientation='vertical'
+													size={'xs'}
+													color={
+														'var(--color-black)'
+													}></Divider>
+												<Image
+													src={`/fishtypes/${update.entity.fishType}.png`}
+													w={90}
+													h={35}
+													fit='contain'></Image>
+											</Flex>
 										</>
 									)}
 									{/* Messages */}

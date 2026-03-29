@@ -20,14 +20,14 @@ type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
 	eventStatus?: string;
-	variant: 'activityCatch' | 'profileCatch';
+	// variant: 'activityCatch' | 'profileCatch';
 };
 
 export const FishCatchCard = ({
 	fishCatch,
 	userId,
 	eventStatus,
-	variant,
+	// variant,
 }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
@@ -80,8 +80,9 @@ export const FishCatchCard = ({
 							color='var(--color-white)'></IconFish>
 					</Flex>
 					<Stack>
-						<Flex gap={'xs'}>
-							{variant === 'activityCatch' && (
+						<Stack gap={0}>
+							<Flex gap={'xs'}>
+								{/* {variant === 'activityCatch' && ( */}
 								<Text>
 									<span style={{ fontStyle: 'italic' }}>
 										{fishCatch.catchersFullName}
@@ -91,39 +92,61 @@ export const FishCatchCard = ({
 										{fishCatch.teamName}
 									</span>
 								</Text>
-							)}
-							{variant === 'profileCatch' && (
-								<Text>
-									{'Your catch in '}
-									<span style={{ fontWeight: 700 }}>
-										{fishCatch.teamName}
-									</span>
-									{' with '}
-									<span style={{ fontWeight: 700 }}>
-										{fishCatch.teamName}
-									</span>
+								{/* )} */}
+								{/* {variant === 'profileCatch' && (
+									<Text>
+										{'Your catch in '}
+										<span style={{ fontWeight: 700 }}>
+											{fishCatch.teamName}
+										</span>
+										{' with '}
+										<span style={{ fontWeight: 700 }}>
+											{fishCatch.teamName}
+										</span>
+									</Text>
+								)} */}
+
+								{/* Redigeraknapp */}
+								{canEditCatch && (
+									<Tooltip label={'Edit catch'}>
+										<ActionIcon
+											variant='filled'
+											bg={'var(--color-grey)'}
+											radius={'lg'}
+											p={'5px'}
+											onClick={open}>
+											<IconPencil color='var(--color-black)'></IconPencil>
+										</ActionIcon>
+									</Tooltip>
+								)}
+							</Flex>
+							{/* Datum */}
+							<Flex gap={'.2rem'}>
+								<IconClockHour5></IconClockHour5>
+								<Text c={'var(--text-muted)'}>
+									{catchDate}
+									{fishCatch.modifiedAt && (
+										<Text
+											ml={'xs'}
+											bdrs={'sm'}
+											p={'0.2rem 0.3rem'}
+											fw={500}
+											span
+											bg={'var(--bg-muted)'}
+											c={'var(--text-primary)'}>
+											Edited
+										</Text>
+									)}
 								</Text>
-							)}
-							{/* Redigeraknapp */}
-							{canEditCatch && (
-								<Tooltip label={'Edit catch'}>
-									<ActionIcon
-										variant='filled'
-										bg={'var(--color-grey)'}
-										radius={'lg'}
-										p={'5px'}
-										onClick={open}>
-										<IconPencil color='var(--color-black)'></IconPencil>
-									</ActionIcon>
-								</Tooltip>
-							)}
-						</Flex>
+							</Flex>
+						</Stack>
+						{/* 
 						{variant === 'profileCatch' && (
 							<Text>
 								Event status:{' '}
 								{capitilizeFirstLetter(fishCatch.eventStatus)}
 							</Text>
-						)}
+						)} */}
 						<Flex align={'center'} gap={'sm'}>
 							<Stack align='center' gap={'0.2rem'}>
 								<Text fw={700}>
@@ -147,25 +170,6 @@ export const FishCatchCard = ({
 								w={90}
 								h={35}
 								fit='contain'></Image>
-						</Flex>
-						{/* Datum */}
-						<Flex gap={'.2rem'}>
-							<IconClockHour5></IconClockHour5>
-							<Text c={'var(--text-muted)'}>
-								{catchDate}
-								{fishCatch.modifiedAt && (
-									<Text
-										ml={'xs'}
-										bdrs={'sm'}
-										p={'0.2rem 0.3rem'}
-										fw={500}
-										span
-										bg={'var(--bg-muted)'}
-										c={'var(--text-primary)'}>
-										Edited
-									</Text>
-								)}
-							</Text>
 						</Flex>
 					</Stack>
 				</Flex>
