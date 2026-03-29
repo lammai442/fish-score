@@ -111,7 +111,6 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 														)
 													</Text>
 												</Title>
-
 												<Text
 													fs='italic'
 													c='var(--text-muted)'>
@@ -133,7 +132,6 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 														</Text>
 													)}
 												</Text>
-
 												<Flex
 													gap='0.2rem'
 													align='center'>
@@ -176,7 +174,6 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 													)}
 												</Flex>
 											</Stack>
-
 											<Badge
 												p='0.8rem'
 												bg='var(--bg-primary)'
@@ -223,41 +220,52 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 										</Stack>
 									)}
 									{/* Event */}
-									{update.type === 'event' && (
-										<Stack gap='xs'>
-											<Stack gap='0'>
-												<Title order={5}>
-													<Text span>Event: </Text>
-													{update.entity.eventName}
-												</Title>
-
-												{update.entity.modifiedAt && (
-													<Flex
-														gap='0.2rem'
-														align='center'>
-														<IconCalendarWeekFilled size='1.3rem' />
-														<Text
-															c='var(--text-muted)'
-															fz='sm'>
-															{dateFormatter(
-																update.entity
-																	.modifiedAt,
-															)}
+									{update.type === 'event' &&
+										update.updateKind === 'eventStatus' && (
+											<Stack gap='xs'>
+												<Stack gap='0'>
+													<Title order={5}>
+														<Text span>
+															Event:{' '}
 														</Text>
-													</Flex>
-												)}
+														{
+															update.entity
+																.eventName
+														}
+													</Title>
 
-												<Text c='var(--text-primary)'>
-													{update.entity.status ===
-													'completed'
-														? 'Event has ended, check out the winners!'
-														: 'Fish on! The event has been reopened.'}
+													{update.entity
+														.modifiedAt && (
+														<Flex
+															gap='0.2rem'
+															align='center'>
+															<IconCalendarWeekFilled size='1.3rem' />
+															<Text
+																c='var(--text-muted)'
+																fz='sm'>
+																{dateFormatter(
+																	update
+																		.entity
+																		.modifiedAt,
+																)}
+															</Text>
+														</Flex>
+													)}
+
+													<Text c='var(--text-primary)'>
+														{update.entity
+															.status ===
+														'completed'
+															? 'Event has ended, check out the winners!'
+															: 'Fish on! The event has been reopened.'}
+													</Text>
+												</Stack>
+
+												<Text>
+													{update.entity.message}
 												</Text>
 											</Stack>
-
-											<Text>{update.entity.message}</Text>
-										</Stack>
-									)}
+										)}
 
 									<Button
 										c='var(--text-inverse)'

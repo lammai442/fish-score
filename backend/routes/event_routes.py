@@ -11,7 +11,7 @@ from services.events import (
     create_new_event_in_db,
     get_all_events_in_db,
     update_event_in_db,
-    end_event_in_db,
+    edit_event_status_in_db,
     subscribe_to_event_in_db,
     unsubscribe_from_event_in_db,
 )
@@ -86,14 +86,14 @@ def create_new_event():
 @event_bp.route("/events/<string:event_id>/edit", methods=["PUT"])
 @require_auth
 @validate_schema(UpdateEventStatusSchema)
-def end_event(event_id):
+def edit_event_status(event_id):
 
     # Validated data after middleware
     data = request.validated_data
     event_status = data["eventStatus"]
     user_id = g.user["sub"]
 
-    response = end_event_in_db(event_id, event_status, user_id)
+    response = edit_event_status_in_db(event_id, event_status, user_id)
 
     if response["success"]:
         return jsonify({"success": True, "eventStatus": response["eventStatus"]}), 200
