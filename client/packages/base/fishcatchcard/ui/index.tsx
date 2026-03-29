@@ -20,15 +20,9 @@ type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
 	eventStatus?: string;
-	// variant: 'activityCatch' | 'profileCatch';
 };
 
-export const FishCatchCard = ({
-	fishCatch,
-	userId,
-	eventStatus,
-	// variant,
-}: Props) => {
+export const FishCatchCard = ({ fishCatch, userId, eventStatus }: Props) => {
 	const [opened, { open, close }] = useDisclosure();
 	const catchDate = dateFormatter(fishCatch.createdAt);
 
@@ -82,7 +76,6 @@ export const FishCatchCard = ({
 					<Stack>
 						<Stack gap={0}>
 							<Flex gap={'xs'}>
-								{/* {variant === 'activityCatch' && ( */}
 								<Text>
 									<span style={{ fontStyle: 'italic' }}>
 										{fishCatch.catchersFullName}
@@ -92,20 +85,6 @@ export const FishCatchCard = ({
 										{fishCatch.teamName}
 									</span>
 								</Text>
-								{/* )} */}
-								{/* {variant === 'profileCatch' && (
-									<Text>
-										{'Your catch in '}
-										<span style={{ fontWeight: 700 }}>
-											{fishCatch.teamName}
-										</span>
-										{' with '}
-										<span style={{ fontWeight: 700 }}>
-											{fishCatch.teamName}
-										</span>
-									</Text>
-								)} */}
-
 								{/* Redigeraknapp */}
 								{canEditCatch && (
 									<Tooltip label={'Edit catch'}>
@@ -140,13 +119,6 @@ export const FishCatchCard = ({
 								</Text>
 							</Flex>
 						</Stack>
-						{/* 
-						{variant === 'profileCatch' && (
-							<Text>
-								Event status:{' '}
-								{capitilizeFirstLetter(fishCatch.eventStatus)}
-							</Text>
-						)} */}
 						<Flex align={'center'} gap={'sm'}>
 							<Stack align='center' gap={'0.2rem'}>
 								<Text fw={700}>

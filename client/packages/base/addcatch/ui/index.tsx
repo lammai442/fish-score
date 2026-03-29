@@ -8,7 +8,7 @@ import { BaseModal } from '@fishScore/basemodal';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import type { FishEvent } from '@fishScore/eventsdata';
 import type { Team } from '@fishScore/teamsdata';
-import { FishType } from '@fishScore/fishcatchdata';
+import type { FishType } from '@fishScore/fishcatchdata';
 
 type Props = {
 	currentEvent: FishEvent | null;

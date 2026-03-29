@@ -1,4 +1,4 @@
-import { Stack, Button, Text, Center } from '@mantine/core';
+import { Stack, Button, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { BaseModal } from '@fishScore/basemodal';
@@ -6,7 +6,6 @@ import { Events } from '@fishScore/events';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useEffect } from 'react';
 import { fetchAllEvents } from '@fishScore/apievents';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export const LandingPage = () => {
 	const { events, setEvents } = useWebSocketStore();

@@ -6,7 +6,7 @@ import { IconCancel, IconCheck, IconTrash } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { fetchDeleteCatch } from '../../../core/api/apicatches/data';
 import { showNotification } from '@mantine/notifications';
-import { FishType } from '@fishScore/fishcatchdata';
+import type { FishType } from '@fishScore/fishcatchdata';
 
 type Props = {
 	initialValue?: string;
@@ -130,7 +130,7 @@ export const CatchForm = ({
 						{ value: 'perch', label: 'Perch' },
 						{ value: 'salmon', label: 'Salmon' },
 						{ value: 'zander', label: 'Zander' },
-						{ value: 'rainbow', label: 'Rainbow trout' },
+						{ value: 'rainbow', label: 'Rainbow' },
 						{ value: 'trout', label: 'Trout' },
 						{ value: 'char', label: 'Char' },
 					]}

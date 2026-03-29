@@ -22,7 +22,6 @@ import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 type Props = {
 	fishCatch: FishCatch;
 	userId?: string;
-	variant: 'activityCatch' | 'profileCatch';
 };
 
 export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {

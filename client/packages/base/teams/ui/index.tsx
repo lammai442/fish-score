@@ -1,7 +1,15 @@
 import { showNotification } from '@mantine/notifications';
-import { Button, Flex, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import {
+	Badge,
+	Button,
+	Flex,
+	Stack,
+	Text,
+	ThemeIcon,
+	Title,
+} from '@mantine/core';
 import { fetchJoinTeam } from '@fishScore/apievents';
-import { IconCheck, IconTrophy, IconX } from '@tabler/icons-react';
+import { IconCheck, IconTrophy, IconUsers, IconX } from '@tabler/icons-react';
 import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
 import type { Team, TeamUserData } from '@fishScore/teamsdata';
@@ -95,7 +103,7 @@ export const Teams = ({
 				}}
 				p={'md'}
 				gap={'xs'}>
-				<Stack gap={0}>
+				<Stack gap={'xs'}>
 					<Flex justify={'space-between'} align={'center'}>
 						<Flex gap={'0.5rem'}>
 							{/* Ranknummer */}
@@ -130,8 +138,12 @@ export const Teams = ({
 					</Flex>
 
 					{team.members.length > 0 ? (
-						<Text>
-							Members:{' '}
+						<Flex align={'center'} gap={'.2rem'}>
+							<IconUsers
+								size={20}
+								fill='filled'
+								color='var(--color-black)'></IconUsers>
+							{/* Members:{' '} */}
 							<Text span fs={'italic'}>
 								{team.members
 									.map((member) => {
@@ -143,18 +155,29 @@ export const Teams = ({
 									})
 									.join(', ')}
 							</Text>
-						</Text>
+						</Flex>
 					) : (
-						<Text>No members</Text>
+						<Flex align={'center'} gap={'.2rem'}>
+							<IconUsers
+								size={20}
+								fill='filled'
+								color='var(--color-black)'></IconUsers>
+							<Text>No members</Text>
+						</Flex>
 					)}
 				</Stack>
 
-				<Text fz={'xl'}>
-					Total catch:{' '}
-					<Text span fw={700} fz={'xl'}>
+				<Flex align={'center'} gap={'xs'}>
+					<Text fz={'xl'}>Total catch:</Text>
+					<Badge
+						p={'0.8rem 0.5rem'}
+						bg={'var(--bg-primary)'}
+						c={'var(--text-inverse)'}
+						bdrs={'sm'}
+						size='xl'>
 						{team.totalCatchWeight} kg
-					</Text>
-				</Text>
+					</Badge>
+				</Flex>
 
 				{!userIsInAnyTeam && eventStatus === 'ongoing' && (
 					<Button bg={'var(--color-black)'} onClick={handleJoinTeam}>
