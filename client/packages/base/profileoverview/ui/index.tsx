@@ -166,7 +166,6 @@ export const ProfileOverview = ({}: Props) => {
 								key={c.catchId}
 								fishCatch={c}
 								userId={user.userId}
-								variant='profileCatch'
 							/>
 						))}
 					</>
