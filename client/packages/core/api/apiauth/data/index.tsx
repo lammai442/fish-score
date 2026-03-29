@@ -101,19 +101,31 @@ export const fetchMe = async () => {
 		if (status === 401) {
 			// Provar nytt anrop för att se ifall det finns en refreshToken som är längre tid
 			const refreshResponse = await refreshAccessToken();
-			if (refreshResponse.success) {
-				const retryMeResponse: any = await axios.get(
-					`${apiUrl}/auth/me`,
-					{
-						withCredentials: true,
-					},
-				);
 
-				if (retryMeResponse.success) {
+			if (refreshResponse.success) {
+				try {
+					const retryMeResponse = await axios.get(
+						`${apiUrl}/auth/me`,
+						{
+							withCredentials: true,
+						},
+					);
+
 					return {
 						success: true,
 						data: retryMeResponse.data,
 						status: retryMeResponse.status,
+					};
+				} catch (retryError: any) {
+					useAuthStore.getState().setAuthStatus('unauthenticated');
+					useUserStore.getState().clearUser();
+
+					return {
+						success: false,
+						data: retryError.response?.data || {
+							message: retryError.message,
+						},
+						status: retryError.response?.status || 500,
 					};
 				}
 			}
