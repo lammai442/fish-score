@@ -5,7 +5,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';
 import { useDisclosure } from '@mantine/hooks';
 import { BaseModal } from '@fishScore/basemodal';
-import { ActionIcon, Box, Tooltip } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 import type { FishEvent } from '@fishScore/eventsdata';
 import type { Team } from '@fishScore/teamsdata';
 

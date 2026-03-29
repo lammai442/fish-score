@@ -2,7 +2,7 @@ import {
 	fetchSubscribeToEvent,
 	fetchUnsubscribeToEvent,
 } from '@fishScore/apievents';
-import { FishEvent } from '@fishScore/eventsdata';
+import type { FishEvent } from '@fishScore/eventsdata';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {

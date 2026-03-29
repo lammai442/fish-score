@@ -1,6 +1,7 @@
 import { dateFormatter } from '@fishScore/formatters';
 import type { Update } from '@fishScore/updatesdata';
 import { useUpdateStore } from '@fishScore/useupdatestore';
+import { useUserStore } from '@fishScore/useUserStore';
 import {
 	Badge,
 	Button,
@@ -26,7 +27,9 @@ type Props = {
 
 export const Updates = ({ updates, close, setWiggle }: Props) => {
 	const navigate = useNavigate();
-	const { clearUpdates, markAllAsRead } = useUpdateStore();
+	const { clearUpdates, markAllAsRead, ownerUserId } = useUpdateStore();
+	const { user } = useUserStore();
+	const isUpdatesInStorageByUser = ownerUserId === user?.userId;
 
 	const handleNavigation = (event_id: string) => {
 		markAllAsRead();
@@ -41,7 +44,7 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 
 	return (
 		<Stack>
-			{updates.length > 0 ? (
+			{updates.length > 0 && isUpdatesInStorageByUser ? (
 				<>
 					<Stack style={{ maxHeight: '500px', overflowY: 'auto' }}>
 						{updates.map((update, index) => (
