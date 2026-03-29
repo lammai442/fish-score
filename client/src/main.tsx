@@ -19,9 +19,9 @@ createRoot(document.getElementById('root')!).render(
 				theme={{
 					fontFamily: 'Verdana, sans-serif',
 				}}>
-				<Notifications />
+				<Notifications zIndex={99999} />
 				<RouterProvider router={router} />
 			</MantineProvider>
 		</>
-	</StrictMode>
+	</StrictMode>,
 );

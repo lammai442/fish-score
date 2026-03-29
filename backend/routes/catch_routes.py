@@ -20,9 +20,10 @@ def add_catch(event_id, team_id):
     # Hämtar data från bodyn
     data = request.get_json()
     catch_weight = data.get("catchWeight")
+    fish_type = data.get("fishType")
     user_id = g.user["sub"]
 
-    response = add_catch_in_db(event_id, team_id, user_id, catch_weight)
+    response = add_catch_in_db(event_id, team_id, user_id, catch_weight, fish_type)
 
     if response["success"]:
         return jsonify({"success": True, "updatedTeam": response["catch"]}), 200
@@ -41,9 +42,10 @@ def edit_catch(event_id, catch_id):
     # Hämtar data från bodyn
     data = request.get_json()
     catch_weight = data.get("catchWeight")
+    fish_type = data.get("fishType")
     user_id = g.user["sub"]
 
-    response = edit_catch_in_db(event_id, catch_id, user_id, catch_weight)
+    response = edit_catch_in_db(event_id, catch_id, user_id, catch_weight, fish_type)
 
     if response["success"]:
         return jsonify({"success": True, "updatedCatch": response["updatedCatch"]}), 200

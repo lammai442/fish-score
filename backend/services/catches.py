@@ -9,7 +9,7 @@ from decimal import Decimal
 table = get_dynamodb_table()
 
 
-def add_catch_in_db(event_id, team_id, user_id, catch_weight):
+def add_catch_in_db(event_id, team_id, user_id, catch_weight, fish_type):
     user = get_user_by_user_id(user_id)
     catch_weight_decimal = Decimal(str(catch_weight))
 
@@ -41,6 +41,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
             "entityType": "CATCH",
             "eventId": event_id,
             "eventName": team_item["eventName"],
+            "fishType": fish_type,
             "teamId": team_id,
             "teamName": team_item["teamName"],
             "lookupType": f"USER#{user_id}#CATCH",
@@ -71,7 +72,7 @@ def add_catch_in_db(event_id, team_id, user_id, catch_weight):
         return {"success": False, "error": str(e)}
 
 
-def edit_catch_in_db(event_id, catch_id, user_id, catch_weight):
+def edit_catch_in_db(event_id, catch_id, user_id, catch_weight, fish_type):
     try:
         catch_response = table.get_item(
             Key={
@@ -115,9 +116,10 @@ def edit_catch_in_db(event_id, catch_id, user_id, catch_weight):
                 "PK": f"EVENT#{event_id}",
                 "SK": f"CATCH#{catch_id}",
             },
-            UpdateExpression="SET catchWeight = :catchWeight, modifiedAt = :modifiedAt",
+            UpdateExpression="SET catchWeight = :catchWeight, modifiedAt = :modifiedAt, fishType = :fishType",
             ExpressionAttributeValues={
                 ":catchWeight": new_catch_weight,
+                ":fishType": fish_type,
                 ":modifiedAt": now,
             },
         )

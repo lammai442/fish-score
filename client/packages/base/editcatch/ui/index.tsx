@@ -2,12 +2,14 @@ import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { CatchForm } from '../../catchform/ui';
 import { fetchEditCatch } from '../../../core/api/apicatches/data';
+import type { FishType } from '@fishScore/fishcatchdata';
 
 type Props = {
 	close: () => void;
 	catchId: string;
 	initialWeight: number;
 	eventId: string;
+	currentFishType: FishType;
 };
 
 export const EditCatch = ({
@@ -15,9 +17,15 @@ export const EditCatch = ({
 	catchId,
 	initialWeight,
 	eventId,
+	currentFishType,
 }: Props) => {
-	const handleEditCatch = async (weight: number) => {
-		const response = await fetchEditCatch(catchId, weight, eventId);
+	const handleEditCatch = async (weight: number, fishType: FishType) => {
+		const response = await fetchEditCatch(
+			catchId,
+			weight,
+			eventId,
+			fishType,
+		);
 
 		if (response.status) {
 			showNotification({
@@ -45,13 +53,13 @@ export const EditCatch = ({
 		<>
 			<CatchForm
 				variant='editCatch'
-				title='Make change to your catch'
 				submitLabel='Edit catch'
 				loadingText='Adding new catch'
 				initialValue={String(initialWeight)}
 				onSubmit={handleEditCatch}
 				catchId={catchId}
-				eventId={eventId}></CatchForm>
+				eventId={eventId}
+				currentFishType={currentFishType}></CatchForm>
 		</>
 	);
 };
