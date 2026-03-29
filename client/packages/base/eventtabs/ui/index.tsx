@@ -126,8 +126,7 @@ export const EventTabs = ({
 									key={fishCatch.catchId}
 									fishCatch={fishCatch}
 									eventStatus={currentEvent?.status}
-									userId={user?.userId}
-									variant='activityCatch'></FishCatchCard>
+									userId={user?.userId}></FishCatchCard>
 							);
 						})
 					) : (

@@ -80,7 +80,8 @@ export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {
 						<Text span>Team: </Text>
 						{fishCatch.teamName}
 					</Text>
-					<Flex gap={'xs'}>
+					{/* Datum */}
+					<Flex gap={'0.2rem'}>
 						<IconCalendarWeekFilled></IconCalendarWeekFilled>
 						<Text c={'var(--text-muted)'}>
 							{catchDate}{' '}
@@ -123,15 +124,12 @@ export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {
 						h={35}
 						fit='contain'></Image>
 				</Flex>
-				{/* Datum */}
-				<Flex>
-					<Button
-						w='100%'
-						bg={'var(--color-black)'}
-						onClick={() => handleNavigation(fishCatch.eventId)}>
-						To event
-					</Button>
-				</Flex>
+				<Button
+					w='100%'
+					bg={'var(--color-black)'}
+					onClick={() => handleNavigation(fishCatch.eventId)}>
+					To event
+				</Button>
 			</Stack>
 		</>
 	);
