@@ -3,7 +3,7 @@ import { Loading } from '@fishScore/loading';
 import { Button, Flex, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCancel, IconCheck, IconTrash } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchDeleteCatch } from '../../../core/api/apicatches/data';
 import { showNotification } from '@mantine/notifications';
 import { FishType } from '@fishScore/fishcatchdata';
@@ -12,10 +12,11 @@ type Props = {
 	initialValue?: string;
 	submitLabel: string;
 	loadingText: string;
-	onSubmit: (weight: number) => Promise<void>;
+	onSubmit: (weight: number, fishType: FishType) => Promise<void>;
 	catchId?: string;
 	eventId?: string;
 	variant?: string;
+	currentFishType?: FishType;
 };
 
 export const CatchForm = ({
@@ -26,6 +27,7 @@ export const CatchForm = ({
 	catchId,
 	eventId,
 	variant,
+	currentFishType,
 }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
 	const [errorSelected, setErrorSelected] = useState<string>('');
@@ -33,6 +35,12 @@ export const CatchForm = ({
 	const [loading, setLoading] = useState<boolean>(false);
 	const [opened, { open, close }] = useDisclosure();
 	const [fishType, setFishType] = useState<FishType | null>(null);
+
+	useEffect(() => {
+		if (currentFishType) {
+			setFishType(currentFishType);
+		}
+	}, []);
 
 	const handleAddCatch = async () => {
 		setErrorInput('');
@@ -122,13 +130,12 @@ export const CatchForm = ({
 						{ value: 'perch', label: 'Perch' },
 						{ value: 'salmon', label: 'Salmon' },
 						{ value: 'zander', label: 'Zander' },
+						{ value: 'rainbow', label: 'Rainbow trout' },
 						{ value: 'trout', label: 'Trout' },
 						{ value: 'char', label: 'Char' },
-						{ value: 'bream', label: 'Bream' },
-						{ value: 'roach', label: 'Roach' },
 					]}
 					value={fishType}
-					onChange={setFishType}
+					onChange={(value) => setFishType(value as FishType | null)}
 					comboboxProps={{
 						withinPortal: false,
 					}}

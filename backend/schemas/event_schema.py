@@ -29,8 +29,20 @@ class UpdateEventStatusSchema(Schema):
     )
 
 
+ALLOWED_FISH_TYPES = [
+    "pike",
+    "perch",
+    "salmon",
+    "zander",
+    "trout",
+    "char",
+    "rainbow",
+]
+
+
 class CatchSchema(Schema):
     catchWeight = fields.Float(required=True, validate=validate.Range(min=0.1))
+    fishType = fields.String(required=True, validate=validate.OneOf(ALLOWED_FISH_TYPES))
 
 
 class TeamSchema(Schema):

@@ -71,7 +71,7 @@ def login_user():
         secure=True,
         samesite="None",
         path="/",
-        max_age=60 * 60 * 3,
+        max_age=60 * 60 * 10,
     )
 
     response.set_cookie(
@@ -114,7 +114,7 @@ def refresh():
         secure=True,
         samesite="None",
         path="/",
-        max_age=60 * 60 * 3,
+        max_age=60 * 60 * 10,
     )
 
     return response

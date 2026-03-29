@@ -2,7 +2,9 @@ import {
 	ActionIcon,
 	Badge,
 	Button,
+	Divider,
 	Flex,
+	Image,
 	Stack,
 	Text,
 	Title,
@@ -15,6 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { EditCatch } from '@fishScore/editcatch';
 import { useNavigate } from 'react-router-dom';
 import type { FishCatch } from '@fishScore/fishcatchdata';
+import { capitilizeFirstLetter } from '@fishScore/helpfunctions';
 
 type Props = {
 	fishCatch: FishCatch;
@@ -39,7 +42,8 @@ export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {
 					close={close}
 					catchId={fishCatch.catchId}
 					initialWeight={Number(fishCatch.catchWeight)}
-					eventId={fishCatch.eventId}></EditCatch>
+					eventId={fishCatch.eventId}
+					currentFishType={fishCatch.fishType}></EditCatch>
 			</BaseModal>
 			<Stack
 				miw={'350px'}
@@ -76,36 +80,53 @@ export const ProfileCatchCard = ({ fishCatch, userId }: Props) => {
 						<Text span>Team: </Text>
 						{fishCatch.teamName}
 					</Text>
+					<Flex gap={'xs'}>
+						<IconCalendarWeekFilled></IconCalendarWeekFilled>
+						<Text c={'var(--text-muted)'}>
+							{catchDate}{' '}
+							{fishCatch.modifiedAt && (
+								<Text
+									ml={'xs'}
+									bdrs={'sm'}
+									p={'0.2rem 0.3rem'}
+									fw={500}
+									span
+									bg={'var(--bg-muted)'}
+									c={'var(--text-primary)'}>
+									Edited
+								</Text>
+							)}
+						</Text>
+					</Flex>
 				</Stack>
-				<Badge
-					p={'0.8rem'}
-					bg={'var(--bg-primary)'}
-					c={'var(--text-inverse)'}
-					bdrs={'sm'}>
-					{fishCatch.catchWeight} kg
-				</Badge>
-				{/* Datum */}
-				<Flex gap={'xs'}>
-					<IconCalendarWeekFilled></IconCalendarWeekFilled>
-					<Text c={'var(--text-muted)'}>
-						{catchDate}{' '}
-						{fishCatch.modifiedAt && (
-							<Text
-								ml={'xs'}
-								bdrs={'sm'}
-								p={'0.2rem 0.3rem'}
-								fw={500}
-								span
-								bg={'var(--bg-muted)'}
-								c={'var(--text-primary)'}>
-								Edited
-							</Text>
-						)}
-					</Text>
+				<Flex align={'center'} gap={'sm'}>
+					<Stack align='center' gap={'0.2rem'}>
+						<Text fw={700}>
+							{capitilizeFirstLetter(fishCatch.fishType)}
+						</Text>
+						<Badge
+							p={'0.8rem'}
+							bg={'var(--bg-primary)'}
+							c={'var(--text-inverse)'}
+							bdrs={'sm'}
+							size='lg'>
+							{fishCatch.catchWeight} kg
+						</Badge>
+					</Stack>
+					<Divider
+						orientation='vertical'
+						size={'xs'}
+						color={'var(--color-black)'}></Divider>
+					<Image
+						src={`/fishtypes/${fishCatch.fishType}.png`}
+						w={90}
+						h={35}
+						fit='contain'></Image>
 				</Flex>
+				{/* Datum */}
 				<Flex>
 					<Button
-						w='fit-content'
+						w='100%'
 						bg={'var(--color-black)'}
 						onClick={() => handleNavigation(fishCatch.eventId)}>
 						To event

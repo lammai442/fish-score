@@ -1,4 +1,13 @@
-import { ActionIcon, Flex, Stack, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Divider,
+	Flex,
+	Image,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import { IconClockHour5, IconFish, IconPencil } from '@tabler/icons-react';
 import { dateFormatter } from '@fishScore/formatters';
 import { BaseModal } from '@fishScore/basemodal';
@@ -37,7 +46,8 @@ export const FishCatchCard = ({
 					close={close}
 					catchId={fishCatch.catchId}
 					initialWeight={Number(fishCatch.catchWeight)}
-					eventId={fishCatch.eventId}></EditCatch>
+					eventId={fishCatch.eventId}
+					currentFishType={fishCatch.fishType}></EditCatch>
 			</BaseModal>
 			<Stack
 				bd={
@@ -114,12 +124,30 @@ export const FishCatchCard = ({
 								{capitilizeFirstLetter(fishCatch.eventStatus)}
 							</Text>
 						)}
-						<Text>
-							Caught{' '}
-							<Text span fw={600}>
-								{fishCatch.catchWeight} kg
-							</Text>
-						</Text>
+						<Flex align={'center'} gap={'sm'}>
+							<Stack align='center' gap={'0.2rem'}>
+								<Text fw={700}>
+									{capitilizeFirstLetter(fishCatch.fishType)}
+								</Text>
+								<Badge
+									p={'0.8rem'}
+									bg={'var(--bg-primary)'}
+									c={'var(--text-inverse)'}
+									bdrs={'sm'}
+									size='lg'>
+									{fishCatch.catchWeight} kg
+								</Badge>
+							</Stack>
+							<Divider
+								orientation='vertical'
+								size={'xs'}
+								color={'var(--color-black)'}></Divider>
+							<Image
+								src={`/fishtypes/${fishCatch.fishType}.png`}
+								w={90}
+								h={35}
+								fit='contain'></Image>
+						</Flex>
 						{/* Datum */}
 						<Flex gap={'.2rem'}>
 							<IconClockHour5></IconClockHour5>

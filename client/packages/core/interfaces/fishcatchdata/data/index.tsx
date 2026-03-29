@@ -10,6 +10,7 @@ export interface FishCatch {
 	eventId: string;
 	eventStatus?: string;
 	eventName?: string;
+	fishType: FishType;
 }
 
 export type FishType =
@@ -19,5 +20,4 @@ export type FishType =
 	| 'salmon'
 	| 'trout'
 	| 'char'
-	| 'bream'
-	| 'roach';
+	| 'rainbow';

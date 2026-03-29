@@ -46,11 +46,12 @@ export const fetchEditCatch = async (
 	catchId: string,
 	catchWeight: number,
 	eventId: string | undefined,
+	fishType: FishType,
 ) => {
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/${eventId}/catch/edit-catch/${catchId}`,
-			{ catchWeight: catchWeight },
+			{ catchWeight: catchWeight, fishType: fishType },
 			{
 				withCredentials: true,
 			},
