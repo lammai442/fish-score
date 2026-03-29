@@ -8,6 +8,7 @@ import { BaseModal } from '@fishScore/basemodal';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import type { FishEvent } from '@fishScore/eventsdata';
 import type { Team } from '@fishScore/teamsdata';
+import { FishType } from '@fishScore/fishcatchdata';
 
 type Props = {
 	currentEvent: FishEvent | null;
@@ -18,7 +19,7 @@ export const AddCatch = ({ currentEvent, usersTeam }: Props) => {
 	const [addCatchOpened, addCatchHandlers] = useDisclosure(false);
 	const { user } = useUserStore();
 
-	const handleAddCatch = async (weight: number) => {
+	const handleAddCatch = async (weight: number, fishType: FishType) => {
 		if (!user?.userId) {
 			throw new Error('You must be logged in to add a catch');
 		}
@@ -26,6 +27,7 @@ export const AddCatch = ({ currentEvent, usersTeam }: Props) => {
 			currentEvent?.eventId,
 			weight,
 			usersTeam?.teamId,
+			fishType,
 		);
 
 		if (response.success) {
@@ -56,7 +58,6 @@ export const AddCatch = ({ currentEvent, usersTeam }: Props) => {
 				opened={addCatchOpened}
 				close={addCatchHandlers.close}>
 				<CatchForm
-					title='Add a new fish catch'
 					submitLabel='Add catch'
 					loadingText='Adding new catch'
 					onSubmit={handleAddCatch}></CatchForm>

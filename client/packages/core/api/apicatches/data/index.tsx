@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@fishScore/useAuthStore';
 import { useUserStore } from '@fishScore/useUserStore';
+import type { FishType } from '@fishScore/fishcatchdata';
 
 const apiUrl: string = import.meta.env.VITE_API_URL;
 
@@ -9,11 +10,12 @@ export const fetchAddCatch = async (
 	eventId: string | undefined,
 	catchWeight: number,
 	teamId: string | undefined,
+	fishType: FishType,
 ) => {
 	try {
 		const response = await axios.post(
 			`${apiUrl}/events/${eventId}/teams/${teamId}/add-catch`,
-			{ catchWeight: catchWeight },
+			{ catchWeight: catchWeight, fishType: fishType },
 			{
 				withCredentials: true,
 			},

@@ -11,3 +11,13 @@ export interface FishCatch {
 	eventStatus?: string;
 	eventName?: string;
 }
+
+export type FishType =
+	| 'pike'
+	| 'perch'
+	| 'zander'
+	| 'salmon'
+	| 'trout'
+	| 'char'
+	| 'bream'
+	| 'roach';

@@ -1,16 +1,16 @@
 import { BaseModal } from '@fishScore/basemodal';
 import { Loading } from '@fishScore/loading';
-import { Button, Flex, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Flex, Select, Stack, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCancel, IconCheck, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import { fetchDeleteCatch } from '../../../core/api/apicatches/data';
 import { showNotification } from '@mantine/notifications';
+import { FishType } from '@fishScore/fishcatchdata';
 
 type Props = {
 	initialValue?: string;
 	submitLabel: string;
-	title: string;
 	loadingText: string;
 	onSubmit: (weight: number) => Promise<void>;
 	catchId?: string;
@@ -21,7 +21,6 @@ type Props = {
 export const CatchForm = ({
 	initialValue = '',
 	submitLabel,
-	title,
 	loadingText,
 	onSubmit,
 	catchId,
@@ -29,12 +28,20 @@ export const CatchForm = ({
 	variant,
 }: Props) => {
 	const [errorInput, setErrorInput] = useState<string>('');
+	const [errorSelected, setErrorSelected] = useState<string>('');
 	const [inputValue, setInputValue] = useState(initialValue);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [opened, { open, close }] = useDisclosure();
+	const [fishType, setFishType] = useState<FishType | null>(null);
 
 	const handleAddCatch = async () => {
 		setErrorInput('');
+		setErrorSelected('');
+
+		if (!fishType) {
+			setErrorSelected('You need to choose a fishtype');
+			return;
+		}
 
 		const numberValue = Number(inputValue);
 
@@ -51,7 +58,7 @@ export const CatchForm = ({
 
 		try {
 			setLoading(true);
-			await onSubmit(roundedDownCatchWeight);
+			await onSubmit(roundedDownCatchWeight, fishType);
 		} finally {
 			setLoading(false);
 		}
@@ -108,8 +115,25 @@ export const CatchForm = ({
 				</Stack>
 			</BaseModal>
 			<Stack>
-				<Text>{title}</Text>
-
+				<Select
+					label='Choose fish type'
+					data={[
+						{ value: 'pike', label: 'Pike' },
+						{ value: 'perch', label: 'Perch' },
+						{ value: 'salmon', label: 'Salmon' },
+						{ value: 'zander', label: 'Zander' },
+						{ value: 'trout', label: 'Trout' },
+						{ value: 'char', label: 'Char' },
+						{ value: 'bream', label: 'Bream' },
+						{ value: 'roach', label: 'Roach' },
+					]}
+					value={fishType}
+					onChange={setFishType}
+					comboboxProps={{
+						withinPortal: false,
+					}}
+					error={errorSelected}
+				/>
 				<TextInput
 					inputMode='decimal'
 					type='number'
