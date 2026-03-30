@@ -92,9 +92,20 @@ def handler(event, context):
         if not event_id:
             continue
 
-        entity_type = changed_item.get("entityType", "EVENT")
-        action = record.get("eventName", "MODIFY")
+        def get_entity_type_from_sk(sk):
+            if sk == "EVENT":
+                return "EVENT"
+            if str(sk).startswith("TEAM#"):
+                return "TEAM"
+            if str(sk).startswith("CATCH#"):
+                return "CATCH"
+            if str(sk).startswith("MESSAGE#"):
+                return "MESSAGE"
+            return "EVENT"
+
         sk = changed_item.get("SK")
+        entity_type = get_entity_type_from_sk(sk)
+        action = record.get("eventName", "MODIFY")
 
         # Försök dedupa bättre än bara eventId
         dedupe_key = f"{event_id}:{entity_type}:{action}:{changed_item.get('SK', '')}"
