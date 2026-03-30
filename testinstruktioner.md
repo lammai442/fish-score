@@ -16,10 +16,12 @@ http://fischscore.s3-website.eu-north-1.amazonaws.com/
 - Appen använder cookies som är giltiga i 10 timmar per aktiv session. Därför behöver du använda två separata webbläsare för att testa med två olika konton.
 
 Upprättade konton:
-rikard@gmail.com
-erika@gmail.com
-gunde@gmail.com
-zlatan@gmail.com
+- rikard@gmail.com
+- erika@gmail.com
+- gunde@gmail.com
+- zlatan@gmail.com
+
+Lösenordet för samtliga: mamma1
 
 **Följ stegen nedan noggrant för att testa applikationen.**
 
