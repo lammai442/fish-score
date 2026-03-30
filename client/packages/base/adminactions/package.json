@@ -1,0 +1,4 @@
+{
+	"name": "@fishScore/adminactions",
+	"main": "./index.ts"
+}

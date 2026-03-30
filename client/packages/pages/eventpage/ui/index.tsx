@@ -5,20 +5,10 @@ import {
 	generateLeaderboard,
 } from '@fishScore/helpfunctions';
 import { PageHeader } from '@fishScore/pageheader';
-import {
-	Button,
-	Divider,
-	Flex,
-	Stack,
-	Text,
-	Title,
-	Tooltip,
-} from '@mantine/core';
+import { Divider, Flex, Stack, Text, Title } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
-import { BaseModal } from '@fishScore/basemodal';
-import { CreateItemModal } from '@fishScore/createitemmodal';
 import { useDisclosure } from '@mantine/hooks';
 import { useUserStore } from '@fishScore/useUserStore';
 import { fetchEventView } from '@fishScore/apievents';
@@ -27,24 +17,25 @@ import type { LeaderboardTeam, Team } from '@fishScore/teamsdata';
 import type { FishCatch } from '@fishScore/fishcatchdata';
 import { AddCatch } from '@fishScore/addcatch';
 import { EventTabs } from '@fishScore/eventtabs';
-import { ResultEvent } from '../../../base/resultevent/ui';
-import { IconTrophy, IconUsers } from '@tabler/icons-react';
+import { IconUsers } from '@tabler/icons-react';
 import { useLocalStorage } from '@mantine/hooks';
 import { EventWinner } from '../../../base/eventwinner/ui';
 import { SubscribeBtn } from '@fishScore/subscribebtn';
+import { ResultEvent } from '../../../base/resultevent/ui';
+import { AdminActions } from '../../../base/adminactions/ui';
 
 export const EventPage = () => {
 	const { eventId } = useParams();
 	const { events } = useWebSocketStore();
 	const [currentEvent, setCurrentEvent] = useState<FishEvent | null>(null);
 	const [mode, setMode] = useState<string | null>('leaderboard');
-	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
-	const [endEventOpened, endEventHandlers] = useDisclosure(false);
 	const [leaderboard, setLeaderboard] = useState<LeaderboardTeam[]>([]);
 	const [activity, setActivity] = useState<FishCatch[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [loadingText, setLoadingText] = useState<string>('Loading event');
 	const [shownWinnersOpened, showWinnersHandlers] = useDisclosure(false);
+	const [endEventOpened, endEventHandlers] = useDisclosure(false);
+
 	const [shownWinners, setShownWinners] = useLocalStorage<string[]>({
 		key: 'winner-popup-events',
 		defaultValue: [],
@@ -159,84 +150,36 @@ export const EventPage = () => {
 					</Flex>
 				)}
 
-			<Flex align={'center'} justify={'space-between'}>
-				{/* Admin actions*/}
-				<Flex m='1rem 0' gap={'sm'}>
-					{/* Skapa nytt lag */}
-					<BaseModal
-						title='Create team'
-						opened={createTeamOpened}
-						close={createTeamHandlers.close}>
-						<CreateItemModal
-							close={createTeamHandlers.close}
-							type='team'></CreateItemModal>
-					</BaseModal>
-
-					<Tooltip
-						label={
-							currentEvent?.status === 'completed'
-								? 'Event has ended'
-								: 'Only the event admin can create new teams'
-						}
-						disabled={
-							currentEvent?.status !== 'completed' &&
-							eventCreatedByUser
-						}>
-						<Button
-							color='var(--color-black)'
-							size='sm'
-							radius='md'
-							disabled={
-								!eventCreatedByUser ||
-								currentEvent?.status === 'completed'
-							}
-							onClick={createTeamHandlers.open}>
-							+ Create team
-						</Button>
-					</Tooltip>
-
-					{/* Avsluta tävling*/}
-					{endEventOpened && (
-						<ResultEvent
-							eventStatus={currentEvent?.status}
-							endEventOpened={endEventOpened}
-							endEventHandlers={endEventHandlers}
-							setLoading={setLoading}
-							eventId={currentEvent?.eventId}
-							leaderboard={leaderboard}
-							setWinner={setWinner}
-							showWinnersHandlers={showWinnersHandlers}
-							setShownWinners={setShownWinners}></ResultEvent>
-					)}
-
-					{eventCreatedByUser &&
-						currentEvent?.teams &&
-						currentEvent?.teams?.length > 0 && (
-							<Button
-								radius='md'
-								bg={
-									currentEvent?.status === 'ongoing'
-										? 'var(--color-gold)'
-										: 'var(--bg-primary)'
-								}
-								c={
-									currentEvent?.status === 'ongoing'
-										? 'var(--text-primary)'
-										: 'var(--text-inverse)'
-								}
-								onClick={endEventHandlers.open}>
-								<IconTrophy></IconTrophy>{' '}
-								{currentEvent?.status === 'ongoing'
-									? 'End event'
-									: 'Open event'}
-							</Button>
-						)}
-				</Flex>
+			<Flex
+				align={'center'}
+				justify={eventCreatedByUser ? 'space-between' : 'flex-end'}
+				m={'0.8rem 0'}>
+				{/* Admin actions */}
+				{eventCreatedByUser && currentEvent && (
+					<AdminActions
+						currentEvent={currentEvent}
+						eventCreatedByUser={eventCreatedByUser}
+						setLoading={setLoading}
+						endEventHandlers={endEventHandlers}></AdminActions>
+				)}
 				<SubscribeBtn
 					userId={user?.userId}
 					currentEvent={currentEvent}></SubscribeBtn>
 			</Flex>
 
+			{/* Avsluta tävling*/}
+			{endEventOpened && (
+				<ResultEvent
+					eventStatus={currentEvent?.status}
+					endEventOpened={endEventOpened}
+					endEventHandlers={endEventHandlers}
+					setLoading={setLoading}
+					eventId={currentEvent?.eventId}
+					leaderboard={leaderboard}
+					setWinner={setWinner}
+					showWinnersHandlers={showWinnersHandlers}
+					setShownWinners={setShownWinners}></ResultEvent>
+			)}
 			{/* Popup vid end event */}
 			{shownWinnersOpened && (
 				<EventWinner
