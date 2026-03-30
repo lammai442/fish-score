@@ -5,6 +5,11 @@ import type { LoginData, RegisterData } from '@fishScore/authsdata';
 export const useAuthFormLogic = () => {
 	const [mode, setMode] = useState('login');
 
+	const emojiRegex = /[\p{Extended_Pictographic}]/u;
+
+	const noEmoji = (value: string) =>
+		emojiRegex.test(value) ? 'Emojis are not allowed' : null;
+
 	const form = useForm<LoginData | RegisterData>({
 		initialValues: {
 			email: 'toa@kalle.se',
@@ -14,21 +19,41 @@ export const useAuthFormLogic = () => {
 		},
 
 		validate: {
-			email: (value: string) =>
-				value.includes('@') ? null : 'Invalid email address',
+			email: (value: string) => {
+				return (
+					noEmoji(value) ??
+					(!value.includes('@') ? 'Invalid email address' : null)
+				);
+			},
 
-			password: (value: string) =>
-				value.length >= 6 ? null : 'Minimum of 6 charaters is required',
+			password: (value: string) => {
+				return (
+					noEmoji(value) ??
+					(value.length < 6
+						? 'Minimum of 6 characters is required'
+						: null)
+				);
+			},
 
-			firstName: (value: string) =>
-				mode === 'register' && value.length === 0
-					? 'First name is required'
-					: null,
+			firstName: (value: string) => {
+				if (mode !== 'register') return null;
 
-			lastName: (value: string) =>
-				mode === 'register' && value.length === 0
-					? 'Last name is required'
-					: null,
+				return (
+					noEmoji(value) ??
+					(value.trim().length === 0
+						? 'First name is required'
+						: null)
+				);
+			},
+
+			lastName: (value: string) => {
+				if (mode !== 'register') return null;
+
+				return (
+					noEmoji(value) ??
+					(value.trim().length === 0 ? 'Last name is required' : null)
+				);
+			},
 		},
 	});
 

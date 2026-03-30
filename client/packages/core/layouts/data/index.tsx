@@ -27,7 +27,12 @@ export const AppLayout = () => {
 	useEffect(() => {
 		// Hämtar inloggad användare om det finns giltig token
 		const initAuth = async () => {
+			if (authStatus === 'authenticated') {
+				return;
+			}
+
 			const response = await fetchMe();
+			console.log(response);
 			if (response.success) {
 				setUser(response.data.user);
 				setAuthStatus('authenticated');
@@ -52,7 +57,7 @@ export const AppLayout = () => {
 
 		initAuth();
 		getAllEvents();
-	}, []);
+	}, [authStatus, clearUser, navigate, setAuthStatus, setEvents, setUser]);
 
 	useWebSocketHook();
 
