@@ -16,6 +16,7 @@ type Props = {
 	showWinnersHandlers: UseDisclosureHandlers;
 	setWinner: React.Dispatch<React.SetStateAction<LeaderboardTeam | null>>;
 	setShownWinners: React.Dispatch<React.SetStateAction<string[]>>;
+	editEventHandlers: UseDisclosureHandlers;
 };
 
 export const ResultEvent = ({
@@ -28,6 +29,7 @@ export const ResultEvent = ({
 	showWinnersHandlers,
 	setWinner,
 	setShownWinners,
+	editEventHandlers,
 }: Props) => {
 	const handleEndEvent = async () => {
 		try {
@@ -46,6 +48,8 @@ export const ResultEvent = ({
 				newEventStatus,
 			);
 			if (response.success) {
+				editEventHandlers.close();
+
 				showNotification({
 					title:
 						response.data.eventStatus === 'completed'

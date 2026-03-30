@@ -346,3 +346,34 @@ export const fetchUnsubscribeToEvent = async (eventId: string | undefined) => {
 		};
 	}
 };
+
+// Unsubscribe to event
+export const fetchDeleteEvent = async (eventId: string) => {
+	try {
+		const response = await axios.delete(
+			`${apiUrl}/events/${eventId}/delete`,
+			{
+				withCredentials: true,
+			},
+		);
+		return {
+			success: true,
+			data: response.data,
+			status: response.status,
+		};
+	} catch (error: any) {
+		const status = error.response?.status || 500;
+
+		// Sätter authstatus till 'unauthenticated' så att loginmodal öppnas
+		if (status === 401) {
+			useAuthStore.getState().setAuthStatus('unauthenticated');
+			useUserStore.getState().clearUser();
+		}
+
+		return {
+			success: false,
+			data: error.response?.data || { message: error.message },
+			status,
+		};
+	}
+};

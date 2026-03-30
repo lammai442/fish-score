@@ -14,6 +14,7 @@ from services.events import (
     edit_event_status_in_db,
     subscribe_to_event_in_db,
     unsubscribe_from_event_in_db,
+    delete_event_in_db,
 )
 
 # Skapa blueprint instans
@@ -93,6 +94,9 @@ def edit_event_status(event_id):
     event_status = data["eventStatus"]
     user_id = g.user["sub"]
 
+    if not user_id:
+        return jsonify({"success": False, "message": "Could not find user"}), 401
+
     response = edit_event_status_in_db(event_id, event_status, user_id)
 
     if response["success"]:
@@ -126,9 +130,26 @@ def unsubscribe_from_event(event_id):
 
     user_id = g.user["sub"]
     if not user_id:
-        return jsonify({"success": False, "message": "Could not find user"}), 404
+        return jsonify({"success": False, "message": "Could not find user"}), 401
 
     response = unsubscribe_from_event_in_db(event_id, user_id)
+
+    if response["success"]:
+        return jsonify({"success": True, "message": response["message"]}), 200
+    else:
+        return jsonify(response), 409
+
+
+# Ta bort subscription till event
+@event_bp.route("/events/<string:event_id>/delete", methods=["DELETE"])
+@require_auth
+def delete_event(event_id):
+
+    user_id = g.user["sub"]
+    if not user_id:
+        return jsonify({"success": False, "message": "Could not find user"}), 401
+
+    response = delete_event_in_db(event_id, user_id)
 
     if response["success"]:
         return jsonify({"success": True, "message": response["message"]}), 200
