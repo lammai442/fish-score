@@ -1,6 +1,6 @@
 import { fetchEditEventStatus } from '@fishScore/apievents';
 import { BaseModal } from '@fishScore/basemodal';
-import { Button, Stack, Text } from '@mantine/core';
+import { Button, Flex, Stack, Text } from '@mantine/core';
 import type { UseDisclosureHandlers } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
@@ -90,12 +90,20 @@ export const ResultEvent = ({
 							? 'Do you want to end this event?'
 							: 'Do you want to open this event?'}
 					</Text>
-					<Button
-						bg={'var(--color-black)'}
-						c={'var(--text-inverse)'}
-						onClick={handleEndEvent}>
-						Yes
-					</Button>
+					<Flex gap={'xs'}>
+						<Button
+							bg={'var(--btn-primary-bg)'}
+							c={'var(--text-inverse)'}
+							onClick={endEventHandlers.close}>
+							No
+						</Button>
+						<Button
+							bg={'var(--btn-gold-bg)'}
+							c={'var(--text-primary)'}
+							onClick={handleEndEvent}>
+							Yes
+						</Button>
+					</Flex>
 				</Stack>
 			</BaseModal>
 		</>

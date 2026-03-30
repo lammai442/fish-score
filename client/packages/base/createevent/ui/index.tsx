@@ -16,11 +16,10 @@ export const CreateEvent = ({ close }: Props) => {
 	const { user } = useUserStore();
 
 	const handleCreateEvent = async () => {
-		const emojiRegex = /[\p{Extended_Pictographic}]/u;
-
 		// Rensa tidigare fel
 		setErrorInput('');
 
+		const emojiRegex = /[\p{Extended_Pictographic}]/u;
 		const value = inputValue.trim();
 
 		if (value.length === 0) {

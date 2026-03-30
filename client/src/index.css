@@ -47,6 +47,7 @@
 	--btn-primary-bg: var(--color-black);
 	--btn-secondary-bg: var(--color-primary);
 	--btn-danger-bg: var(--color-danger);
+	--btn-gold-bg: var(--color-gold);
 
 	/* Text */
 	--text-primary: var(--color-black);
