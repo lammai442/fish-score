@@ -22,12 +22,12 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 	isConnected: false,
 	userFromWs: null,
 	events: [],
-	// Stores the WebSocket when it connects.
+	// Lagrar websockets när den är connected
 	setWebSocket: (websocket) => {
 		set({ ws: websocket, isConnected: true });
 	},
 
-	// Updates the variable that's used in Frontend
+	// Uppdaterar variabeln userFromWs
 	updateUser: (updatedUser: User): void => {
 		set({ userFromWs: updatedUser });
 	},

@@ -90,14 +90,7 @@ export const ProfileOverview = ({}: Props) => {
 
 	return (
 		<>
-			<Stack
-				align='center'
-				style={
-					{
-						// width: '100vw',
-						// marginLeft: 'calc(50% - 50vw)',
-					}
-				}>
+			<Stack align='center'>
 				<Stack
 					w={'100%'}
 					p={'1.6rem 0 2.8rem 0'}
