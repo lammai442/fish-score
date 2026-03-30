@@ -3,6 +3,7 @@ import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { useUserStore } from '@fishScore/useUserStore';
 import { useUpdateStore } from '@fishScore/useupdatestore';
 import type { User } from '@fishScore/usersdata';
+import { useNavigate } from 'react-router-dom';
 
 const webSocketUrl: string = import.meta.env.VITE_WEBSOCKET_URL;
 
@@ -13,9 +14,12 @@ export const useWebSocketHook = () => {
 		setConnectionStatus,
 		updateUser,
 		closeConnection,
+		removeEvent,
+		updateEvent,
 	} = useWebSocketStore();
 	const { user } = useUserStore();
 	const { addUpdate } = useUpdateStore();
+	const navigate = useNavigate();
 
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
 		null,
@@ -59,10 +63,17 @@ export const useWebSocketHook = () => {
 					}
 
 					// Uppdatera frontend om det är en eventUpdate
-					if (message.type === 'eventUpdate' && message.data) {
-						console.log('Ny event-uppdatering:', message.data);
-						const { updateEvent } = useWebSocketStore.getState();
-						updateEvent(message.data);
+					if (message.type === 'eventUpdate') {
+						if (
+							message.entityType === 'EVENT' &&
+							message.action === 'REMOVE'
+						) {
+							removeEvent(message.eventId);
+							navigate('/', { replace: true });
+						} else if (message.data) {
+							console.log('Ny event-uppdatering:', message.data);
+							updateEvent(message.data);
+						}
 					}
 
 					const currentUser = useUserStore.getState().user;
@@ -70,7 +81,7 @@ export const useWebSocketHook = () => {
 						return;
 					}
 
-					if (message.update_kind === 'subscribers') {
+					if (message.updateKind === 'subscribers') {
 						return;
 					}
 
@@ -131,8 +142,10 @@ export const useWebSocketHook = () => {
 						updateId = message.entity.eventId;
 						type = 'event';
 					}
-
+					console.log('updateId, type: ', updateId, type);
 					if (!updateId || !type) return;
+
+					console.log('här');
 
 					addUpdate(currentUser.userId, {
 						updateId,

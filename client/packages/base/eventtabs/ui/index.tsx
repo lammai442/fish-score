@@ -41,6 +41,7 @@ export const EventTabs = ({
 	setMode,
 }: Props) => {
 	const [message, setMessage] = useState<string>('');
+	const maxChars = 200;
 
 	const handleSendMsg = async () => {
 		try {
@@ -48,7 +49,7 @@ export const EventTabs = ({
 
 			const response = await fetchAddMessage(
 				currentEvent?.eventId,
-				message,
+				message.trim(),
 			);
 			if (response.success) {
 				setMessage('');
@@ -142,20 +143,26 @@ export const EventTabs = ({
 			<Tabs.Panel value='messages' pt='md'>
 				<Stack>
 					<Flex gap={'sm'}>
-						<Textarea
-							placeholder='New message'
-							autosize
-							maxRows={4}
-							flex={9}
-							value={message}
-							onChange={(event) =>
-								setMessage(event.currentTarget.value)
-							}
-							styles={{
-								input: {
-									'--input-bd-focus': 'var(--color-black)',
-								},
-							}}></Textarea>
+						<Stack flex={9} gap={0}>
+							<Textarea
+								placeholder='New message'
+								autosize
+								maxRows={4}
+								value={message}
+								onChange={(event) =>
+									setMessage(event.currentTarget.value)
+								}
+								maxLength={maxChars}
+								styles={{
+									input: {
+										'--input-bd-focus':
+											'var(--color-black)',
+									},
+								}}></Textarea>
+							<Text ta='right' fz='sm' c='var(--text-muted)'>
+								{message.length}/{maxChars}
+							</Text>
+						</Stack>
 						<Button
 							flex={1}
 							bg={

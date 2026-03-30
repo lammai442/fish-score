@@ -59,6 +59,9 @@ export const CatchForm = ({
 		} else if (numberValue <= 0) {
 			setErrorInput('Weight must be greater than 0');
 			return;
+		} else if (numberValue >= 100) {
+			setErrorInput('Weight must be less than 100 kg');
+			return;
 		}
 
 		// Avrundar till en decimal

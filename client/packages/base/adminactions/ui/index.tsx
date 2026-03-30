@@ -7,8 +7,9 @@ import {
 	IconTrash,
 	IconTrophy,
 } from '@tabler/icons-react';
-import { useDisclosure, UseDisclosureHandlers } from '@mantine/hooks';
-import { FishEvent } from '@fishScore/eventsdata';
+import type { UseDisclosureHandlers } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
+import type { FishEvent } from '@fishScore/eventsdata';
 import { useState } from 'react';
 import { validateInput } from './validateinput';
 import { fetchDeleteEvent, fetchUpdateEvent } from '@fishScore/apievents';
@@ -18,7 +19,6 @@ import { useNavigate } from 'react-router-dom';
 type Props = {
 	currentEvent: FishEvent;
 	eventCreatedByUser: boolean;
-	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	endEventHandlers: UseDisclosureHandlers;
 	editEventOpened: boolean;
 	editEventHandlers: UseDisclosureHandlers;
@@ -27,7 +27,6 @@ type Props = {
 export const AdminActions = ({
 	currentEvent,
 	eventCreatedByUser,
-	setLoading,
 	endEventHandlers,
 	editEventOpened,
 	editEventHandlers,
@@ -95,61 +94,69 @@ export const AdminActions = ({
 				opened={editEventOpened}
 				close={editEventHandlers.close}>
 				<Stack gap={'xs'}>
-					{currentEvent.teams && currentEvent.teams.length > 0 && (
-						<>
-							{/* Change name */}
-							<Text>Change event name</Text>
-							<Flex gap={'xs'}>
-								<TextInput
-									defaultValue={inputValue}
-									flex={'9'}
-									onChange={(event) => {
-										setInputValue(
-											event.currentTarget.value,
-										);
-										setErrorInput('');
-									}}
-									error={errorInput}></TextInput>
-								<Button
-									bg={'var(--btn-primary-bg)'}
-									onClick={handleChangeName}>
-									Change
-								</Button>
-							</Flex>
-							{/* End/Reopen event */}
-							<Text>
-								{currentEvent?.status === 'ongoing'
-									? 'Do you want to end event'
-									: 'Do you want to Open event'}
-							</Text>
-							<Button
-								w={'fit-content'}
-								p={'0.5rem'}
-								radius='md'
-								bg={
-									currentEvent.status === 'ongoing'
-										? 'var(--color-gold)'
-										: 'var(--bg-primary)'
-								}
-								c={
-									currentEvent.status === 'ongoing'
-										? 'var(--text-primary)'
-										: 'var(--text-inverse)'
-								}
-								onClick={() => {
-									endEventHandlers.open();
-								}}>
+					<>
+						{/* Change name */}
+						{currentEvent.status === 'ongoing' && (
+							<>
+								<Text>Change event name</Text>
 								<Flex gap={'xs'}>
-									<IconTrophy></IconTrophy>{' '}
+									<TextInput
+										defaultValue={inputValue}
+										flex={'9'}
+										onChange={(event) => {
+											setInputValue(
+												event.currentTarget.value,
+											);
+											setErrorInput('');
+										}}
+										error={errorInput}></TextInput>
+									<Button
+										bg={'var(--btn-primary-bg)'}
+										onClick={handleChangeName}>
+										Change
+									</Button>
+								</Flex>
+							</>
+						)}
+						{/* End/Reopen event */}
+						{currentEvent.teams &&
+							currentEvent.teams.length > 0 && (
+								<>
 									<Text>
 										{currentEvent?.status === 'ongoing'
-											? 'End event'
-											: 'Open event'}
+											? 'Do you want to end event'
+											: 'Do you want to Open event'}
 									</Text>
-								</Flex>
-							</Button>
-						</>
-					)}
+									<Button
+										w={'fit-content'}
+										p={'0.5rem'}
+										radius='md'
+										bg={
+											currentEvent.status === 'ongoing'
+												? 'var(--color-gold)'
+												: 'var(--bg-primary)'
+										}
+										c={
+											currentEvent.status === 'ongoing'
+												? 'var(--text-primary)'
+												: 'var(--text-inverse)'
+										}
+										onClick={() => {
+											endEventHandlers.open();
+										}}>
+										<Flex gap={'xs'}>
+											<IconTrophy></IconTrophy>{' '}
+											<Text>
+												{currentEvent?.status ===
+												'ongoing'
+													? 'End event'
+													: 'Open event'}
+											</Text>
+										</Flex>
+									</Button>
+								</>
+							)}
+					</>
 					<Text>Do you wish to delete event?</Text>
 					<Button
 						w={'fit-content'}

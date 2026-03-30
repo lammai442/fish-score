@@ -31,6 +31,7 @@ export const AppLayout = () => {
 			if (response.success) {
 				setUser(response.data.user);
 				setAuthStatus('authenticated');
+
 				return;
 			} else {
 				clearUser();
@@ -66,7 +67,7 @@ export const AppLayout = () => {
 			</AppShell.Header>
 			<AppShell.Main>
 				<Container size='lg' pb={'3rem'}>
-					<Box style={{ position: 'relative' }}>
+					<Box style={{ position: 'relative', overflow: 'hidden' }}>
 						{/* Sidoanimering*/}
 						<AnimatePresence initial={false} mode='wait'>
 							<motion.div

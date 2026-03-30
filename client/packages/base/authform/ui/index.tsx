@@ -19,7 +19,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@fishScore/useUserStore';
 
-export const AuthForm = () => {
+type Props = {
+	setShowSplash: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const AuthForm = ({ setShowSplash }: Props) => {
 	const { mode, setMode, form } = useAuthFormLogic();
 	const { setUser } = useUserStore();
 	const [loading, setLoading] = useState(false);
@@ -40,9 +44,15 @@ export const AuthForm = () => {
 				});
 			} else {
 				const res = await fetchMe();
+				setShowSplash(true);
+				const timer = setTimeout(() => {
+					setShowSplash(false);
+					setUser(res.data.user);
+					navigate('/');
+				}, 3380);
+
+				return () => clearTimeout(timer);
 				// Sparar inloggade användaren i store
-				setUser(res.data.user);
-				navigate('/');
 			}
 		} finally {
 			setLoading(false);
@@ -133,38 +143,23 @@ export const AuthForm = () => {
 							handleLogin(loginData);
 						}
 					})}>
-					<TextInput
-						label='Email'
-						placeholder='din@email.se'
-						{...form.getInputProps('email')}
-						styles={{
-							label: {
-								fontWeight: 700,
-							},
-						}}
-					/>
+					<TextInput label='Email' {...form.getInputProps('email')} />
 					{mode === 'register' && (
 						<>
 							<TextInput
-								label='Förnamn'
+								label='First name'
 								mt='md'
 								{...form.getInputProps('firstName')}
-								styles={{
-									label: {
-										fontWeight: 700,
-									},
-								}}
 							/>
 							<TextInput
-								label='Efternamn'
+								label='Last name'
 								mt='md'
 								{...form.getInputProps('lastName')}
 							/>
 						</>
 					)}
 					<PasswordInput
-						label='Lösenord'
-						placeholder='Ditt lösenord'
+						label='Password'
 						mt='md'
 						{...form.getInputProps('password')}
 					/>

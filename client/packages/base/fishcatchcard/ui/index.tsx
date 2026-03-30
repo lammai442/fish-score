@@ -119,7 +119,17 @@ export const FishCatchCard = ({ fishCatch, userId, eventStatus }: Props) => {
 								</Text>
 							</Flex>
 						</Stack>
+						{/* Fångstinfo */}
 						<Flex align={'center'} gap={'sm'}>
+							<Image
+								src={`/fishtypes/${fishCatch.fishType}.png`}
+								w={90}
+								h={35}
+								fit='contain'></Image>
+							<Divider
+								orientation='vertical'
+								size={'xs'}
+								color={'var(--color-black)'}></Divider>
 							<Stack align='center' gap={'0.2rem'}>
 								<Text fw={700}>
 									{capitilizeFirstLetter(fishCatch.fishType)}
@@ -133,15 +143,6 @@ export const FishCatchCard = ({ fishCatch, userId, eventStatus }: Props) => {
 									{fishCatch.catchWeight} kg
 								</Badge>
 							</Stack>
-							<Divider
-								orientation='vertical'
-								size={'xs'}
-								color={'var(--color-black)'}></Divider>
-							<Image
-								src={`/fishtypes/${fishCatch.fishType}.png`}
-								w={90}
-								h={35}
-								fit='contain'></Image>
 						</Flex>
 					</Stack>
 				</Flex>

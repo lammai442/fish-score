@@ -14,6 +14,7 @@ type WebSocketState = {
 	updateEvent: (updatedEvent: FishEvent) => void;
 	closeConnection: () => void;
 	reset: () => void;
+	removeEvent: (eventId: string) => void;
 };
 
 export const useWebSocketStore = create<WebSocketState>((set, get) => ({
@@ -50,6 +51,10 @@ export const useWebSocketStore = create<WebSocketState>((set, get) => ({
 			}
 		});
 	},
+	removeEvent: (eventId: string) =>
+		set((state) => ({
+			events: state.events.filter((event) => event.eventId !== eventId),
+		})),
 
 	setConnectionStatus: (status) => {
 		set({ isConnected: status });

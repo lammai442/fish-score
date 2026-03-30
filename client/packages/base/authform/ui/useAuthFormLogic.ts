@@ -7,10 +7,10 @@ export const useAuthFormLogic = () => {
 
 	const form = useForm<LoginData | RegisterData>({
 		initialValues: {
-			email: 'moa@kalle.se',
+			email: 'toa@kalle.se',
 			password: 'mamma1',
-			firstName: 'Anders',
-			lastName: 'Karlsson',
+			firstName: '',
+			lastName: '',
 		},
 
 		validate: {

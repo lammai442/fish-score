@@ -13,6 +13,7 @@ The purpose of FishScore is to replace spreadsheets and chat-based updates with 
 ## Features
 
 ### Core features
+
 - User authentication
 - Create and join teams
 - Create and manage competition events
@@ -20,6 +21,7 @@ The purpose of FishScore is to replace spreadsheets and chat-based updates with 
 - Live-updated scoreboard based on total catch weight
 
 ### Optional features
+
 - Heaviest catch per event
 - Event deadline handling
 - Image upload for catches
@@ -29,15 +31,18 @@ The purpose of FishScore is to replace spreadsheets and chat-based updates with 
 ## Tech Stack
 
 ### Frontend
+
 - React
 - TypeScript
 - Mantine UI
 
 ### Backend
+
 - Python
 - WebSockets
 
 ### Database
+
 - DynamoDb
 
 ---
@@ -58,8 +63,3 @@ The purpose of FishScore is to replace spreadsheets and chat-based updates with 
 - Feature-based branching strategy
 
 ---
-
-## Status
-
-Work in progress. This repository represents an active development project.
-

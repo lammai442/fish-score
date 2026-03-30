@@ -284,12 +284,12 @@ def unsubscribe_from_event_in_db(event_id, user_id):
         if not event_item:
             return {"success": False, "error": "Could not find event item"}
 
-        event_created_by_user = event_item.get("eventName") == user_id
+        user_is_subscriber = user_id in event_item.get("subscribers", [])
 
-        if not event_created_by_user:
+        if not user_is_subscriber:
             return {
                 "success": False,
-                "error": "You are unauthorized to delete this event",
+                "error": "Could not find user as a subscriber to the event",
             }
 
         subscribers = event_item.get("subscribers", [])
