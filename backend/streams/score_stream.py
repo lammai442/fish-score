@@ -94,6 +94,7 @@ def handler(event, context):
 
         entity_type = changed_item.get("entityType", "EVENT")
         action = record.get("eventName", "MODIFY")
+        sk = changed_item.get("SK")
 
         # Försök dedupa bättre än bara eventId
         dedupe_key = f"{event_id}:{entity_type}:{action}:{changed_item.get('SK', '')}"
@@ -113,6 +114,8 @@ def handler(event, context):
 
         update_kind = changed_item.get("update_kind")
         cleaned_entity = filter_item_keys(changed_item)
+
+        is_event_remove = action == "REMOVE" and sk == "EVENT"
 
         message = {
             "type": "eventUpdate",
