@@ -45,13 +45,13 @@ export const AuthForm = ({ setShowSplash }: Props) => {
 			} else {
 				const res = await fetchMe();
 				setShowSplash(true);
-				const timer = setTimeout(() => {
+				// Stänger av splash
+				setTimeout(() => {
 					setShowSplash(false);
 					setUser(res.data.user);
 					navigate('/');
 				}, 3380);
 
-				return () => clearTimeout(timer);
 				// Sparar inloggade användaren i store
 			}
 		} finally {
