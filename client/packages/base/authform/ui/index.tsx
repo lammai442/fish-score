@@ -113,8 +113,8 @@ export const AuthForm = ({ setShowSplash }: Props) => {
 					value={mode}
 					onChange={(value) => setMode(value as 'login' | 'register')}
 					data={[
-						{ label: 'Logga in', value: 'login' },
-						{ label: 'Registera', value: 'register' },
+						{ label: 'Log in', value: 'login' },
+						{ label: 'Register', value: 'register' },
 					]}
 					fullWidth
 					styles={{
@@ -171,7 +171,7 @@ export const AuthForm = ({ setShowSplash }: Props) => {
 						fullWidth
 						mt='xl'
 						bg={'var(--color-black)'}>
-						{mode === 'login' ? 'Logga in' : 'Registrera'}
+						{mode === 'login' ? 'Log in' : 'Register'}
 					</Button>
 				</form>
 			</Box>
