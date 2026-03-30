@@ -168,7 +168,7 @@ export const Teams = ({
 				</Stack>
 
 				<Flex align={'center'} gap={'xs'}>
-					<Text fz={'xl'}>Total catch:</Text>
+					<Text fz={'lg'}>Teams catch weight:</Text>
 					<Badge
 						p={'0.8rem 0.5rem'}
 						bg={'var(--bg-primary)'}
