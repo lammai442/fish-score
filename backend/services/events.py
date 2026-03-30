@@ -284,12 +284,12 @@ def unsubscribe_from_event_in_db(event_id, user_id):
         if not event_item:
             return {"success": False, "error": "Could not find event item"}
 
-        user_is_subscriber = user_id in event_item.get("subscribers", [])
+        event_created_by_user = event_item.get("eventName") == user_id
 
-        if not user_is_subscriber:
+        if not event_created_by_user:
             return {
                 "success": False,
-                "error": "Could not find user as a subscriber to the event",
+                "error": "You are unauthorized to delete this event",
             }
 
         subscribers = event_item.get("subscribers", [])
@@ -318,4 +318,61 @@ def unsubscribe_from_event_in_db(event_id, user_id):
         if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
             return {"success": False, "error": "Event not found"}
 
+        return {"success": False, "error": str(e)}
+
+
+def delete_event_in_db(event_id, user_id):
+
+    try:
+        event_pk = f"EVENT#{event_id}"
+        event_response = table.get_item(Key={"PK": event_pk, "SK": "EVENT"})
+
+        event_item = event_response.get("Item")
+
+        if not event_item:
+            return {"success": False, "error": "Could not find event item"}
+
+        if event_item.get("createdBy") != user_id:
+            return {"success": False, "error": "Not authorized"}
+
+        items_to_delete = []
+        last_evaluated_key = None
+
+        # Hämtar hem alla items med hänsyn till pagination
+        while True:
+            query_kwargs = {
+                "KeyConditionExpression": Key("PK").eq(event_pk),
+            }
+
+            if last_evaluated_key:
+                query_kwargs["ExclusiveStartKey"] = last_evaluated_key
+
+            response = table.query(**query_kwargs)
+
+            items = response.get("Items", [])
+            items_to_delete.extend(items)
+
+            last_evaluated_key = response.get("LastEvaluatedKey")
+            if not last_evaluated_key:
+                break
+
+        if not items_to_delete:
+            return {"success": False, "error": "No items found for event"}
+
+        # Raderar eventet och alla relaterade items från databasen
+        with table.batch_writer() as batch:
+            for item in items_to_delete:
+                batch.delete_item(
+                    Key={
+                        "PK": item["PK"],
+                        "SK": item["SK"],
+                    }
+                )
+
+        return {
+            "success": True,
+            "message": "Successfully removed event and all related items",
+        }
+
+    except ClientError as e:
         return {"success": False, "error": str(e)}

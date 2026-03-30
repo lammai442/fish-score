@@ -35,6 +35,7 @@ export const EventPage = () => {
 	const [loadingText, setLoadingText] = useState<string>('Loading event');
 	const [shownWinnersOpened, showWinnersHandlers] = useDisclosure(false);
 	const [endEventOpened, endEventHandlers] = useDisclosure(false);
+	const [editEventOpened, editEventHandlers] = useDisclosure(false);
 
 	const [shownWinners, setShownWinners] = useLocalStorage<string[]>({
 		key: 'winner-popup-events',
@@ -160,7 +161,9 @@ export const EventPage = () => {
 						currentEvent={currentEvent}
 						eventCreatedByUser={eventCreatedByUser}
 						setLoading={setLoading}
-						endEventHandlers={endEventHandlers}></AdminActions>
+						endEventHandlers={endEventHandlers}
+						editEventOpened={editEventOpened}
+						editEventHandlers={editEventHandlers}></AdminActions>
 				)}
 				<SubscribeBtn
 					userId={user?.userId}
@@ -178,7 +181,8 @@ export const EventPage = () => {
 					leaderboard={leaderboard}
 					setWinner={setWinner}
 					showWinnersHandlers={showWinnersHandlers}
-					setShownWinners={setShownWinners}></ResultEvent>
+					setShownWinners={setShownWinners}
+					editEventHandlers={editEventHandlers}></ResultEvent>
 			)}
 			{/* Popup vid end event */}
 			{shownWinnersOpened && (

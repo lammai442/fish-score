@@ -1,16 +1,27 @@
 import { BaseModal } from '@fishScore/basemodal';
 import { CreateItemModal } from '@fishScore/createitemmodal';
 import { Button, Flex, Stack, Text, TextInput, Tooltip } from '@mantine/core';
-import { IconSettings, IconTrash, IconTrophy } from '@tabler/icons-react';
+import {
+	IconCheck,
+	IconSettings,
+	IconTrash,
+	IconTrophy,
+} from '@tabler/icons-react';
 import { useDisclosure, UseDisclosureHandlers } from '@mantine/hooks';
 import { FishEvent } from '@fishScore/eventsdata';
 import { useState } from 'react';
+import { validateInput } from './validateinput';
+import { fetchDeleteEvent, fetchUpdateEvent } from '@fishScore/apievents';
+import { showNotification } from '@mantine/notifications';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
 	currentEvent: FishEvent;
 	eventCreatedByUser: boolean;
 	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	endEventHandlers: UseDisclosureHandlers;
+	editEventOpened: boolean;
+	editEventHandlers: UseDisclosureHandlers;
 };
 
 export const AdminActions = ({
@@ -18,38 +29,52 @@ export const AdminActions = ({
 	eventCreatedByUser,
 	setLoading,
 	endEventHandlers,
+	editEventOpened,
+	editEventHandlers,
 }: Props) => {
 	const [createTeamOpened, createTeamHandlers] = useDisclosure(false);
-	const [editEventOpened, editEventHandlers] = useDisclosure(false);
+	const [deleteEventOpened, deleteEventHandlers] = useDisclosure(false);
 	const [inputValue, setInputValue] = useState<string>(
 		currentEvent.eventName,
 	);
 	const [errorInput, setErrorInput] = useState<string>('');
+	const navigate = useNavigate();
 
-	const handleChangeName = () => {
-		// Rensa tidigare fel
-		setErrorInput('');
+	const handleChangeName = async () => {
+		const inputValidated = validateInput(
+			inputValue,
+			setErrorInput,
+			currentEvent.eventName,
+		);
 
-		const emojiRegex = /[\p{Extended_Pictographic}]/u;
-		const value = inputValue.trim();
-
-		if (value.length === 0) {
-			setErrorInput('You need to fill in an event name');
-			return;
+		if (inputValidated) {
+			const response = await fetchUpdateEvent(
+				currentEvent.eventId,
+				inputValue,
+			);
+			if (response.success) {
+				showNotification({
+					title: 'Event name changed',
+					message: `Your event name has changed to ${inputValue}`,
+					color: 'var(--color-primary)',
+					icon: <IconCheck />,
+					position: 'top-center',
+				});
+			}
 		}
-		if (value === currentEvent.eventName.toLowerCase()) {
-			setErrorInput('New event name is the same as current event name');
-			return;
-		}
+	};
 
-		if (value.length > 18) {
-			setErrorInput('Max 18 characters');
-			return;
-		}
-
-		if (emojiRegex.test(value)) {
-			setErrorInput('Emojis are not allowed');
-			return;
+	const handleDeleteEvent = async () => {
+		const response = await fetchDeleteEvent(currentEvent.eventId);
+		if (response.success) {
+			navigate('/', { replace: true });
+			showNotification({
+				title: 'Event deleted',
+				message: `This event and all related teams and catches has been deleted`,
+				color: 'var(--color-primary)',
+				icon: <IconCheck />,
+				position: 'top-center',
+			});
 		}
 	};
 
@@ -72,6 +97,7 @@ export const AdminActions = ({
 				<Stack gap={'xs'}>
 					{currentEvent.teams && currentEvent.teams.length > 0 && (
 						<>
+							{/* Change name */}
 							<Text>Change event name</Text>
 							<Flex gap={'xs'}>
 								<TextInput
@@ -90,6 +116,7 @@ export const AdminActions = ({
 									Change
 								</Button>
 							</Flex>
+							{/* End/Reopen event */}
 							<Text>
 								{currentEvent?.status === 'ongoing'
 									? 'Do you want to end event'
@@ -111,7 +138,6 @@ export const AdminActions = ({
 								}
 								onClick={() => {
 									endEventHandlers.open();
-									editEventHandlers.close();
 								}}>
 								<Flex gap={'xs'}>
 									<IconTrophy></IconTrophy>{' '}
@@ -129,7 +155,8 @@ export const AdminActions = ({
 						w={'fit-content'}
 						radius='md'
 						p={'0.5rem'}
-						bg='var(--btn-danger-bg)'>
+						bg='var(--btn-danger-bg)'
+						onClick={() => deleteEventHandlers.open()}>
 						<Flex gap={'xs'}>
 							<IconTrash size={20}></IconTrash>
 							<Text>Delete event</Text>
@@ -138,6 +165,31 @@ export const AdminActions = ({
 				</Stack>
 			</BaseModal>
 
+			{/* Öppna modal för att delete event*/}
+			<BaseModal
+				title='Delete event'
+				opened={deleteEventOpened}
+				close={deleteEventHandlers.close}>
+				<Stack>
+					<Text c={'var(--text-danger)'}>
+						This will permanently delete the event and all related
+						teams and catches.
+					</Text>
+					<Text>Are you sure you want to delete this event?</Text>
+					<Flex gap={'xs'}>
+						<Button
+							bg={'var(--btn-primary-bg)'}
+							onClick={deleteEventHandlers.close}>
+							No
+						</Button>
+						<Button
+							bg={'var(--btn-danger-bg)'}
+							onClick={handleDeleteEvent}>
+							Yes
+						</Button>
+					</Flex>
+				</Stack>
+			</BaseModal>
 			{/* Create team btn */}
 			<Tooltip
 				label={
