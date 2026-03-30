@@ -18,6 +18,7 @@ import { Loading } from '@fishScore/loading';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '@fishScore/useUserStore';
+import { useAuthStore } from '@fishScore/useAuthStore';
 
 type Props = {
 	setShowSplash: React.Dispatch<React.SetStateAction<boolean>>;
@@ -26,6 +27,7 @@ type Props = {
 export const AuthForm = ({ setShowSplash }: Props) => {
 	const { mode, setMode, form } = useAuthFormLogic();
 	const { setUser } = useUserStore();
+	const { setAuthStatus } = useAuthStore();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
@@ -44,6 +46,7 @@ export const AuthForm = ({ setShowSplash }: Props) => {
 				});
 			} else {
 				const res = await fetchMe();
+				setAuthStatus('authenticated');
 				setShowSplash(true);
 				// Stänger av splash
 				setTimeout(() => {

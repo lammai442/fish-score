@@ -15,6 +15,12 @@ http://fischscore.s3-website.eu-north-1.amazonaws.com/
 - För att få notiser behöver followstjärnan vara ifylld på eventet.
 - Appen använder cookies som är giltiga i 10 timmar per aktiv session. Därför behöver du använda två separata webbläsare för att testa med två olika konton.
 
+Upprättade konton:
+rikard@gmail.com
+erika@gmail.com
+gunde@gmail.com
+zlatan@gmail.com
+
 **Följ stegen nedan noggrant för att testa applikationen.**
 
 ---

@@ -27,14 +27,10 @@ export const SubscribeBtn = ({ userId, currentEvent }: Props) => {
 		let response = null;
 
 		if (isSubscriberToEvent) {
-			console.log('unsubscribe');
-
 			response = await fetchUnsubscribeToEvent(currentEvent.eventId);
 		} else {
-			console.log('Subscribe');
 			response = await fetchSubscribeToEvent(currentEvent.eventId);
 		}
-		console.log('Subscriberesponse: ', response);
 		if (response.success) {
 			showNotification({
 				title: 'Subscription',

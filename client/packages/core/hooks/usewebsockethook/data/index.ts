@@ -142,10 +142,7 @@ export const useWebSocketHook = () => {
 						updateId = message.entity.eventId;
 						type = 'event';
 					}
-					console.log('updateId, type: ', updateId, type);
 					if (!updateId || !type) return;
-
-					console.log('här');
 
 					addUpdate(currentUser.userId, {
 						updateId,
