@@ -1,8 +1,0 @@
-Flask==3.0.3
-boto3
-marshmallow
-passlib[bcrypt]
-python-dotenv
-PyJWT
-bcrypt
-python-dateutil
