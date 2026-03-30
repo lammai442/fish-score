@@ -7,7 +7,7 @@ import {
 import { PageHeader } from '@fishScore/pageheader';
 import { Divider, Flex, Stack, Text, Title } from '@mantine/core';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { useDisclosure } from '@mantine/hooks';
 import { useUserStore } from '@fishScore/useUserStore';
@@ -36,14 +36,13 @@ export const EventPage = () => {
 	const [shownWinnersOpened, showWinnersHandlers] = useDisclosure(false);
 	const [endEventOpened, endEventHandlers] = useDisclosure(false);
 	const [editEventOpened, editEventHandlers] = useDisclosure(false);
-
 	const [shownWinners, setShownWinners] = useLocalStorage<string[]>({
 		key: 'winner-popup-events',
 		defaultValue: [],
 	});
 	const [winner, setWinner] = useState<LeaderboardTeam | null>(null);
-
 	const { user } = useUserStore();
+	const navigate = useNavigate();
 
 	// Kontroll om user finns i team
 	const usersTeam: Team | undefined = currentEvent?.teams?.find((team) =>
@@ -57,11 +56,15 @@ export const EventPage = () => {
 		setLoadingText('Loading event');
 		try {
 			const response = await fetchEventView(eventId);
-
 			if (!response.success) {
-				setCurrentEvent(null);
-				setLeaderboard([]);
-				setActivity([]);
+				navigate('/error', {
+					replace: true,
+					state: {
+						title: 'Event not found',
+						message:
+							'This event and related teams, catches and messages has been removed by admin.',
+					},
+				});
 				return;
 			}
 
@@ -160,7 +163,6 @@ export const EventPage = () => {
 					<AdminActions
 						currentEvent={currentEvent}
 						eventCreatedByUser={eventCreatedByUser}
-						setLoading={setLoading}
 						endEventHandlers={endEventHandlers}
 						editEventOpened={editEventOpened}
 						editEventHandlers={editEventHandlers}></AdminActions>

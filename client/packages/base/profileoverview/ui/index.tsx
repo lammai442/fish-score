@@ -11,6 +11,7 @@ import { useWebSocketStore } from '@fishScore/usewebsocketstore';
 import { ProfileCatchCard } from '@fishScore/profilecatchcard';
 import type { User, UserStats } from '@fishScore/usersdata';
 import type { FishCatch } from '@fishScore/fishcatchdata';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 type Props = {};
 
 export const ProfileOverview = ({}: Props) => {
@@ -91,13 +92,14 @@ export const ProfileOverview = ({}: Props) => {
 		<>
 			<Stack
 				align='center'
-				style={{
-					width: '100vw',
-					marginLeft: 'calc(50% - 50vw)',
-				}}>
+				style={
+					{
+						// width: '100vw',
+						// marginLeft: 'calc(50% - 50vw)',
+					}
+				}>
 				<Stack
 					w={'100%'}
-					// p={'xl'}
 					p={'1.6rem 0 2.8rem 0'}
 					bg={'var(--color-black)'}
 					align='center'>
@@ -130,7 +132,7 @@ export const ProfileOverview = ({}: Props) => {
 				</Stack>
 				{userStats && (
 					<Flex
-						p={'0 2rem 0 2rem'}
+						p={'0 2rem 2rem 2rem'}
 						maw={'100%'}
 						gap={15}
 						justify={'center'}
@@ -157,17 +159,28 @@ export const ProfileOverview = ({}: Props) => {
 						})}
 					</Flex>
 				)}
-				{userCatches && userCatches.length > 0 && (
+				<Title order={3}>MY CATCHES</Title>
+				{userCatches && userCatches.length > 0 ? (
+					userCatches.map((c) => (
+						<ProfileCatchCard
+							key={c.catchId}
+							fishCatch={c}
+							userId={user.userId}
+						/>
+					))
+				) : (
 					<>
-						<Title order={3}>MY CATCHES</Title>
-
-						{userCatches.map((c) => (
-							<ProfileCatchCard
-								key={c.catchId}
-								fishCatch={c}
-								userId={user.userId}
-							/>
-						))}
+						<Text ta={'center'}>
+							You have no catches yet. Join a team and start
+							catching!
+						</Text>
+						<DotLottieReact
+							src='https://lottie.host/2d6d9998-f277-4800-9a18-cdaa75fb4421/t2VbZoHzOn.lottie'
+							loop
+							autoplay
+							speed={0.75}
+							style={{ width: 200, height: 200 }}
+						/>
 					</>
 				)}
 			</Stack>

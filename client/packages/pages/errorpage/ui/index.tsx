@@ -1,10 +1,14 @@
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Button, Stack, Text, Title } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const ErrorPage = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 
+	const message =
+		location.state?.message ||
+		"Oh no, it seems that the page you are looking for doesn't exist.";
 	return (
 		<Stack align='center' ta={'center'}>
 			<DotLottieReact
@@ -15,9 +19,7 @@ export const ErrorPage = () => {
 				style={{ width: 200, height: 200 }}
 			/>
 			<Title order={1}>404</Title>
-			<Text>
-				Oh no, it seems that the page you are looking for doesn't exist.
-			</Text>
+			<Text>{message}</Text>
 			<Button
 				bg={'var(--btn-primary-bg)'}
 				c={'var(--text-inverse'}

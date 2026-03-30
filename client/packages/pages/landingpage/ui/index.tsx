@@ -32,7 +32,7 @@ export const LandingPage = () => {
 				{' '}
 				<CreateItemModal close={close} type='event'></CreateItemModal>
 			</BaseModal>
-			<Stack>
+			<Stack mt={'lg'}>
 				<Button
 					color='var(--color-black)'
 					size='lg'

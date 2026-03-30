@@ -102,12 +102,6 @@ def handler(event, context):
             continue
         processed_records.add(dedupe_key)
 
-        # Hämta senaste fulla eventvyn efter förändringen
-        event_response = get_event_view_in_db(event_id)
-        if not event_response["success"]:
-            print(f"Could not fetch full event view for eventId={event_id}")
-            continue
-
         changed_by = (
             changed_item.get("createdBy") or changed_item.get("updatedBy") or None
         )
@@ -117,17 +111,38 @@ def handler(event, context):
 
         is_event_remove = action == "REMOVE" and sk == "EVENT"
 
-        message = {
-            "type": "eventUpdate",
-            "entityType": entity_type,
-            "action": action,
-            "eventId": event_id,
-            "changedBy": changed_by,
-            "entity": make_json_safe(cleaned_entity),
-            "data": make_json_safe(event_response["event"]),
-            "subscribers": event_response["event"]["subscribers"],
-            "updateKind": update_kind,
-        }
+        if is_event_remove:
+            message = {
+                "type": "eventUpdate",
+                "entityType": entity_type,
+                "action": action,
+                "eventId": event_id,
+                "changedBy": changed_by,
+                "subscribers": changed_item.get("subscribers", []),
+                "entity": {
+                    "eventName": changed_item.get("eventName"),
+                    "eventId": event_id,
+                },
+            }
+        else:
+            # Hämta senaste fulla eventvyn efter förändringen
+            event_response = get_event_view_in_db(event_id)
+
+            if not event_response["success"]:
+                print(f"Could not fetch full event view for eventId={event_id}")
+                continue
+
+            message = {
+                "type": "eventUpdate",
+                "entityType": entity_type,
+                "action": action,
+                "eventId": event_id,
+                "changedBy": changed_by,
+                "entity": make_json_safe(cleaned_entity),
+                "data": make_json_safe(event_response["event"]),
+                "subscribers": event_response["event"]["subscribers"],
+                "updateKind": update_kind,
+            }
 
         for conn in connections:
             connection_id = conn["SK"].replace("CONNECTION#", "")

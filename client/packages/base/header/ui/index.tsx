@@ -8,6 +8,7 @@ import {
 	ActionIcon,
 	Container,
 	Tooltip,
+	Title,
 } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { IconBell } from '@tabler/icons-react';
@@ -25,7 +26,7 @@ export const Header = () => {
 	const [wiggle, setWiggle] = useState<boolean>(false);
 
 	const userFullName = `${user?.firstName} ${user?.lastName}`;
-
+	// Uppdatering av sidans titel
 	useEffect(() => {
 		if (updates.length > 0 && updates.some((u) => u.read === false)) {
 			const unread = updates.filter((u) => !u.read).length;
@@ -60,11 +61,12 @@ export const Header = () => {
 						<Image
 							src='/transparent-logo.png'
 							alt='Logo'
-							width={70}
-							height={70}
+							width={60}
+							height={60}
 							style={{ cursor: 'pointer' }}
 							fit='contain'></Image>
 					</Tooltip>
+					<Title order={6}>FISHSCORE</Title>
 				</Box>
 				{/* Öppnar upp modal med Updates */}
 				<BaseModal

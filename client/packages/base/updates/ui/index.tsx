@@ -44,7 +44,6 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 		setWiggle(false);
 		clearUpdates();
 	};
-
 	return (
 		<Stack>
 			{updates.length > 0 && isUpdatesInStorageByUser ? (
@@ -257,7 +256,8 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 									)}
 									{/* Event */}
 									{update.type === 'event' &&
-										update.updateKind === 'eventStatus' && (
+										(update.updateKind === 'eventStatus' ||
+											update.action === 'REMOVE') && (
 											<Stack gap='xs'>
 												<Stack gap='0'>
 													<Title order={5}>
@@ -289,11 +289,14 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 													)}
 
 													<Text c='var(--text-primary)'>
-														{update.entity
-															.status ===
-														'completed'
-															? 'Event has ended, check out the winners!'
-															: 'Fish on! The event has been reopened.'}
+														{update.action ===
+														'REMOVE'
+															? 'This event has been removed by admin and all related teams and catches.'
+															: update.entity
+																		.status ===
+																  'completed'
+																? 'Event has ended, check out the winners!'
+																: 'Fish on! The event has been reopened.'}
 													</Text>
 												</Stack>
 
@@ -303,14 +306,16 @@ export const Updates = ({ updates, close, setWiggle }: Props) => {
 											</Stack>
 										)}
 
-									<Button
-										c='var(--text-inverse)'
-										bg='var(--color-black)'
-										onClick={() =>
-											handleNavigation(update.eventId)
-										}>
-										Go to event
-									</Button>
+									{update.action !== 'REMOVE' && (
+										<Button
+											c='var(--text-inverse)'
+											bg='var(--color-black)'
+											onClick={() =>
+												handleNavigation(update.eventId)
+											}>
+											Go to event
+										</Button>
+									)}
 								</Stack>
 							</Flex>
 						))}
